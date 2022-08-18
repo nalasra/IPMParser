@@ -1,0 +1,9 @@
+ext {
+    jposVersion =   '2.1.6'
+
+    libraries = [
+        junit: 'junit:junit:4.12',
+        jpos: "org.jpos:jpos:${jposVersion}",
+    ]
+}
+
