@@ -26,7 +26,7 @@ public class Main {
 
         //this will write all ISO msgs into a separate file
         BufferedWriter writer = new BufferedWriter(new FileWriter(
-                System.getProperty("user.dir") + "/src/dist/cfg/ipm_files/clear/" + fileName + "_clear"));
+                System.getProperty("user.dir") + "/src/dist/cfg/ipm_files/" + fileName + "_clear"));
         File ipmFile = new File(System.getProperty("user.dir") + "/src/dist/cfg/ipm_files/" + fileName);
         if (!ipmFile.exists()) {
             System.out.println(fileName + ": File not exists");
