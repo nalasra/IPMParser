@@ -1,26 +1,22 @@
 package org.example;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.util.List;
-
-import org.example.mastercard.IPM.RDWReader;
 import org.example.mastercard.T057.T057Parser;
+import org.example.mastercard.T112.T112Parser;
 import org.example.visa.baseii.BaseIIParser;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.iso.packager.GenericPackager;
 import org.jpos.util.FSDMsg;
+import org.jpos.util.Loggeable;
 import org.jpos.util.Logger;
 import org.jpos.util.SimpleLogListener;
 
-import static org.example.helper.ISOMsgHelper.*;
+import java.io.*;
+import java.util.List;
+
+import static org.example.helper.ISOMsgHelper.loggeableToString;
 
 public class Main {
     static Logger l = Logger.getLogger("Q2");
-
-    static String MC_IPM = "mas_ipm.xml";
-    static String MC_IPM_EBCDIC = "mas_ipm_ebcdic.xml";
     static String USER_DIR = System.getProperty("user.dir");
     static String BASEII_FILES = USER_DIR + "/src/dist/files/baseii/";
     static String BASEII_FILES_PARSED = BASEII_FILES + "parsed/";
@@ -32,9 +28,9 @@ public class Main {
     public static void main(String[] args) throws ISOException, IOException {
         l.addListener(new SimpleLogListener());
 
-        parseBASEIIFile("VISAIN_BAE_410896_090921.txt"); //VISAIN_BAE_410896_090921.txt
-        parseT112File("MCI.AR.T112.M.E0070571.D220316.T061510.A005"); //MCI.AR.T112.M.E0070571.D220316.T061510.A005
-        parseT057File("TT057T0.2020-10-25-00-00-27.001"); //"TT057T0.2020-10-25-00-00-27.001"
+        parseBASEIIFile("VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
+        //parseT112File("MCI.AR.T112.M.E0070571.D220316.T061510.A005"); //MCI.AR.T112.M.E0070571.D220316.T061510.A005
+        //parseT057File("TT057T0.2020-10-25-00-00-27.001"); //"TT057T0.2020-10-25-00-00-27.001"
     }
 
     public static File[] getFiles(String desiredFile, String folder) throws Exception {
@@ -70,9 +66,10 @@ public class Main {
                 for (File f : fs) {
                     if (f.isFile()) {
                         BaseIIParser parser = new BaseIIParser();
-                        List<FSDMsg> msgs = parser.parse(f);
-                        BufferedWriter writer = initializeWriter(BASEII_FILES_PARSED, f.getName() + "_" + System.currentTimeMillis());
-                        for (FSDMsg m : msgs) {
+                        List<Loggeable> msgs = parser.parse(f);
+                        BufferedWriter writer = initializeWriter(BASEII_FILES_PARSED, f.getName());
+                        for (Loggeable l : msgs) {
+                            FSDMsg m = (FSDMsg)l;
                             writer.write("TC" + m.get("transactionCode") + (m.hasField("transactionComponentSeq") ? " TCR" + m.get("transactionComponentSeq") : "") + "\n");
                             writer.write(loggeableToString(m));
                         }
@@ -92,9 +89,9 @@ public class Main {
                 for (File f : fs) {
                     if (f.isFile()) {
                         T057Parser parser = new T057Parser();
-                        List<FSDMsg> msgs = parser.parse(f);
-                        BufferedWriter writer = initializeWriter(T057_FILES_PARSED, f.getName() + "_" + System.currentTimeMillis());
-                        for (FSDMsg m : msgs) {
+                        List<Loggeable> msgs = parser.parse(f);
+                        BufferedWriter writer = initializeWriter(T057_FILES_PARSED, f.getName());
+                        for (Loggeable m : msgs) {
                             writer.write(loggeableToString(m));
                         }
                         writer.close();
@@ -106,26 +103,17 @@ public class Main {
     }
 
     public static void parseT112File(String fileName) {
-        String ENCODING = MC_IPM_EBCDIC;
         try {
             File[] fs = getFiles(fileName, T112_FILES);
             if (fs != null)
                 for (File f : fs) {
                     if (f.isFile()) {
-                        BufferedWriter writer = initializeWriter(T112_FILES_PARSED, f.getName() + "_" + System.currentTimeMillis());
-                        try (RDWReader reader = new RDWReader(Files.newInputStream(f.toPath()))) {
-                            byte[] r = reader.read();
-                            GenericPackager packager = new GenericPackager("jar:packager/" + ENCODING);
-                            while (r != null && r.length > 0) {
-                                ISOMsg msg = createISOMsg(r, packager);
-                                //if (msg.getMTI().equals("1644") && msg.getString(24).equals("680")) {
-                                writer.write(loggeableToString(msg));
-                                writer.write("---------\r\n");
-                                dumpPDS(writer, msg.getString(48));
-                                writer.write("---------\r\n");
-                                // }
-                                r = reader.read();
-                            }
+                        T112Parser parser = new T112Parser();
+                        List<Loggeable> msgs = parser.parse(f);
+                        BufferedWriter writer = initializeWriter(T112_FILES_PARSED, f.getName());
+                        for (Loggeable m : msgs) {
+                            writer.write(loggeableToString(m));
+                            dumpPDS(writer, ((ISOMsg) m).getString(48));
                         }
                         writer.close();
                     }

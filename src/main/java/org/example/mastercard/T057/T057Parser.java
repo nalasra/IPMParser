@@ -1,6 +1,7 @@
 package org.example.mastercard.T057;
 
 import org.jpos.util.FSDMsg;
+import org.jpos.util.Loggeable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,9 +13,9 @@ import java.util.List;
 public class T057Parser {
     private static final String SCHEMA = "file:src/dist/cfg/t057/t057-";
 
-    public List<FSDMsg> parse(File file){
+    public List<Loggeable> parse(File file){
         int counter = 0;
-        List<FSDMsg> msgs = new ArrayList<>();
+        List<Loggeable> msgs = new ArrayList<>();
 
         FSDMsg msgBase;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {

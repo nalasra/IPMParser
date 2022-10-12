@@ -1,11 +1,11 @@
-package org.example.mastercard.IPM;
-
-import java.io.IOException;
-import java.io.InputStream;
+package org.example.rdw;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jpos.iso.ISOUtil;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class RDWReader implements AutoCloseable {
 

@@ -1,6 +1,7 @@
 package org.example.visa.baseii;
 
 import org.jpos.util.FSDMsg;
+import org.jpos.util.Loggeable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,8 +16,8 @@ public class BaseIIParser {
     private static final String FOOTER_91_SCHEMA = "file:src/dist/cfg/baseii/baseii-91-";
     private static final String TC_SCHEMA = "file:src/dist/cfg/baseii/baseii-";
     private int counter;
-    public List<FSDMsg> parse(File baseiiFile) {
-        List<FSDMsg> msgs = new ArrayList<>();
+    public List<Loggeable> parse(File baseiiFile) {
+        List<Loggeable> msgs = new ArrayList<>();
 
         FSDMsg msgBase;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(baseiiFile))) {
