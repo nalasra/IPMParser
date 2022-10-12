@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='agentUniqueID' type='AN' length='5' />
+    <field id='reserved' type='AN' length='5' />
+</schema>

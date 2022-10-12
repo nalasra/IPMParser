@@ -1,3 +1,5 @@
 /.idea/
 /.gradle/
-/src/dist/cfg/ipm_files/clear/
+/src/dist/files/baseii/parsed/
+/src/dist/files/t112/parsed/
+/src/dist/files/t057/parsed/

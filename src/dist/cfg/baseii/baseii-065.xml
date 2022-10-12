@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='transactionIdentifier' type='N' length='15' />
+    <field id='authAmount' type='N' length='12' />
+    <field id='authCurrencyCode' type='AN' length='3' />
+    <field id='authRespCode' type='AN' length='2' />
+    <field id='validationCode' type='AN' length='4' />
+    <field id='excluded' type='AN' length='1' />
+    <field id='reserved1' type='AN' length='1' />
+    <field id='reserved2' type='AN' length='2' />
+    <field id='multiClearingSeqNum' type='N' length='2' />
+    <field id='multiClearingSeqCount' type='N' length='2' />
+    <field id='marketIndicator' type='AN' length='1' />
+    <field id='totalAuthAmount' type='N' length='12' />
+    <field id='infoIndicator' type='AN' length='1' />
+    <field id='mercTelephone' type='AN' length='14' />
+    <field id='additionalDataInd' type='AN' length='1' />
+    <field id='merchVolumeInd' type='AN' length='2' />
+    <field id='ecomGoodsInd' type='AN' length='2' />
+    <field id='mvv' type='AN' length='10' />
+    <field id='interchangeFee' type='N' length='15' />
+    <field id='interchangeFeeSign' type='AN' length='1' />
+    <field id='sourceToBaseCurrExchRate' type='N' length='8' />
+    <field id='baseToDestCurrExchRate' type='N' length='8' />
+    <field id='optionalIssuerAmount' type='N' length='12' />
+    <field id='productID' type='AN' length='2' />
+    <field id='programID' type='AN' length='6' />
+    <field id='dcc' type='AN' length='1' />
+    <field id='acctTypeID' type='AN' length='4' />
+    <field id='spendIndicator' type='AN' length='1' />
+    <field id='panToken' type='N' length='16' />
+    <field id='reserved3' type='AN' length='2' />
+    <field id='cvv2ResultCode' type='AN' length='1' />
+    </schema>
+
+

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='transactionCode' type='N' length='2' key="true" />
+	<field id='transactionCodeQualifier' type='AN' length='1' />
+    <field id='transactionComponentSeq' type='AN' length='1' key="true" />
+</schema>
