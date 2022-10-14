@@ -1,4 +1,4 @@
-package org.example.rdw;
+package org.hablo.rdw;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;

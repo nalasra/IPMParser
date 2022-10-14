@@ -1,4 +1,4 @@
-package org.example.visa.baseii;
+package org.hablo.visa.baseii;
 
 import org.jpos.util.FSDMsg;
 import org.jpos.util.Loggeable;
@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseIIParser {
-    private static final String TC_90 = "90";
     private static final String HEADER_SCHEMA = "file:src/dist/cfg/baseii/baseii-90-";
-    private static final String FOOTER_91_SCHEMA = "file:src/dist/cfg/baseii/baseii-91-";
     private static final String TC_SCHEMA = "file:src/dist/cfg/baseii/baseii-";
     private int counter;
     public List<Loggeable> parse(File baseiiFile) {
@@ -23,7 +21,7 @@ public class BaseIIParser {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(baseiiFile))) {
             String row;
             while ((row = bufferedReader.readLine()) != null && row.length() > 0) {
-                msgBase = new FSDMsg(row.startsWith(TC_90) ? HEADER_SCHEMA : TC_SCHEMA);
+                msgBase = new FSDMsg(row.startsWith("90") ? HEADER_SCHEMA : TC_SCHEMA);
                 msgBase.unpack(row.getBytes());
                 msgs.add(msgBase);
                 counter++;

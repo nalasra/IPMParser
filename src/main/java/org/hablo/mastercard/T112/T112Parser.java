@@ -1,6 +1,6 @@
-package org.example.mastercard.T112;
+package org.hablo.mastercard.T112;
 
-import org.example.rdw.RDWReader;
+import org.hablo.rdw.RDWReader;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.packager.GenericPackager;
 import org.jpos.util.Loggeable;
@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.example.helper.ISOMsgHelper.createISOMsg;
+import static org.hablo.helper.ISOMsgHelper.createISOMsg;
 
 public class T112Parser {
 

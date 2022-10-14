@@ -1,4 +1,4 @@
-package org.example.helper;
+package org.hablo.helper;
 
 import java.util.Currency;
 import java.util.HashMap;

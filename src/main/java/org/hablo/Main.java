@@ -1,9 +1,8 @@
-package org.example;
+package org.hablo;
 
-import org.example.mastercard.T057.T057Parser;
-import org.example.mastercard.T112.T112Parser;
-import org.example.visa.baseii.BaseIIParser;
-import org.jpos.iso.ISOException;
+import org.hablo.mastercard.T057.T057Parser;
+import org.hablo.mastercard.T112.T112Parser;
+import org.hablo.visa.baseii.BaseIIParser;
 import org.jpos.iso.ISOMsg;
 import org.jpos.util.FSDMsg;
 import org.jpos.util.Loggeable;
@@ -13,7 +12,7 @@ import org.jpos.util.SimpleLogListener;
 import java.io.*;
 import java.util.List;
 
-import static org.example.helper.ISOMsgHelper.loggeableToString;
+import static org.hablo.helper.ISOMsgHelper.loggeableToString;
 
 public class Main {
     static Logger l = Logger.getLogger("Q2");
@@ -25,11 +24,16 @@ public class Main {
     static String T057_FILES = USER_DIR + "/src/dist/files/t057/";
     static String T057_FILES_PARSED = T057_FILES + "parsed/";
 
-    public static void main(String[] args) throws ISOException, IOException {
+    public static void main(String[] args) {
         l.addListener(new SimpleLogListener());
 
-        parseBASEIIFile("VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
+        parseBASEIIFile("");
+        //parseBASEIIFile("VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
+
+        parseT112File("");
         //parseT112File("MCI.AR.T112.M.E0070571.D220316.T061510.A005"); //MCI.AR.T112.M.E0070571.D220316.T061510.A005
+
+        parseT057File("");
         //parseT057File("TT057T0.2020-10-25-00-00-27.001"); //"TT057T0.2020-10-25-00-00-27.001"
     }
 
