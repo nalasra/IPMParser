@@ -3,54 +3,56 @@ package org.hablo;
 import org.hablo.mastercard.T057.T057Parser;
 import org.hablo.mastercard.T112.T112Parser;
 import org.hablo.visa.baseii.BaseIIParser;
-import org.jpos.iso.ISOMsg;
-import org.jpos.util.FSDMsg;
-import org.jpos.util.Loggeable;
 import org.jpos.util.Logger;
 import org.jpos.util.SimpleLogListener;
 
 import java.io.*;
-import java.util.List;
-
-import static org.hablo.helper.ISOMsgHelper.loggeableToString;
 
 public class Main {
     static Logger l = Logger.getLogger("Q2");
     static String USER_DIR = System.getProperty("user.dir");
-    static String BASEII_FILES = USER_DIR + "/src/dist/files/baseii/";
+    static String FILES_DIR = "/src/dist/files/";
+    static String BASEII_FILES = USER_DIR + FILES_DIR + "baseii/";
     static String BASEII_FILES_PARSED = BASEII_FILES + "parsed/";
-    static String T112_FILES = USER_DIR + "/src/dist/files/t112/";
+    static String T112_FILES = USER_DIR + FILES_DIR + "t112/";
     static String T112_FILES_PARSED = T112_FILES + "parsed/";
-    static String T057_FILES = USER_DIR + "/src/dist/files/t057/";
+    static String T057_FILES = USER_DIR + FILES_DIR + "t057/";
     static String T057_FILES_PARSED = T057_FILES + "parsed/";
 
     public static void main(String[] args) {
         l.addListener(new SimpleLogListener());
 
-        parseBASEIIFile("");
+        //parseBASEIIFile("");
         //parseBASEIIFile("VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
 
-        parseT112File("");
-        //parseT112File("MCI.AR.T112.M.E0070571.D220316.T061510.A005"); //MCI.AR.T112.M.E0070571.D220316.T061510.A005
+        //parseT112File("");
+        //parseT112File("agoda"); //MCI.AR.T112.M.E0070571.D220316.T061510.A005
+        parseT112File("MCI.AR.T112.M.E0072218.D221013.T062131.A005");
 
-        parseT057File("");
-        //parseT057File("TT057T0.2020-10-25-00-00-27.001"); //"TT057T0.2020-10-25-00-00-27.001"
+        //parseT057File("");
+        //parseT057File("MCI.AR.T112.M.E0070571.D221001.T184842.A001"); //"TT057T0.2020-10-25-00-00-27.001"
     }
 
-    public static File[] getFiles(String desiredFile, String folder) throws Exception {
+    public static File[] getFiles(String desiredFile, String parentFolder) throws Exception {
         File[] fs;
         File fp;
+        //process all files under parent
         if (desiredFile == null || desiredFile.isEmpty()) {
-            fp = new File(folder);
+            fp = new File(parentFolder);
             if (fp.isDirectory())
                 fs = fp.listFiles();
             else
                 throw new Exception("Invalid flow. Cannot get files.");
         } else {
-            fp = new File(folder + desiredFile);
+            //process desired file
+            fp = new File(parentFolder + desiredFile);
             if (!fp.exists())
                 throw new FileNotFoundException();
-            fs = new File[]{fp};
+            //process desired folder
+            if (fp.isDirectory())
+                fs = fp.listFiles();
+            else
+                fs = new File[]{fp};
         }
         return fs;
     }
@@ -69,17 +71,13 @@ public class Main {
             if (fs != null)
                 for (File f : fs) {
                     if (f.isFile()) {
-                        BaseIIParser parser = new BaseIIParser();
-                        List<Loggeable> msgs = parser.parse(f);
                         BufferedWriter writer = initializeWriter(BASEII_FILES_PARSED, f.getName());
-                        for (Loggeable l : msgs) {
-                            FSDMsg m = (FSDMsg)l;
-                            writer.write("TC" + m.get("transactionCode") + (m.hasField("transactionComponentSeq") ? " TCR" + m.get("transactionComponentSeq") : "") + "\n");
-                            writer.write(loggeableToString(m));
-                        }
+                        BaseIIParser parser = new BaseIIParser();
+                        parser.setOutputParsedFile(true);
+                        parser.setWriter(writer);
+                        parser.parse(f);
                         writer.close();
                     }
-                    //else do some handling
                 }
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
@@ -92,12 +90,11 @@ public class Main {
             if (fs != null)
                 for (File f : fs) {
                     if (f.isFile()) {
-                        T057Parser parser = new T057Parser();
-                        List<Loggeable> msgs = parser.parse(f);
                         BufferedWriter writer = initializeWriter(T057_FILES_PARSED, f.getName());
-                        for (Loggeable m : msgs) {
-                            writer.write(loggeableToString(m));
-                        }
+                        T057Parser parser = new T057Parser();
+                        parser.setOutputParsedFile(true);
+                        parser.setWriter(writer);
+                        parser.parse(f);
                         writer.close();
                     }
                 }
@@ -112,33 +109,17 @@ public class Main {
             if (fs != null)
                 for (File f : fs) {
                     if (f.isFile()) {
-                        T112Parser parser = new T112Parser();
-                        List<Loggeable> msgs = parser.parse(f);
                         BufferedWriter writer = initializeWriter(T112_FILES_PARSED, f.getName());
-                        for (Loggeable m : msgs) {
-                            writer.write(loggeableToString(m));
-                            dumpPDS(writer, ((ISOMsg) m).getString(48));
-                        }
+                        T112Parser parser = new T112Parser();
+                        parser.setOutputParsedFile(true);
+                        parser.setWriter(writer);
+                        parser.setMtiFilter("1644, 1100");
+                        parser.parse(f);
                         writer.close();
                     }
                 }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
-    }
-
-
-    public static void dumpPDS(BufferedWriter writer, String data) throws IOException {
-        int i = 0;
-        while (i < data.length()) {
-            String t = data.substring(i, i + 4);
-            i = i + 4;
-            String l = data.substring(i, i + 3);
-            i = i + 3;
-            int len = Integer.parseInt(l);
-            String v = data.substring(i, i + len);
-            i = i + v.length();
-            writer.write("PDS" + t + " " + l + " " + v + "\r\n");
         }
     }
 }
