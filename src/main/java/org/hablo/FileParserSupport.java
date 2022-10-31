@@ -3,7 +3,7 @@ package org.hablo;
 import java.io.BufferedWriter;
 import java.io.File;
 
-public abstract class ParserSupport {
+public abstract class FileParserSupport {
     protected BufferedWriter writer;
     protected boolean outputParsedFile;
     protected abstract void parse(File file);

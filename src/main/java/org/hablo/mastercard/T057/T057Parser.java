@@ -1,6 +1,6 @@
 package org.hablo.mastercard.T057;
 
-import org.hablo.ParserSupport;
+import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.jpos.util.FSDMsg;
 
@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class T057Parser extends ParserSupport {
+public class T057Parser extends FileParserSupport {
     private static final String SCHEMA = "file:src/dist/cfg/t057/t057-";
     public void parse(File file) {
         int counter = 0;

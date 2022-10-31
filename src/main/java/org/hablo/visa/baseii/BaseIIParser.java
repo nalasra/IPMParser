@@ -1,6 +1,6 @@
 package org.hablo.visa.baseii;
 
-import org.hablo.ParserSupport;
+import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.jpos.util.FSDMsg;
 
@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class BaseIIParser extends ParserSupport {
+public class BaseIIParser extends FileParserSupport {
     private static final String HEADER_SCHEMA = "file:src/dist/cfg/baseii/baseii-90-";
     private static final String TC_SCHEMA = "file:src/dist/cfg/baseii/baseii-";
     private int counter;

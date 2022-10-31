@@ -1,6 +1,6 @@
 package org.hablo.mastercard.T112;
 
-import org.hablo.ParserSupport;
+import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.hablo.rdw.RDWReader;
 import org.jpos.iso.ISOMsg;
@@ -14,7 +14,7 @@ import java.nio.file.Files;
 
 import static org.hablo.helper.ISOMsgHelper.createISOMsg;
 
-public class T112Parser extends ParserSupport {
+public class T112Parser extends FileParserSupport {
     static String MC_IPM = "mas_ipm.xml";
     static String MC_IPM_EBCDIC = "mas_ipm_ebcdic.xml";
     private String mtiFilter;
@@ -31,7 +31,7 @@ public class T112Parser extends ParserSupport {
             GenericPackager packager = new GenericPackager("jar:packager/" + ENCODING);
             while (r != null && r.length > 0) {
                 ISOMsg msg = createISOMsg(r, packager);
-                if (!mtiFilter.isEmpty() && mtiFilter.contains(msg.getMTI())) {
+                if (mtiFilter.isEmpty() || mtiFilter.contains(msg.getMTI())) {
                     if (outputParsedFile) {
                         writer.write(ISOMsgHelper.toString(msg));
                         parsePDS(writer, msg.getString(48));

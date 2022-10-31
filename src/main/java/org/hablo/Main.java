@@ -2,7 +2,9 @@ package org.hablo;
 
 import org.hablo.mastercard.T057.T057Parser;
 import org.hablo.mastercard.T112.T112Parser;
+import org.hablo.visa.basei.BaseIParser;
 import org.hablo.visa.baseii.BaseIIParser;
+import org.jpos.iso.ISOMsg;
 import org.jpos.util.Logger;
 import org.jpos.util.SimpleLogListener;
 
@@ -27,10 +29,11 @@ public class Main {
 
         //parseT112File("");
         //parseT112File("agoda"); //MCI.AR.T112.M.E0070571.D220316.T061510.A005
-        parseT112File("MCI.AR.T112.M.E0072218.D221013.T062131.A005");
+        //parseT112File("MCI.AR.T112.M.E0070571.D220316.T061510.A005");
 
         //parseT057File("");
         //parseT057File("MCI.AR.T112.M.E0070571.D221001.T184842.A001"); //"TT057T0.2020-10-25-00-00-27.001"
+        parseRawMessage("01 04 01 72 d9 1c c3 01 00 76 7e 66 81 28 f0 ba 16 10 42 77 69 00 69 46 44 73 00 00 00 00 00 00 30 00 00 00 00 00 00 24 87 10 04 09 27 52 98 29 00 00 25 29 94 12 27 52 10 04 25 06 10 05 73 99 04 04 05 10 00 00 00 06 45 87 84 25 04 27 76 90 06 94 64 47 3d 25 06 22 00 18 47 64 10 00 02 f2 f2 f7 f7 f1 f3 f2 f8 f0 f5 f1 f0 f0 f0 f1 f8 f0 f9 f4 f0 f8 f2 f0 f9 f6 f1 f9 f1 f1 f3 40 40 40 40 40 d9 c1 c9 d5 d3 c5 e7 40 c9 d5 e5 c5 e2 e3 d4 c5 d5 e3 40 40 40 40 40 40 40 d5 c1 c9 d9 d6 c2 c9 40 40 40 40 40 40 d2 c5 05 40 40 40 40 f2 04 04 08 40 24 60 7d 83 ae 28 01 84 20 01 01 01 00 00 00 00 5f 01 00 5c 9f 34 03 42 03 00 9f 33 03 e0 f8 e8 95 05 00 80 04 80 00 9f 37 04 ea 36 cf b0 9f 10 07 06 01 12 03 a0 30 02 9f 26 08 d5 9d 73 df 43 35 fc e6 9f 36 02 00 03 82 02 38 00 9c 01 00 9f 1a 02 06 43 9a 03 22 10 04 9f 02 06 00 00 00 30 00 00 5f 2a 02 04 04 9f 03 06 00 00 00 00 00 00 04 05 00 00 10 10 40 00 00 00 00 00 00 00 03 82 27 73 40 72 84 81 05 80 00 00 00 02");
     }
 
     public static File[] getFiles(String desiredFile, String parentFolder) throws Exception {
@@ -113,7 +116,7 @@ public class Main {
                         T112Parser parser = new T112Parser();
                         parser.setOutputParsedFile(true);
                         parser.setWriter(writer);
-                        parser.setMtiFilter("1644, 1100");
+//                        parser.setMtiFilter("1644, 1240");
                         parser.parse(f);
                         writer.close();
                     }
@@ -121,5 +124,9 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+    public static void parseRawMessage(String hexString) {
+        ISOMsg m = BaseIParser.parseRaw(hexString);
+        m.dump(System.out, "");
     }
 }
