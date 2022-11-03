@@ -1,20 +1,20 @@
-package org.hablo.visa.basei;
+package org.hablo.visa.iso;
 
+import org.hablo.ISOMsgParserSupport;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.iso.ISOUtil;
 import org.jpos.iso.packager.GenericPackager;
 
-public class BaseIParser {
+public class VisaBaseIParser implements ISOMsgParserSupport {
     static GenericPackager packager;
 
-    public static ISOMsg parseRaw(String hexString){
+    public ISOMsg parse(byte[] d){
         ISOMsg m = null;
         try {
             packager = new GenericPackager("jar:packager/base1.xml");
             m = packager.createISOMsg();
             m.setPackager(packager);
-            m.unpack(ISOUtil.hex2byte(hexString.replace(" ", "")));
+            m.unpack(d);
         } catch (ISOException e) {
             System.out.println("Exception occurred...");
             e.printStackTrace();

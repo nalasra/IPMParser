@@ -7,6 +7,8 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jpos.org/maven' }
+    mavenLocal()
 }
 
 dependencies {
@@ -15,6 +17,8 @@ dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.2'
     implementation 'org.jpos:jpos:2.1.7'
+    implementation 'org.jpos.ee:jposee-core:2.2.8'
+
 }
 
 test {
