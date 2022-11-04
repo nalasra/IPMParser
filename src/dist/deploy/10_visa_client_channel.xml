@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<channel-adaptor name='visa-channel-adaptor' realm="visa-channel-adaptor" class="org.jpos.q2.iso.ChannelAdaptor"
+                 logger="Q2">
+    <channel class="org.jpos.iso.channel.VAPChannel" logger="Q2" realm="visa-client-channel"
+             packager="org.jpos.iso.packager.GenericPackager">
+        <property name="packager-config" value="jar:packager/base1.xml"/>
+        <property name="packager-logger" value="Q2"/>
+        <property name="packager-realm" value="visa-packager"/>
+        <property name="host" value="127.0.0.1"/>
+        <property name="port" value="6793"/>
+        <property name="timeout" value="300000"/>
+        <property name="trailer" value="false"/>
+        <property name="srcid" value="00000"/>
+        <property name="override-header" value="false"/>
+    </channel>
+    <in>visa-send</in>
+    <out>visa-receive</out>
+    <reconnect-delay>5000</reconnect-delay>
+</channel-adaptor>
+

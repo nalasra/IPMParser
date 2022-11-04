@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+
+<mux class="org.jpos.q2.iso.QMUX" logger="Q2" name="mastercard-mux">
+    <in>mastercard-receive</in>
+    <out>mastercard-send</out>
+    <ready>mastercard-channel-adaptor.ready</ready>
+    <unhandled>mastercard-unhandled</unhandled>
+
+    <request-listener class="org.jpos.iso.IncomingListener" logger="Q2" realm="incoming-listener">
+        <property name="queue" value="TXNMGR" />
+        <property name="ctx.STATION" value="MASTERCARD" />
+    </request-listener>
+</mux>
+

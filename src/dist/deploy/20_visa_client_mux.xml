@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+
+<mux class="org.jpos.q2.iso.QMUX" logger="Q2" name="visa-mux">
+    <in>visa-receive</in>
+    <out>visa-send</out>
+    <ready>visa-channel-adaptor.ready</ready>
+    <unhandled>visa-unhandled</unhandled>
+
+    <request-listener class="org.jpos.iso.IncomingListener" logger="Q2" realm="incoming-listener">
+        <property name="queue" value="TXNMGR" />
+        <property name="ctx.STATION" value="VISA" />
+    </request-listener>
+</mux>
+

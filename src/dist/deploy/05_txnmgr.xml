@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<txnmgr class="org.jpos.transaction.TransactionManager" logger="Q2" name="txnmgr">
+    <property name="queue"            value="TXNMGR" />
+    <property name="sessions"         value="2" />
+
+    <participant class="org.jpos.transaction.participant.BSHTransactionParticipant">
+        <prepare>
+            import org.jpos.iso.*;
+            import org.jpos.transaction.*;
+
+            msg = context.get("REQUEST");
+            source = context.get("SOURCE");
+            ISOMsg res = (ISOMsg) msg.clone();
+            res.setResponseMTI();
+
+            res.set(39, "00");
+
+            context.put("RESPONSE", res);
+            source.send(res);
+
+            result = TransactionConstants.PREPARED | TransactionConstants.READONLY;
+        </prepare>
+    </participant>
+</txnmgr>
