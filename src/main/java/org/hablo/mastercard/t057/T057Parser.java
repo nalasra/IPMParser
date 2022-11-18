@@ -1,4 +1,4 @@
-package org.hablo.mastercard.T057;
+package org.hablo.mastercard.t057;
 
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;

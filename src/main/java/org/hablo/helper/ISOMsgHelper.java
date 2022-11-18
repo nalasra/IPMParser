@@ -5,7 +5,6 @@ import org.jpos.iso.ISOMsg;
 import org.jpos.iso.ISOUtil;
 import org.jpos.iso.packager.GenericPackager;
 import org.jpos.util.Loggeable;
-import org.jpos.util.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -15,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 public class ISOMsgHelper {
     public static ISOMsg createISOMsg(byte[] data, GenericPackager genericPackager) throws ISOException {
         ISOMsg msg = new ISOMsg();
-        genericPackager.setLogger(Logger.getLogger("Q2"), "packager");
         msg.setPackager(genericPackager);
         msg.unpack(data);
         return msg;

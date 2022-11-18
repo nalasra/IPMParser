@@ -355,7 +355,7 @@
     <isofield
       id="48"
       length="999"
-      name="Additional Data—Private Use"
+      name="Additional Data - Private Use"
       class="org.jpos.iso.IFE_LLLCHAR"/>
     <isofield
       id="49"

@@ -1,10 +1,12 @@
-package org.hablo.mastercard.T112;
+package org.hablo.mastercard.t112;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.hablo.rdw.RDWReader;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.packager.GenericPackager;
+import org.jpos.util.Logger;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,14 +31,18 @@ public class T112Parser extends FileParserSupport {
         try (RDWReader reader = new RDWReader(Files.newInputStream(file.toPath()))) {
             byte[] r = reader.read();
             GenericPackager packager = new GenericPackager("jar:packager/" + ENCODING);
+            packager.setLogger(Logger.getLogger("Q2"), "packager");
             while (r != null && r.length > 0) {
                 ISOMsg msg = createISOMsg(r, packager);
-                if (mtiFilter.isEmpty() || mtiFilter.contains(msg.getMTI())) {
+                if (StringUtils.isBlank(mtiFilter) || mtiFilter.contains(msg.getMTI())) {
                     if (outputParsedFile) {
                         writer.write(ISOMsgHelper.toString(msg));
                         parsePDS(writer, msg.getString(48));
                     }
                 }
+                if(counter % 100 == 0)
+                    writer.flush();
+
                 r = reader.read();
                 counter++;
             }
