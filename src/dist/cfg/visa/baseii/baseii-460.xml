@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='destinationIdentifier' type='N' length='6' />
+    <field id='sourceIdentifier' type='N' length='6' />
+    <field id='reportIdentifier' type='AN' length='10' />
+    <field id='settlementServiceIdentifier' type='AN' length='3' />
+    <field id='reportDate' type='N' length='7' />
+    <field id='sreLevelNumber' type='AN' length='1' />
+    <field id='lastChangeDate' type='UN' length='7' />
+    <field id='reserved' type='AN' length='14' />
+    <field id='reportGroup' type='AN' length='1' />
+    <field id='reportSubGroup' type='AN' length='1' />
+    <field id='reportIdentificationNumber' type='AN' length='3' />
+    <field id='reportIdentificationSuffix' type='AN' length='2' />
+    <field id='subordinateSREIdentifier' type='AN' length='10' />
+    <field id='subordinateSREName' type='AN' length='15' />
+    <field id='fundsTransferIndicator' type='AN' length='1' />
+    <field id='clearingEntityIdentifierType' type='AN' length='1' />
+    <field id='clearingEntityIdentifier1' type='N' length='18' />
+    <field id='clearingEntityIdentifier2' type='N' length='18' />
+    <field id='processorSpecifiedIndicator' type='AN' length='1' />
+    <field id='processorIdentifier' type='N' length='10' />
+    <field id='networkSpecifiedIndicator' type='AN' length='1' />
+    <field id='networkIdentifier' type='N' length='4' />
+    <field id='settlementCurrency' type='N' length='3' />
+    <field id='transactionCurrencyAcquirerPerspective' type='N' length='3' />
+    <field id='transactionCurrencyIssuerPerspective' type='N' length='3' />
+    <field id='reserved' type='AN' length='14' />
+    <field id='reimbursementAttribute' type='AN' length='1' />
+</schema>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='destinationIdentifier' type='N' length='6' />
+    <field id='sourceIdentifier' type='N' length='6' />
+    <field id='reportIdentifier' type='AN' length='10' />
+    <field id='reportLineSequenceNumber' type='N' length='8' />
+    <field id='reportText' type='AN' length='133' />
+    <field id='reimbursementAttribute' type='AN' length='1' />
+</schema>
+
+

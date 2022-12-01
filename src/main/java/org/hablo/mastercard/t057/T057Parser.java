@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 public class T057Parser extends FileParserSupport {
-    private static final String SCHEMA = "file:src/dist/cfg/t057/t057-";
+    private static final String SCHEMA = "file:src/dist/cfg/mastercard/t057/t057-";
     public void parse(File file) {
         int counter = 0;
 

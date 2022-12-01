@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='fromDate' type='AN' length='7' />
+    <field id='toDate' type='AN' length='7' />
+    <field id='reserved' type='AN' length='150' />
+</schema>

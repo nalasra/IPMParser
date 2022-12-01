@@ -10,9 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 public class BaseIIParser extends FileParserSupport {
-    private static final String HEADER_SCHEMA = "file:src/dist/cfg/baseii/baseii-90-";
-    private static final String TC_SCHEMA = "file:src/dist/cfg/baseii/baseii-";
+    private static final String HEADER_SCHEMA = "file:src/dist/cfg/visa/baseii/baseii-90-";
+    private static final String TC_SCHEMA = "file:src/dist/cfg/visa/baseii/baseii-";
     private int counter;
+    @Override
     public void parse(File file) {
         FSDMsg msgBase;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
