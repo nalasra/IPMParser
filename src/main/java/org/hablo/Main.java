@@ -43,7 +43,7 @@ public class Main {
         /* Visa BASE II */
         //parseVisaBaseIIFile("");
         //parseVisaBaseIIFile("VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
-        parseVisaBaseIIFile("INCTF01.EPD.20221128.223219.CTF"); //VISAIN_BAE_410896_090921.txt
+        parseVisaBaseIIFile("INCTF01.EPD.20221112.190737.CTF"); //VISAIN_BAE_410896_090921.txt
 
         /* Mastercard IPM Clearing */
         //parseT112File("");
