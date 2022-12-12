@@ -7,5 +7,3 @@
     <field id='reportText' type='AN' length='133' />
     <field id='reimbursementAttribute' type='AN' length='1' />
 </schema>
-
-

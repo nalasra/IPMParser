@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<ssm name="ssm" class="org.jpos.q2.security.SMAdaptor" logger="Q2">
+ <attr name="impl">org.jpos.security.jceadapter.SSM</attr>
+ <property name="rebuildlmk" value="false" />
+ <property name="lmk" value="src/dist/cfg/test.lmk" />
+</ssm>

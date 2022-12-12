@@ -12,8 +12,11 @@ import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.ISOUtil;
 import org.jpos.q2.Q2;
+import org.jpos.security.Exportability;
+import org.jpos.security.SMException;
 import org.jpos.security.SecureKeyBlock;
 import org.jpos.security.SecureKeyBlockBuilder;
+import org.jpos.security.jceadapter.SSM;
 import org.jpos.util.Logger;
 import org.jpos.util.SimpleLogListener;
 
@@ -31,7 +34,7 @@ public class Main {
     static String BASEII_FILES_PARSED = BASEII_FILES + "parsed/";
     static String RAW_DATA_FILES = USER_DIR + FILES_DIR + VISA_FILES_DIR + "raw/";
     static String RAW_DATA_FILES_PARSED = RAW_DATA_FILES + "parsed/";
-    static String T112_FILES = USER_DIR + FILES_DIR + "t112/";
+    static String T112_FILES = USER_DIR + FILES_DIR + MC_FILES_DIR + "t112/";
     static String T112_FILES_PARSED = T112_FILES + "parsed/";
     static String T057_FILES = USER_DIR + FILES_DIR + MC_FILES_DIR + "t057/";
     static String T057_FILES_PARSED = T057_FILES + "parsed/";
@@ -43,7 +46,7 @@ public class Main {
         /* Visa BASE II */
         //parseVisaBaseIIFile("");
         //parseVisaBaseIIFile("VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
-        parseVisaBaseIIFile("INCTF01.EPD.20221112.190737.CTF"); //VISAIN_BAE_410896_090921.txt
+        //parseVisaBaseIIFile("INCTF01.EPD.20221112.190737.CTF"); //VISAIN_BAE_410896_090921.txt
 
         /* Mastercard IPM Clearing */
         //parseT112File("");
@@ -64,8 +67,10 @@ public class Main {
          * For VTS/MAS Simulator
          * */
         //startQ2();
+        //startQ2CLI();
 
         //keyblock();
+        keyblockBuilder();
     }
 
     private static void init() {
@@ -78,6 +83,12 @@ public class Main {
 
     private static void startQ2() {
         Q2 q2 = new Q2("src/dist/deploy");
+        q2.start();
+    }
+    private static void startQ2CLI() {
+        Q2 q2 = new Q2(new String[]{
+                "-i"
+        });
         q2.start();
     }
 
@@ -200,12 +211,48 @@ public class Main {
         }
     }
 
-    public static void keyblock() {
+    public static void keyblockBuilder(){
         try {
-            SecureKeyBlock skb = SecureKeyBlockBuilder.newBuilder().build("B0080P0TB00S0000A0C16511F1F555F89E7A749FFF6AFDB06E79DDD28A9B2846BC87FB00B331AD3710006D97E2E");
+            String keyblock = "B0080P0TB00S0000AC12A687FD4F8637C77C8ABBDB667A2BF338B6B9264A7EBFA380D605C2232F12";
+            SecureKeyBlock skb = SecureKeyBlockBuilder.newBuilder().build(keyblock);
             skb.dump(System.out, "");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void keyblock() {
+        String kek = "13AED5DA1F32347523C708C11F2608FD"; //clear ZMK
+        String pek = "0170F175468FB5E60213233243526273";
+        String random = "F6DF85BC2043";
+
+        SSM ssm;
+        try {
+            ssm = new SSM("src/dist/cfg/test.lmk");
+        } catch (SMException e) {
+            throw new RuntimeException(e);
+        }
+        String se11009 = ssm.encryptKeyTR31(pek, kek, Exportability.TRUSTED);
+        String se11010;
+        try {
+            se11010 = ISOUtil.hexString(ssm.generateKeyCheckValue(SSM.getSecureKey(pek, 128, "ZPK", "")));
+        } catch (SMException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("############ ENCRYPTION ############");
+        System.out.println("KEK = [" + kek + "]");
+        System.out.println("Clear PEK: [" + pek + "]");
+        System.out.println("TR-31 Keyblock = [" + se11009 + "]");
+        //System.out.println("DE110.TLV.09 = [" + se11009 + "]");
+        //System.out.println("DE110.TLV.10 = [" + se11010 + "]");
+        //System.out.println("DE-110 = [" + "090" + se11009.length() + se11009 + "1000" + se11010.length() + se11010 + "]");
+
+        System.out.println("############ DECRYPTION ############");
+        System.out.println("KEK = [" + kek + "]");
+        System.out.println("TR-31 Keyblock = [" + se11009 + "]");
+        ////String block = "B0080P0TB00S0000AC12A687FD4F8637C77C8ABBDB667A2BF338B6B9264A7EBFA380D605C2232F12";
+        String pekd = ssm.decryptKeyTR31(se11009, kek);
+        System.out.println("Clear PEK: [" + pekd + "]");
     }
 }

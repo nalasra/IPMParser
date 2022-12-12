@@ -7,16 +7,25 @@
         <prepare>
             import org.jpos.iso.*;
             import org.jpos.transaction.*;
+            import org.jpos.util.NameRegistrar;
+            import org.jpos.security.jceadapter.*;
+
+            JCESecurityModule ssm = NameRegistrar.get("ssm");
+            context.put("SSM", ssm);
+
+            ssm.decryptKeyTR31("");
 
             msg = context.get("REQUEST");
             source = context.get("SOURCE");
-            ISOMsg res = (ISOMsg) msg.clone();
-            res.setResponseMTI();
+            if(!msg.getMTI().equals("0820")) {
+                ISOMsg res = (ISOMsg) msg.clone();
+                res.setResponseMTI();
 
-            res.set(39, "00");
+                res.set(39, "00");
 
-            context.put("RESPONSE", res);
-            source.send(res);
+                context.put("RESPONSE", res);
+                source.send(res);
+            }
 
             result = TransactionConstants.PREPARED | TransactionConstants.READONLY;
         </prepare>
