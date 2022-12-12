@@ -1,6 +1,5 @@
 package org.jpos.security.jceadapter;
 
-import org.hablo.security.tr31.TR31;
 import org.jpos.core.Configuration;
 import org.jpos.core.ConfigurationException;
 import org.jpos.iso.ISOUtil;
@@ -56,9 +55,9 @@ public class SSM extends JCESecurityModule {
         return new SecureDESKey((short) keyLength, keyType, keyBytes, KeyCheckValue);
     }
 
-    public String encryptKeyTR31(String pek, String kek, Exportability exportability){
+    public String encryptKeyTR31(String pek, String kek, String random, Exportability exportability){
         tr31 = new TR31(this);
-        tr31.setRandomNumber("F6DF85BC2043");
+        tr31.setRandomNumber(random);
         tr31.setExportability(exportability);
         return tr31.encryptData(pek, kek);
     }

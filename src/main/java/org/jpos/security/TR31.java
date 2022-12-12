@@ -1,14 +1,11 @@
-package org.hablo.security.tr31;
+package org.jpos.security;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jpos.iso.ISOUtil;
-import org.jpos.security.*;
 import org.jpos.security.jceadapter.JCEHandlerException;
 import org.jpos.security.jceadapter.SSM;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -106,7 +103,7 @@ public class TR31 {
 
     private void buildKeyBlockHeader() {
         String asciiData = String.join("",
-                this.keyBlockVersionID.toString(),
+                String.valueOf(this.keyBlockVersionID.getCode()),
                 StringUtils.leftPad(String.valueOf(String.join("", this.zpk).length() + 48), 4, '0'),
                 this.keyUsage.getCode(),
                 String.valueOf(this.algorithm.getCode()),
@@ -278,57 +275,12 @@ public class TR31 {
         this.randomNumber = kcv.substring(kcv.length() - 12, 12 + (kcv.length() - 12));
     }
 
-    public String computeKCV(String pek, int kcvLen) {
-        try {
-            byte[] d = ssm.generateKeyCheckValue(new SecureDESKey((short) (pek.length() * 4), "ZPK", pek, ""));
-            this.keycheckValue = ISOUtil.hexString(d);
-            return this.keycheckValue.substring(0, kcvLen);
-        } catch (SMException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private List<String> parsedKeys(String kString) {
         List<String> StringList = new ArrayList<String>();
         for (int startIndex = 0; startIndex < kString.length(); startIndex += 16)
             StringList.add(kString.substring(startIndex, 16 + startIndex));
         return StringList;
     }
-
-    Key formDESKey(short keyLength, byte[] clearKeyBytes) throws JCEHandlerException {
-        Key key = null;
-        switch (keyLength) {
-            case SMAdapter.LENGTH_DES: {
-                key = new SecretKeySpec(clearKeyBytes, "DES");
-            }
-            break;
-            case SMAdapter.LENGTH_DES3_2KEY: {
-                // make it 3 components to work with JCE
-                clearKeyBytes = ISOUtil.concat(clearKeyBytes, 0, 16, clearKeyBytes, 0, 8);
-            }
-            case SMAdapter.LENGTH_DES3_3KEY: {
-                key = new SecretKeySpec(clearKeyBytes, "DESede");
-            }
-        }
-        if (key == null)
-            throw new JCEHandlerException("Unsupported DES key length: " + keyLength + " bits");
-        return key;
-    }
-
-//    private String Get3DESValue(String Data, String keyBlock) {
-//        byte[] d = ISOUtil.hex2byte(Data);
-//        Key key = null;
-//        try {
-//            key = formDESKey((short) 128, ISOUtil.hex2byte(keyBlock));
-//        } catch (JCEHandlerException e) {
-//            throw new RuntimeException(e);
-//        }
-//        try {
-//            return ISOUtil.hexString(ssm.getJCEHandler().encryptData(d, ssm.formDESKey(keyBlock)));
-//        } catch (JCEHandlerException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     private boolean isBitSet(byte b, int pos) {
         return (Byte.toUnsignedInt(b) &
@@ -362,18 +314,8 @@ public class TR31 {
         return randomNumber;
     }
 
-//    private String Get3DESDecryptValue(String Data, String keyBlock) {
-//        byte[] d = ISOUtil.hex2byte(Data);
-//        Key key = null;
-//        try {
-//            key = formDESKey((short) 128, ISOUtil.hex2byte(keyBlock));
-//        } catch (JCEHandlerException e) {
-//            throw new RuntimeException(e);
-//        }
-//        try {
-//            return ISOUtil.hexString(ssm.getJCEHandler().decryptData(d, key));
-//        } catch (JCEHandlerException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    enum DerivationMode {
+        Encryption,
+        MAC
+    }
 }

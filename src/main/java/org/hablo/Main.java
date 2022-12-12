@@ -69,8 +69,8 @@ public class Main {
         //startQ2();
         //startQ2CLI();
 
-        //keyblock();
-        keyblockBuilder();
+        keyblock();
+        //keyblockBuilder();
     }
 
     private static void init() {
@@ -232,7 +232,7 @@ public class Main {
         } catch (SMException e) {
             throw new RuntimeException(e);
         }
-        String se11009 = ssm.encryptKeyTR31(pek, kek, Exportability.TRUSTED);
+        String se11009 = ssm.encryptKeyTR31(pek, kek, random, Exportability.TRUSTED);
         String se11010;
         try {
             se11010 = ISOUtil.hexString(ssm.generateKeyCheckValue(SSM.getSecureKey(pek, 128, "ZPK", "")));
