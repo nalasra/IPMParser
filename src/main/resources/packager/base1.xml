@@ -804,9 +804,9 @@
             length="255"/>
     <isofield
             id="105"
-            length="99"
-            name="RESERVED ISO USE"
-            class="org.jpos.iso.IFB_LLHCHAR"/>
+            length="16"
+            name="Double-Length DES Key"
+            class="org.jpos.iso.IFB_BINARY"/>
     <isofield
             id="106"
             length="99"

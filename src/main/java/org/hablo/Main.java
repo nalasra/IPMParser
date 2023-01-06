@@ -66,10 +66,10 @@ public class Main {
         /* TCP Socket Channels
          * For VTS/MAS Simulator
          * */
-        //startQ2();
+        startQ2();
         //startQ2CLI();
 
-        keyblock();
+        //keyblock();
         //keyblockBuilder();
     }
 

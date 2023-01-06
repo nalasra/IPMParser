@@ -5,7 +5,7 @@
         <property name="packager-logger" value="Q2"/>
         <property name="packager-realm" value="visa-packager"/>
         <property name="host" value="127.0.0.1"/>
-        <property name="port" value="6793"/>
+        <property name="port" value="9999"/>
         <property name="timeout" value="300000"/>
         <property name="trailer" value="false"/>
         <property name="srcid" value="00000"/>

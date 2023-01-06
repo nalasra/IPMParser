@@ -10,19 +10,31 @@
             import org.jpos.util.NameRegistrar;
             import org.jpos.security.jceadapter.*;
 
-            JCESecurityModule ssm = NameRegistrar.get("ssm");
-            context.put("SSM", ssm);
-
-            ssm.decryptKeyTR31("");
+            boolean sendResponse = true;
 
             msg = context.get("REQUEST");
             source = context.get("SOURCE");
-            if(!msg.getMTI().equals("0820")) {
-                ISOMsg res = (ISOMsg) msg.clone();
-                res.setResponseMTI();
+            station = context.get("STATION");
 
-                res.set(39, "00");
+            ISOMsg res = (ISOMsg) msg.clone();
+            reqMTI = msg.getMTI();
 
+            if(station.equals("VISA")) {
+                if (reqMTI.equals("0800") {
+                    res.unset(55);
+                    res.unset(105);
+                }
+            } else if(station.equals("MASTERCARD")) {
+                //no response for MC key exchange advices
+                if(!msg.getMTI().equals("0820")) {
+                    res.setResponseMTI();
+                    res.set(39, "00");
+                } else {
+                    sendResponse = false;
+                }
+            }
+
+            if(sendResponse) {
                 context.put("RESPONSE", res);
                 source.send(res);
             }

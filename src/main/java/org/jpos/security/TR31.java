@@ -35,7 +35,6 @@ public class TR31 {
     private List<String> encryptedkeydata;
     private List<String> tr31keyblock;
     private String tr31keydata = "";
-    private String keycheckValue;
     private String randomNumber = "";
     private final SSM ssm;
 
@@ -302,7 +301,6 @@ public class TR31 {
     private String getRandomNumber(int numBytes) {
         if (StringUtils.isNotEmpty(this.randomNumber))
             return this.randomNumber;
-        String empty = "";
         Random random = new Random();
         StringBuilder StringBuilder = new StringBuilder();
         for (int index = 0; index < numBytes; ++index) {
