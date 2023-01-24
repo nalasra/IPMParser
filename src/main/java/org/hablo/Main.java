@@ -1,5 +1,6 @@
 package org.hablo;
 
+import org.hablo.mada.tlf.TLFParser;
 import org.hablo.mastercard.t057.T057Parser;
 import org.hablo.mastercard.t112.T112Parser;
 import org.hablo.mastercard.util.DE110Parser;
@@ -30,6 +31,7 @@ public class Main {
     static String FILES_DIR = "/src/dist/files/";
     static String VISA_FILES_DIR = "visa/";
     static String MC_FILES_DIR = "mastercard/";
+    static String MADA_FILES_DIR = "mada/";
     static String BASEII_FILES = USER_DIR + FILES_DIR + VISA_FILES_DIR + "baseii/";
     static String BASEII_FILES_PARSED = BASEII_FILES + "parsed/";
     static String RAW_DATA_FILES = USER_DIR + FILES_DIR + VISA_FILES_DIR + "raw/";
@@ -38,10 +40,15 @@ public class Main {
     static String T112_FILES_PARSED = T112_FILES + "parsed/";
     static String T057_FILES = USER_DIR + FILES_DIR + MC_FILES_DIR + "t057/";
     static String T057_FILES_PARSED = T057_FILES + "parsed/";
+    static String MADA_TLF_FILES = USER_DIR + FILES_DIR + MADA_FILES_DIR + "tlf/";
+    static String MADA_TLF_FILES_PARSED = MADA_TLF_FILES + "parsed/";
     static List<Class> mcDEParsers = new ArrayList<>();
 
     public static void main(String[] args) {
         init();
+
+        /* Mada */
+        //parseMadaTLFFile("TLF04.20210321.SPAN.588850"); //TLF04.20210321.SPAN.588850
 
         /* Visa BASE II */
         //parseVisaBaseIIFile("");
@@ -51,7 +58,7 @@ public class Main {
         /* Mastercard IPM Clearing */
         //parseT112File("");
         //parseT112File("agoda"); //MCI.AR.T112.M.E0070571.D220316.T061510.A005
-        //parseT112File("MCI.AR.T112.M.E0070571.D221001.T184842.A001");
+        parseT112File("MCI.AR.T112.M.E0070571.D220316.T061510.A005");
 
         /* Mastercard Currency Exchange Rates */
         //parseT057File("");
@@ -66,7 +73,7 @@ public class Main {
         /* TCP Socket Channels
          * For VTS/MAS Simulator
          * */
-        startQ2();
+        //startQ2();
         //startQ2CLI();
 
         //keyblock();
@@ -122,6 +129,25 @@ public class Main {
             theDir.mkdirs();
         }
         return new BufferedWriter(new FileWriter(path + fileName + "_" + System.currentTimeMillis()));
+    }
+
+    public static void parseMadaTLFFile(String fileName) {
+        try {
+            File[] fs = getFiles(fileName, MADA_TLF_FILES);
+            if (fs != null)
+                for (File f : fs) {
+                    if (f.isFile()) {
+                        BufferedWriter writer = initializeWriter(MADA_TLF_FILES_PARSED, f.getName());
+                        TLFParser parser = new TLFParser();
+                        parser.setOutputParsedFile(true);
+                        parser.setWriter(writer);
+                        parser.parse(f);
+                        writer.close();
+                    }
+                }
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 
     public static void parseVisaBaseIIFile(String fileName) {
