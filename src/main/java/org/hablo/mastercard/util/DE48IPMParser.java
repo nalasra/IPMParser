@@ -1,17 +1,14 @@
 package org.hablo.mastercard.util;
 
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
 
-public class DE110Parser extends GenericTLVParser {
-    private static final Map<String, String> allowedSF = new HashMap<>();
+/**
+ * Created by Arsalan Khan on 09/06/21.
+ */
+public class DE48IPMParser extends GenericTLVParser {
 
-    static {
-    }
-
-    public DE110Parser() {
-        super(110, 2, 3, "SE", 0, 10);
+    public DE48IPMParser() {
+        super(48,4, 3, "PDS");
     }
 
     @Override

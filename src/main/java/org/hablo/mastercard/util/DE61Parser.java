@@ -13,12 +13,8 @@ public class DE61Parser implements DEParserSupport {
 
     String de61;
 
-    public DE61Parser(ISOMsg m) throws BLException, ISOException {
-        parse(m);
-    }
-
     @Override
-    public void parse(ISOMsg m) throws ISOException, BLException {
+    public void parse(ISOMsg m) {
         de61 = m.getString(61);
     }
 
