@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='recordCount' type='N' length='6' />
+    <field id='hashTotal' type='N' length='17' />
+    <field id='filler' type='ADS' length='101' />
+</schema>
