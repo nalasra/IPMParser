@@ -13,7 +13,7 @@ import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.packager.GenericPackager;
 
-public class MCDMSParser implements ISOMsgParserSupport {
+public class MCCISParser implements ISOMsgParserSupport {
 
     static GenericPackager packager;
     static List<Class> mcDEParsers = new ArrayList<>();
