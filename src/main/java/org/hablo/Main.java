@@ -16,6 +16,10 @@ import org.hablo.mastercard.iso.MCCISParser;
 import org.hablo.mastercard.t057.T057Parser;
 import org.hablo.mastercard.t067.T067Parser;
 import org.hablo.mastercard.t112.T112Parser;
+import org.hablo.mastercard.util.DE108Parser;
+import org.hablo.mastercard.util.DE110Parser;
+import org.hablo.mastercard.util.DE48Parser;
+import org.hablo.mastercard.util.DE61Parser;
 import org.hablo.mastercard.util.DEParserSupport;
 import org.hablo.visa.baseii.BaseIIParser;
 import org.hablo.visa.iso.VisaBaseIParser;
@@ -71,12 +75,12 @@ public class Main {
         /* Visa BASE II */
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"");
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
-        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"INCTF01.EPD.20221112.190737.CTF"); //VISAIN_BAE_410896_090921.txt
+        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
 
         /* Mastercard IPM Clearing (T112)*/
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
+        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves");
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "MCI.AR.T112.M.E0072218.D221013.T062131.A005");
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
 
         /* Mastercard Currency Exchange Rates (T057) */
         //parseFile(T057Parser.class, T057_FILES_IN, T057_FILES_OUT, "");
@@ -104,7 +108,7 @@ public class Main {
         //parseDE(DE48IPMParser.class, "0100", 48, "0002003MSO0003003MSO0148008826282620158030MSI4826001S212061402     NNNNN0165001M0177001N0191001201590679570       0942027400                  1EU00000008N2104190121041901");
         //parseDE(DE61Parser.class, "0100", 61, "102510800600084063129-5210");
         //parseDE(DE108Parser.class, "0100", 108,"010640109FIRSTNAME0308LASTNAME0703USA1122123456789+123456789012180202020690109FIRSTNAME0308LASTNAME04121234 MAIN ST0703USA1111123456789101802050302301190877775555580121530");
-        //parseDE(DE110Parser.class, "0100", 110,"09080B0080P0TB00S000082E9F773BCFF20772A6D292A45F5F4C97EAD3C519679D1E95AC6A9E509F7BEE21000658D4C6");
+        //parseDE(DE110Parser.class, "0100", 110,"09080B0080P0TB00S000082E9F773BCFF20772A6D292A45F5F4C97EAD3C519679D1E95AC6A9E509F7BEE21000658D4C6"); //key block DKE
 
         /* TCP Socket Channels
          * For VTS/MAS Simulator

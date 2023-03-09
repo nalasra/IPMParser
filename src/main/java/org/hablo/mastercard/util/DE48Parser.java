@@ -4,13 +4,10 @@ import org.hablo.helper.ISOMsgHelper;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.util.Loggeable;
 
 import java.io.PrintStream;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Created by Arsalan Khan on 09/06/21.
@@ -18,16 +15,16 @@ import java.util.Objects;
 public class DE48Parser extends GenericTLVParser {
 
     private String tcc;
-    private static final Map<String, String> allowedSF = new HashMap<>();
+    private static final Map<String, String> de48SEList = new HashMap<>();
 
     static {
-        allowedSF.put("37", "01,02,03,04");
-        allowedSF.put("42", "01");
-        allowedSF.put("66", "01,02");
+        de48SEList.put("37", "01,02,03,04");
+        de48SEList.put("42", "01");
+        de48SEList.put("66", "01,02");
     }
 
     public DE48Parser() {
-        super(48, 2, 2, "SE", 0, 99, allowedSF);
+        super(48, 2, 2, "SE", 0, 99);
     }
 
     @Override
@@ -57,7 +54,23 @@ public class DE48Parser extends GenericTLVParser {
         p.println(indent + getClass().getName() + " value='" + tcc + sourceTLVData + "'");
         if (tcc != null)
             p.println(indent + " TCC=" + tcc);
-        super.dump(p, indent);
+
+        for (GenericTag e : getElements()) {
+            e.dump(p, indent + getFieldType() + e.getId());
+            if (de48SEList.containsKey(e.getId())) {
+                int j = 0;
+                while (j < e.getLength()) {
+                    String subTagId = e.getValue().substring(j, j + 2);
+                    j = j + 2;
+                    String subFieldLength = e.getValue().substring(j, j + 2);
+                    j = j + 2;
+                    int sFL = Integer.parseInt(subFieldLength);
+                    String subFieldData = e.getValue().substring(j, j + sFL);
+                    j = j + sFL;
+                    p.println(indent + "  SF" + subTagId + " " + subFieldLength + " " + subFieldData);
+                }
+            }
+        }
     }
 
     public String getTcc() {

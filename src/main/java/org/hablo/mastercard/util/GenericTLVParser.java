@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
@@ -17,16 +18,13 @@ import org.jpos.util.Loggeable;
 public class GenericTLVParser implements DEParserSupport {
 
     String sourceTLVData;
-    LinkedHashSet<GenericTag> elements;
+    private LinkedHashSet<GenericTag> elements;
     int MIN_TAG_ID = 0;
     int MAX_TAG_ID = 9999;
-    int MAX_SE_LEN_0100 = 99;
-    int MAX_SE_LEN_0800 = 96;
     private int tagSize;
     private int lengthSize;
     private int tlvFieldId;
     private String fieldType;
-    private static Map<String, String> allowedSubTags = new HashMap<>();
 
     public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType) {
         elements = new LinkedHashSet<>();
@@ -35,22 +33,15 @@ public class GenericTLVParser implements DEParserSupport {
         this.lengthSize = lengthSize;
         this.fieldType = fieldType;
     }
+
     public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType, int minSEId, int maxSEId) {
-       this(fieldId, tagSize, lengthSize, fieldType);
-       this.MIN_TAG_ID = minSEId;
-       this.MAX_TAG_ID = maxSEId;
-    }
-    public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType, int minSEId, int maxSEId, Map<String, String> allowedSubTags) {
-        this(fieldId, tagSize, lengthSize, fieldType, minSEId, maxSEId);
-        this.allowedSubTags = allowedSubTags;
+        this(fieldId, tagSize, lengthSize, fieldType);
+        this.MIN_TAG_ID = minSEId;
+        this.MAX_TAG_ID = maxSEId;
     }
 
-    public void setTagSize(int tagSize) {
-        this.tagSize = tagSize;
-    }
-
-    public void setLengthSize(int lengthSize) {
-        this.lengthSize = lengthSize;
+    public String getFieldType() {
+        return fieldType;
     }
 
     @Override
@@ -70,38 +61,18 @@ public class GenericTLVParser implements DEParserSupport {
             i = i + tagSize;
             int tagIdInt = Integer.parseInt(tagId);
             if (tagIdInt > MAX_TAG_ID || tagIdInt < MIN_TAG_ID) {
-                throw new BLException("format.error", "0480" + tagId);
+                throw new BLException("Encountered tag id out of range. ");
             }
 
             String tagLength = sourceTLVData.substring(i, i + lengthSize);
             i = i + lengthSize;
 
             int tagLenInt = Integer.parseInt(tagLength);
-            boolean parseSubTag = allowedSubTags.containsKey(tagId);
 
             String value = "";
             GenericTag se = new GenericTag(tagId);
-            if (parseSubTag) {
-                int j = 0;
-                String de48_se = sourceTLVData.substring(i);
-                while (j < tagLenInt) {
-                    String subTagId = de48_se.substring(j, j + 2);
-                    j = j + 2;
-                    if (!allowedSubTags.get(tagId).contains(subTagId)) {
-                        throw new BLException("format.error", "0480" + tagId);
-                    }
-
-                    String subFieldLength = de48_se.substring(j, j + 2);
-                    j = j + 2;
-                    int sFL = Integer.parseInt(subFieldLength);
-                    String subFieldData = de48_se.substring(j, j + sFL);
-                    j = j + sFL;
-                    se.add(new GenericTag(subTagId, sFL, subFieldData, true));
-                }
-            } else {
-                se.setLength(tagLenInt);
-                value = sourceTLVData.substring(i, i + tagLenInt);
-            }
+            se.setLength(tagLenInt);
+            value = sourceTLVData.substring(i, i + tagLenInt);
             se.setValue(value);
             elements.add(se);
             i = i + tagLenInt;
@@ -128,6 +99,10 @@ public class GenericTLVParser implements DEParserSupport {
         return null;
     }
 
+    public Set<GenericTag> getElements() {
+        return elements;
+    }
+
     @Override
     public void dump(PrintStream p, String indent) {
         for (GenericTag e : elements) {
@@ -135,7 +110,7 @@ public class GenericTLVParser implements DEParserSupport {
         }
     }
 
-    public class GenericTag implements Loggeable {
+    public static class GenericTag implements Loggeable {
 
         private String id;
         private int length;
@@ -146,6 +121,16 @@ public class GenericTLVParser implements DEParserSupport {
         public GenericTag(String id) {
             this.id = id;
             elements = new LinkedHashSet<>();
+        }
+
+        public GenericTag(String id, String value) {
+            this.id = id;
+            this.value = value;
+        }
+
+        public GenericTag(String id, String value, boolean sf) {
+            this(id, value);
+            isSF = sf;
         }
 
         public GenericTag(String id, int length, String value) {
@@ -179,8 +164,8 @@ public class GenericTLVParser implements DEParserSupport {
             return null;
         }
 
-        public void add(GenericTag de48SE) {
-            elements.add(de48SE);
+        public void add(GenericTag item) {
+            elements.add(item);
         }
 
         public String getId() {

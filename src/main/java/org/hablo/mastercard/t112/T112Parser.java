@@ -3,15 +3,18 @@ package org.hablo.mastercard.t112;
 import org.apache.commons.lang3.StringUtils;
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
+import org.hablo.mastercard.util.DE48IPMParser;
+import org.hablo.mastercard.util.DEParserSupport;
 import org.hablo.rdw.RDWReader;
+import org.jpos.ee.BLException;
+import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.packager.GenericPackager;
 import org.jpos.util.Logger;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 
 import static org.hablo.helper.ISOMsgHelper.createISOMsg;
@@ -36,11 +39,9 @@ public class T112Parser extends FileParserSupport {
             packager.setLogger(Logger.getLogger("Q2"), "packager");
             while (r != null && r.length > 0) {
                 ISOMsg msg = createISOMsg(r, packager);
-                if (StringUtils.isBlank(mtiFilter) || mtiFilter.contains(msg.getMTI())) {
-                    if (outputParsedFile) {
-                        writer.write(ISOMsgHelper.toString(msg));
-                        parsePDS(writer, msg.getString(48));
-                    }
+                if (outputParsedFile && (StringUtils.isBlank(mtiFilter) || mtiFilter.contains(msg.getMTI()))) {
+                    writer.write(ISOMsgHelper.toString(msg));
+                    writer.write(parseDE(DE48IPMParser.class, msg));
                 }
                 if (counter % 100 == 0) {
                     writer.flush();
@@ -50,33 +51,28 @@ public class T112Parser extends FileParserSupport {
                 counter++;
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Error at line# " + counter);
+            System.err.println("Error at line# " + counter);
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public static void parsePDS(BufferedWriter writer, String data) throws IOException {
+    public static <T> String parseDE(Class<T> clazz, ISOMsg m) throws BLException {
         try {
-            if (data == null || data.isEmpty())
-                return;
-            int i = 0;
-            writer.write("---------------------------\r\nPrivate Data Sub-elements\r\n");
-            while (i < data.length()) {
-                String t = data.substring(i, i + 4);
-                i = i + 4;
-                String l = data.substring(i, i + 3);
-                i = i + 3;
-                int len = Integer.parseInt(l);
-                String v = data.substring(i, i + len);
-                i = i + v.length();
-                writer.write("PDS" + t + " " + l + " " + v + "\r\n");
+            T o = clazz.newInstance();
+            if (o instanceof DEParserSupport) {
+                ((DEParserSupport) o).parse(m);
+                return ISOMsgHelper.toString((DEParserSupport) o);
+            } else {
+                System.err.println("Unknown class type: " + clazz.getSimpleName());
             }
-            writer.write("---------------------------\r\n");
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (BLException | ISOException | UnsupportedEncodingException blException) {
+            blException.printStackTrace();
         }
+        throw new BLException("Error occurred while parsing DE");
     }
 }
