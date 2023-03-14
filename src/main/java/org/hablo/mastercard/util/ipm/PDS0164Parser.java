@@ -1,12 +1,15 @@
 package org.hablo.mastercard.util.ipm;
 
+import org.hablo.mastercard.util.GenericTLVParser.GenericTag;
 import org.hablo.mastercard.util.PDSParserSupport;
 
 public class PDS0164Parser extends PDSParserSupport {
 
-    public void parse(String data) {
+    public void parse(GenericTag tag) {
         int i = 0;
         int counter = 1;
+        String data = tag.getValue();
+
         while (i < data.length()) {
             String currCode = data.substring(i, i + 3);
             i += 3;
@@ -18,9 +21,7 @@ public class PDS0164Parser extends PDSParserSupport {
             i += 6;
             String cycle = data.substring(i, i + 2);
             i += 2;
-            elements.add(
-                    "PDS0164_" + counter + " Currency Code=" + currCode + " Conversion Rate=" + currRate
-                            + " Conversion Type=" + currType + " Business Date=" + date + " Delivery Cycle=" + cycle);
+            tag.add(new GenericTag(" <p0164 idx=\"" + counter + "\" curr_code=\"" + currCode + "\" conv_rate=\"" + currRate + "\" conv_type=\"" + currType + "\" business_date=\"" + date + "\" delivery_cycle=\"" + cycle + "\"/>", true));
             counter++;
         }
     }

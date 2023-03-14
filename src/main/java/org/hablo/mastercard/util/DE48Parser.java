@@ -24,7 +24,7 @@ public class DE48Parser extends GenericTLVParser {
     }
 
     public DE48Parser() {
-        super(48, 2, 2, "SE", 0, 99);
+        super(48, 2, 2, "subelement", 0, 99);
     }
 
     @Override
@@ -38,25 +38,17 @@ public class DE48Parser extends GenericTLVParser {
         }
         if (!ISOMsgHelper.isNetworkMessage(m)) {
             //tcc
-            String tcc = de48.substring(0, 1);
-            if (!TCC.isValid(tcc)) {
+            String tcc1 = de48.substring(0, 1);
+            if (!TCC.isValid(tcc1)) {
                 throw new BLException("format.error", "048");
             }
-            this.tcc = tcc;
+            this.tcc = tcc1;
             m.set(48, de48.substring(1));
         }
 
         super.parse(m);
-    }
 
-    @Override
-    public void dump(PrintStream p, String indent) {
-        p.println(indent + getClass().getName() + " value='" + tcc + sourceTLVData + "'");
-        if (tcc != null)
-            p.println(indent + " TCC=" + tcc);
-
-        for (GenericTag e : getElements()) {
-            e.dump(p, indent + getFieldType() + e.getId());
+        for (GenericTag e : getTags()) {
             if (de48SEList.containsKey(e.getId())) {
                 int j = 0;
                 while (j < e.getLength()) {
@@ -67,9 +59,19 @@ public class DE48Parser extends GenericTLVParser {
                     int sFL = Integer.parseInt(subFieldLength);
                     String subFieldData = e.getValue().substring(j, j + sFL);
                     j = j + sFL;
-                    p.println(indent + "  SF" + subTagId + " " + subFieldLength + " " + subFieldData);
+                    e.add(new GenericTag(" <subfield id=\"" + subTagId + "\" length=\"" + subFieldLength + "\" value=\"" + subFieldData + "\"/>", true));
                 }
             }
+        }
+    }
+
+    @Override
+    public void dump(PrintStream p, String indent) {
+        p.println(indent + getClass().getName() + " value='" + tcc + sourceTLVData + "'");
+        if (tcc != null)
+            p.println(indent + " TCC=" + tcc);
+        for (GenericTag e : getTags()) {
+            e.dump(p, indent + " ");
         }
     }
 

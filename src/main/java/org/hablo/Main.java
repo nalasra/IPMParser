@@ -18,6 +18,7 @@ import org.hablo.mastercard.t067.T067Parser;
 import org.hablo.mastercard.t112.T112Parser;
 import org.hablo.mastercard.util.DE108Parser;
 import org.hablo.mastercard.util.DE110Parser;
+import org.hablo.mastercard.util.DE48IPMParser;
 import org.hablo.mastercard.util.DE48Parser;
 import org.hablo.mastercard.util.DE61Parser;
 import org.hablo.mastercard.util.DEParserSupport;
@@ -78,9 +79,9 @@ public class Main {
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
 
         /* Mastercard IPM Clearing (T112)*/
-        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves");
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
+        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
 
         /* Mastercard Currency Exchange Rates (T057) */
         //parseFile(T057Parser.class, T057_FILES_IN, T057_FILES_OUT, "");

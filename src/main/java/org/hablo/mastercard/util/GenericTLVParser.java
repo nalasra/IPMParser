@@ -1,9 +1,7 @@
 package org.hablo.mastercard.util;
 
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,26 +16,26 @@ import org.jpos.util.Loggeable;
 public class GenericTLVParser implements DEParserSupport {
 
     String sourceTLVData;
-    private LinkedHashSet<GenericTag> elements;
+    private LinkedHashSet<GenericTag> tags;
     int MIN_TAG_ID = 0;
     int MAX_TAG_ID = 9999;
-    private int tagSize;
-    private int lengthSize;
-    private int tlvFieldId;
-    private String fieldType;
+    private final int tagSize;
+    private final int lengthSize;
+    private final int tlvFieldId;
+    private final String fieldType;
 
     public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType) {
-        elements = new LinkedHashSet<>();
+        tags = new LinkedHashSet<>();
         this.tlvFieldId = fieldId;
         this.tagSize = tagSize;
         this.lengthSize = lengthSize;
         this.fieldType = fieldType;
     }
 
-    public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType, int minSEId, int maxSEId) {
+    public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType, int minTagId, int maxTagId) {
         this(fieldId, tagSize, lengthSize, fieldType);
-        this.MIN_TAG_ID = minSEId;
-        this.MAX_TAG_ID = maxSEId;
+        this.MIN_TAG_ID = minTagId;
+        this.MAX_TAG_ID = maxTagId;
     }
 
     public String getFieldType() {
@@ -61,7 +59,7 @@ public class GenericTLVParser implements DEParserSupport {
             i = i + tagSize;
             int tagIdInt = Integer.parseInt(tagId);
             if (tagIdInt > MAX_TAG_ID || tagIdInt < MIN_TAG_ID) {
-                throw new BLException("Encountered tag id out of range. ");
+                throw new BLException("Encountered tag id out of range.");
             }
 
             String tagLength = sourceTLVData.substring(i, i + lengthSize);
@@ -70,18 +68,15 @@ public class GenericTLVParser implements DEParserSupport {
             int tagLenInt = Integer.parseInt(tagLength);
 
             String value = "";
-            GenericTag se = new GenericTag(tagId);
-            se.setLength(tagLenInt);
             value = sourceTLVData.substring(i, i + tagLenInt);
-            se.setValue(value);
-            elements.add(se);
+            tags.add(new GenericTag(tagId, tagLenInt, value, fieldType));
             i = i + tagLenInt;
         }
     }
 
     public boolean hasElement(String id) {
         Objects.requireNonNull(id);
-        for (GenericTag e : elements) {
+        for (GenericTag e : tags) {
             if (e.getId().equals(id)) {
                 return true;
             }
@@ -91,7 +86,7 @@ public class GenericTLVParser implements DEParserSupport {
 
     public GenericTag getElementById(String id) {
         Objects.requireNonNull(id);
-        for (GenericTag e : elements) {
+        for (GenericTag e : tags) {
             if (e.getId().equals(id)) {
                 return e;
             }
@@ -99,14 +94,15 @@ public class GenericTLVParser implements DEParserSupport {
         return null;
     }
 
-    public Set<GenericTag> getElements() {
-        return elements;
+    protected Set<GenericTag> getTags() {
+        return tags;
     }
 
     @Override
     public void dump(PrintStream p, String indent) {
-        for (GenericTag e : elements) {
-            e.dump(p, indent + fieldType + e.getId());
+        p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
+        for (GenericTag e : getTags()) {
+            e.dump(p, indent+ " ");
         }
     }
 
@@ -115,15 +111,29 @@ public class GenericTLVParser implements DEParserSupport {
         private String id;
         private int length;
         private String value;
+        private String type;
         LinkedHashSet<GenericTag> elements;
         private boolean isSF = false;
+        private boolean dumpable = false;
+        private String dumpData;
 
-        public GenericTag(String id) {
-            this.id = id;
+        public GenericTag() {
             elements = new LinkedHashSet<>();
         }
 
+        public GenericTag(String id) {
+            this();
+            this.id = id;
+        }
+
+        public GenericTag(String dumpData, boolean dumpable) {
+            this();
+            this.dumpData = dumpData;
+            this.dumpable = dumpable;
+        }
+
         public GenericTag(String id, String value) {
+            this();
             this.id = id;
             this.value = value;
         }
@@ -134,6 +144,7 @@ public class GenericTLVParser implements DEParserSupport {
         }
 
         public GenericTag(String id, int length, String value) {
+            this();
             this.id = id;
             this.length = length;
             this.value = value;
@@ -141,6 +152,16 @@ public class GenericTLVParser implements DEParserSupport {
 
         public GenericTag(String id, int length, String value, boolean sf) {
             this(id, length, value);
+            isSF = sf;
+        }
+
+        public GenericTag(String id, int length, String value, String type) {
+            this(id, length, value);
+            this.type = type;
+        }
+
+        public GenericTag(String id, int length, String value, String type, boolean sf) {
+            this(id, length, value, type);
             isSF = sf;
         }
 
@@ -192,19 +213,43 @@ public class GenericTLVParser implements DEParserSupport {
             this.value = value;
         }
 
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
         @Override
         public void dump(PrintStream p, String indent) {
-            if (elements != null && !elements.isEmpty()) {
-                for (GenericTag e : elements) {
-                    e.dump(p, indent + " SF" + e.getId());
-                }
+            if (dumpable) {
+                p.println(indent + dumpData);
             } else {
-                p.print(" ");
                 p.print(indent);
-                p.print(" ");
+                p.print("<");
+                p.print(getType());
+                p.print(" id=\"");
+                p.print(getId());
+                p.print("\"");
+                p.print(" length=\"");
                 p.print(getLength());
-                p.print(" ");
-                p.println(getValue());
+                p.print("\"");
+                p.print(" value=\"");
+                p.print(getValue());
+                p.print("\">");
+            }
+            if (elements != null && !elements.isEmpty()) {
+                p.println();
+                for (GenericTag e : elements) {
+                    e.dump(p, indent);
+                }
+            }
+            if(!dumpable) {
+                p.print(indent);
+                p.print("</");
+                p.print(getType());
+                p.println(">");
             }
         }
     }

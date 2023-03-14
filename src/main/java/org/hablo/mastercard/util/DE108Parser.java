@@ -4,7 +4,12 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jpos.ee.BLException;
+import org.jpos.iso.ISOException;
+import org.jpos.iso.ISOMsg;
+
 public class DE108Parser extends GenericTLVParser {
+
     private static final Map<String, Object> de108SEList = new HashMap<>();
 
     static {
@@ -14,14 +19,13 @@ public class DE108Parser extends GenericTLVParser {
     }
 
     public DE108Parser() {
-        super(108, 2, 3, "SE", 0, 6);
+        super(108, 2, 3, "subelement", 0, 6);
     }
 
     @Override
-    public void dump(PrintStream p, String indent) {
-        p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
-        for (GenericTag e : getElements()) {
-            e.dump(p, indent + getFieldType() + e.getId());
+    public void parse(ISOMsg m) throws BLException, ISOException {
+        super.parse(m);
+        for (GenericTag e : getTags()) {
             if (de108SEList.containsKey(e.getId())) {
                 int j = 0;
                 while (j < e.getLength()) {
@@ -32,7 +36,7 @@ public class DE108Parser extends GenericTLVParser {
                     int sFL = Integer.parseInt(subFieldLength);
                     String subFieldData = e.getValue().substring(j, j + sFL);
                     j = j + sFL;
-                    p.println(indent + "  SF" + subTagId + " " + subFieldLength + " " + subFieldData);
+                    e.add(new GenericTag(" <subfield id=\"" + subTagId + "\" length=\"" + subFieldLength + "\" value=\"" + subFieldData + "\"/>", true));
                 }
             }
         }

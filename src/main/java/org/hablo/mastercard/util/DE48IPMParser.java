@@ -1,10 +1,14 @@
 package org.hablo.mastercard.util;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hablo.mastercard.util.ipm.PDS0146Parser;
+import org.hablo.mastercard.util.ipm.PDS0159Parser;
 import org.hablo.mastercard.util.ipm.PDS0164Parser;
+import org.jpos.ee.BLException;
+import org.jpos.iso.ISOException;
+import org.jpos.iso.ISOMsg;
 
 /**
  * Created by Arsalan Khan on 09/06/21.
@@ -12,28 +16,28 @@ import org.hablo.mastercard.util.ipm.PDS0164Parser;
  */
 public class DE48IPMParser extends GenericTLVParser {
 
-    private static final Map<String, Class> pdsList = new HashMap<>();
+    private static final Map<String, Class> pdsElementParsers = new HashMap<>();
 
     static {
-        pdsList.put("0164", PDS0164Parser.class);
+        pdsElementParsers.put("0146", PDS0146Parser.class);
+        pdsElementParsers.put("0159", PDS0159Parser.class);
+        pdsElementParsers.put("0164", PDS0164Parser.class);
     }
 
     public DE48IPMParser() {
-        super(48, 4, 3, "PDS", 0, 9999);
+        super(48, 4, 3, "pds", 0, 9999);
     }
 
     @Override
-    public void dump(PrintStream p, String indent) {
-        p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
-        for (GenericTag e : getElements()) {
-            e.dump(p, indent + getFieldType() + e.getId());
-            if (pdsList.containsKey(e.getId())) {
-                Class<PDSParserSupport> clazz = pdsList.get(e.getId());
+    public void parse(ISOMsg m) throws BLException, ISOException {
+        super.parse(m);
+        for (GenericTag e : getTags()) {
+            if (pdsElementParsers.containsKey(e.getId())) {
+                Class<PDSParserSupport> clazz = pdsElementParsers.get(e.getId());
                 PDSParserSupport parserSupport;
                 try {
                     parserSupport = clazz.newInstance();
-                    parserSupport.parse(e.getValue());
-                    parserSupport.dump(p, "  ");
+                    parserSupport.parse(e);
                 } catch (InstantiationException | IllegalAccessException instantiationException) {
                     instantiationException.printStackTrace();
                 }
