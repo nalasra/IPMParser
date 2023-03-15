@@ -25,11 +25,18 @@ public class PDS0146Parser extends PDSParserSupport {
             i += 3;
             String amtFeeRecon = data.substring(i, i + 12);
             i += 12;
-            tag.add(new GenericTag(
-                    " <p0146 idx=\"" + counter + "\" fee_type_code=\"" + feeTypeCode + "\" fee_proc_code=\""
-                            + feeProcCode + "\" fee_sett_indc=\"" + feeSettIndc + "\" curr_code_fee=\"" + currCodeFee
-                            + "\" amt_fee=\"" + amtFee + "\" curr_code_fee_recon=\"" + currCodeFeeRecon
-                            + "\" amt_fee_recon=\"" + amtFeeRecon + "\"/>", true));
+
+            GenericTag t1 = new GenericTag(counter + "");
+            t1.add(new GenericTag("1", feeTypeCode, "fee_type_code"));
+            t1.add(new GenericTag("2", feeProcCode, "fee_proc_code"));
+            t1.add(new GenericTag("3", feeSettIndc, "fee_sett_indc"));
+            t1.add(new GenericTag("4", currCodeFee, "curr_code_fee"));
+            t1.add(new GenericTag("5", amtFee, "amt_fee"));
+            t1.add(new GenericTag("6", currCodeFeeRecon, "curr_code_fee_recon"));
+            t1.add(new GenericTag("7", currCodeFee, "curr_code_fee"));
+            t1.add(new GenericTag("8", amtFeeRecon, "amt_fee_recon"));
+
+            tag.add(t1);
             counter++;
         }
     }
