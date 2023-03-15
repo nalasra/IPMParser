@@ -1,5 +1,7 @@
 package org.hablo.mastercard.util;
 
+import org.jpos.ee.BLException;
+import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 
 import java.io.PrintStream;

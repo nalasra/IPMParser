@@ -38,10 +38,6 @@ public class GenericTLVParser implements DEParserSupport {
         this.MAX_TAG_ID = maxTagId;
     }
 
-    public int getTlvFieldId() {
-        return tlvFieldId;
-    }
-
     public String getFieldType() {
         return fieldType;
     }
@@ -116,8 +112,8 @@ public class GenericTLVParser implements DEParserSupport {
         private int length;
         private String value;
         private String type;
-        private String description;
-        Set<GenericTag> elements;
+        LinkedHashSet<GenericTag> elements;
+        private boolean isSF = false;
         private boolean dumpable = false;
         private String dumpData;
 
@@ -142,9 +138,9 @@ public class GenericTLVParser implements DEParserSupport {
             this.value = value;
         }
 
-        public GenericTag(String id, String value, String description) {
+        public GenericTag(String id, String value, boolean sf) {
             this(id, value);
-            this.description = description;
+            isSF = sf;
         }
 
         public GenericTag(String id, int length, String value) {
@@ -154,9 +150,19 @@ public class GenericTLVParser implements DEParserSupport {
             this.value = value;
         }
 
+        public GenericTag(String id, int length, String value, boolean sf) {
+            this(id, length, value);
+            isSF = sf;
+        }
+
         public GenericTag(String id, int length, String value, String type) {
             this(id, length, value);
             this.type = type;
+        }
+
+        public GenericTag(String id, int length, String value, String type, boolean sf) {
+            this(id, length, value, type);
+            isSF = sf;
         }
 
         public boolean hasField(String id) {
@@ -199,24 +205,8 @@ public class GenericTLVParser implements DEParserSupport {
             this.length = length;
         }
 
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
         public String getValue() {
             return value;
-        }
-
-        public boolean hasElements(){
-            return !elements.isEmpty();
-        }
-
-        public Set<GenericTag> getElements() {
-            return elements;
         }
 
         public void setValue(String value) {

@@ -2,7 +2,6 @@ package org.hablo.mastercard.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.hablo.mastercard.util.ipm.PDS0146Parser;
 import org.hablo.mastercard.util.ipm.PDS0159Parser;
@@ -32,25 +31,16 @@ public class DE48IPMParser extends GenericTLVParser {
     @Override
     public void parse(ISOMsg m) throws BLException, ISOException {
         super.parse(m);
-        setISOMsg(m, getTlvFieldId() + "", getTags());
-    }
-
-    private void setISOMsg(ISOMsg m, String fpath, Set<GenericTag> tags) {
-        for (GenericTag t : tags) {
-            if (pdsElementParsers.containsKey(t.getId())) {
-                Class<PDSParserSupport> clazz = pdsElementParsers.get(t.getId());
+        for (GenericTag e : getTags()) {
+            if (pdsElementParsers.containsKey(e.getId())) {
+                Class<PDSParserSupport> clazz = pdsElementParsers.get(e.getId());
                 PDSParserSupport parserSupport;
                 try {
                     parserSupport = clazz.newInstance();
-                    parserSupport.parse(t);
+                    parserSupport.parse(e);
                 } catch (InstantiationException | IllegalAccessException instantiationException) {
                     instantiationException.printStackTrace();
                 }
-            }
-            if (t.hasElements()) {
-                setISOMsg(m, fpath + "." + t.getId(), t.getElements());
-            } else {
-                m.set(fpath + "." + t.getId(), t.getValue());
             }
         }
     }

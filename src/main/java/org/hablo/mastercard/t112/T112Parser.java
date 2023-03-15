@@ -14,6 +14,7 @@ import org.jpos.util.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.HashMap;
 
@@ -60,23 +61,23 @@ public class T112Parser extends FileParserSupport {
 
     @Override
     public void parse(File file) {
-        String encoding = MC_IPM_EBCDIC;
+        String ENCODING = MC_IPM_EBCDIC;
         int counter = 0;
         try (RDWReader reader = new RDWReader(Files.newInputStream(file.toPath()))) {
             byte[] r = reader.read();
-            GenericPackager packager = new GenericPackager("jar:packager/" + encoding);
+            GenericPackager packager = new GenericPackager("jar:packager/" + ENCODING);
             packager.setLogger(Logger.getLogger("Q2"), "packager");
             while (r != null && r.length > 0) {
                 ISOMsg msg = createISOMsg(r, packager);
                 if (outputParsedFile && (StringUtils.isBlank(mtiFilter) || mtiFilter.contains(msg.getMTI()))) {
-                    expandPDS(DE48IPMParser.class, msg);
+                    writer.write(ISOMsgHelper.toString(msg));
                     //dump description
                     if (mtiMap.containsKey(msg.getMTI() + " " + msg.getString(24))) {
                         String description = mtiMap.get(msg.getMTI() + " " + msg.getString(24));
                         writer.write("<!-- ########### " + description + " ########### -->");
                         writer.newLine();
                     }
-                    writer.write(ISOMsgHelper.toString(msg));
+                    writer.write(parseDE(DE48IPMParser.class, msg));
                     writer.newLine();
                 }
                 if (counter % 100 == 0) {
@@ -95,18 +96,20 @@ public class T112Parser extends FileParserSupport {
         }
     }
 
-    public static <T> void expandPDS(Class<T> clazz, ISOMsg m) {
+    public static <T> String parseDE(Class<T> clazz, ISOMsg m) throws BLException {
         try {
             T o = clazz.newInstance();
             if (o instanceof DEParserSupport) {
                 ((DEParserSupport) o).parse(m);
+                return ISOMsgHelper.toString((DEParserSupport) o);
             } else {
                 System.err.println("Unknown class type: " + clazz.getSimpleName());
             }
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
-        } catch (BLException | ISOException blException) {
+        } catch (BLException | ISOException | UnsupportedEncodingException blException) {
             blException.printStackTrace();
         }
+        throw new BLException("Error occurred while parsing DE");
     }
 }
