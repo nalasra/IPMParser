@@ -5,6 +5,6 @@ public class DE110Parser extends GenericTLVParser {
     }
 
     public DE110Parser() {
-        super(110, 2, 3, "subelement", 0, 10);
+        super(110, 2, 3, "SE", 0, 10);
     }
 }

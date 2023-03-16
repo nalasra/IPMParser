@@ -21,7 +21,7 @@ public class PDS0164Parser extends PDSParserSupport {
             i += 6;
             String cycle = data.substring(i, i + 2);
             i += 2;
-            tag.add(new GenericTag(" <p0164 idx=\"" + counter + "\" curr_code=\"" + currCode + "\" conv_rate=\"" + currRate + "\" conv_type=\"" + currType + "\" business_date=\"" + date + "\" delivery_cycle=\"" + cycle + "\"/>", true));
+            tag.add(new GenericTag(" <p0164 idx=\"" + counter + "\" curr_code=\"" + currCode + "\" conv_rate=\"" + currRate + "\" conv_type=\"" + currType + "\" business_date=\"" + date + "\" delivery_cycle=\"" + cycle + "\"/>"));
             counter++;
         }
     }

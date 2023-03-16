@@ -25,11 +25,15 @@ public class PDS0146Parser extends PDSParserSupport {
             i += 3;
             String amtFeeRecon = data.substring(i, i + 12);
             i += 12;
+
+            GenericTag t1 = new GenericTag();
+
+
             tag.add(new GenericTag(
                     " <p0146 idx=\"" + counter + "\" fee_type_code=\"" + feeTypeCode + "\" fee_proc_code=\""
                             + feeProcCode + "\" fee_sett_indc=\"" + feeSettIndc + "\" curr_code_fee=\"" + currCodeFee
                             + "\" amt_fee=\"" + amtFee + "\" curr_code_fee_recon=\"" + currCodeFeeRecon
-                            + "\" amt_fee_recon=\"" + amtFeeRecon + "\"/>", true));
+                            + "\" amt_fee_recon=\"" + amtFeeRecon + "\"/>"));
             counter++;
         }
     }

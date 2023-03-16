@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -102,7 +103,7 @@ public class GenericTLVParser implements DEParserSupport {
     public void dump(PrintStream p, String indent) {
         p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
         for (GenericTag e : getTags()) {
-            e.dump(p, indent+ " ");
+            e.dump(p, indent + " ");
         }
     }
 
@@ -112,10 +113,8 @@ public class GenericTLVParser implements DEParserSupport {
         private int length;
         private String value;
         private String type;
+        private String description;
         LinkedHashSet<GenericTag> elements;
-        private boolean isSF = false;
-        private boolean dumpable = false;
-        private String dumpData;
 
         public GenericTag() {
             elements = new LinkedHashSet<>();
@@ -126,63 +125,29 @@ public class GenericTLVParser implements DEParserSupport {
             this.id = id;
         }
 
-        public GenericTag(String dumpData, boolean dumpable) {
-            this();
-            this.dumpData = dumpData;
-            this.dumpable = dumpable;
-        }
-
         public GenericTag(String id, String value) {
-            this();
-            this.id = id;
+            this(id);
             this.value = value;
         }
 
-        public GenericTag(String id, String value, boolean sf) {
+        public GenericTag(String id, String value, String type) {
             this(id, value);
-            isSF = sf;
+            this.type = type;
+        }
+
+        public GenericTag(String id, String value, String type, String description) {
+            this(id, value, type);
+            this.description = description;
         }
 
         public GenericTag(String id, int length, String value) {
-            this();
-            this.id = id;
+            this(id, value);
             this.length = length;
-            this.value = value;
-        }
-
-        public GenericTag(String id, int length, String value, boolean sf) {
-            this(id, length, value);
-            isSF = sf;
         }
 
         public GenericTag(String id, int length, String value, String type) {
             this(id, length, value);
             this.type = type;
-        }
-
-        public GenericTag(String id, int length, String value, String type, boolean sf) {
-            this(id, length, value, type);
-            isSF = sf;
-        }
-
-        public boolean hasField(String id) {
-            Objects.requireNonNull(id);
-            for (GenericTag e : elements) {
-                if (e.getId().equals(id)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public GenericTag getFieldById(String id) {
-            Objects.requireNonNull(id);
-            for (GenericTag e : elements) {
-                if (e.getId().equals(id)) {
-                    return e;
-                }
-            }
-            return null;
         }
 
         public void add(GenericTag item) {
@@ -198,7 +163,7 @@ public class GenericTLVParser implements DEParserSupport {
         }
 
         public int getLength() {
-            return length;
+            return length > 0 ? length : value != null ? value.length() : 0;
         }
 
         public void setLength(int length) {
@@ -221,35 +186,40 @@ public class GenericTLVParser implements DEParserSupport {
             this.type = type;
         }
 
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
         @Override
         public void dump(PrintStream p, String indent) {
-            if (dumpable) {
-                p.println(indent + dumpData);
-            } else {
-                p.print(indent);
-                p.print("<");
-                p.print(getType());
-                p.print(" id=\"");
-                p.print(getId());
-                p.print("\"");
-                p.print(" length=\"");
-                p.print(getLength());
-                p.print("\"");
-                p.print(" value=\"");
-                p.print(getValue());
-                p.print("\">");
-            }
+            p.println(indent + StringUtils.rightPad("_", 100 - indent.length(), '_'));
+
+            p.print(indent);
+
+            String pType = StringUtils.leftPad(getType(), 3 - indent.length(), ' ');
+            p.print(pType);
+            String pId = StringUtils.rightPad(getId(), 4, ' ');
+            p.print(pId);
+
+            String spaceBeforeLength = StringUtils.rightPad(" ", (pType + pId).length() + indent.length() , ' ');
+            p.print(spaceBeforeLength);
+
+            p.print(StringUtils.leftPad(getLength() + "", 3, '0'));
+
+            String spaceAfterLength = StringUtils.rightPad(" ", (pType + pId).length() + indent.length() , ' ');
+            p.print(spaceAfterLength);
+
+            p.println(getDescription());
+            p.print(StringUtils.rightPad(" ", (pType + pId + spaceBeforeLength + spaceAfterLength).length() + 3 + indent.length(), ' '));
+            p.println(getValue());
             if (elements != null && !elements.isEmpty()) {
-                p.println();
                 for (GenericTag e : elements) {
-                    e.dump(p, indent);
+                    e.dump(p, indent + " ");
                 }
-            }
-            if(!dumpable) {
-                p.print(indent);
-                p.print("</");
-                p.print(getType());
-                p.println(">");
             }
         }
     }

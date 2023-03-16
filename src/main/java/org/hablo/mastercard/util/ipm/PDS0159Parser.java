@@ -4,15 +4,16 @@ import org.hablo.mastercard.util.GenericTLVParser.GenericTag;
 import org.hablo.mastercard.util.PDSParserSupport;
 
 public class PDS0159Parser extends PDSParserSupport {
+
     public void parse(GenericTag tag) {
-        tag.add(new GenericTag(" <subfield id=\"1\" name=\"sett_srv_agent_id_code\" value=\"" + tag.getValue().substring(0, 11) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"2\" name=\"sett_srv_trf_agent_account\" value=\"" + tag.getValue().substring(11, 39) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"3\" name=\"sett_srv_lvl_code\" value=\"" + tag.getValue().substring(39, 40) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"4\" name=\"sett_srv_id_code\" value=\"" + tag.getValue().substring(40, 50) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"5\" name=\"sett_srv_fx_rate_code\" value=\"" + tag.getValue().substring(50, 51) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"6\" name=\"recon_date\" value=\"" + tag.getValue().substring(51, 57) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"7\" name=\"recon_cycle\" value=\"" + tag.getValue().substring(57, 59) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"8\" name=\"sett_cycle\" value=\"" + tag.getValue().substring(59, 65) + "\"/>",true));
-        tag.add(new GenericTag(" <subfield id=\"9\" name=\"sett_cycle\" value=\"" + tag.getValue().substring(65, 67) + "\"/>",true));
+        tag.add(new GenericTag("1", tag.getValue().substring(0, 11), "SF", "Settlement Service Transfer Agent ID Code"));
+        tag.add(new GenericTag("2", tag.getValue().substring(11, 39), "SF", "Settlement Service Transfer Agent Account"));
+        tag.add(new GenericTag("3", tag.getValue().substring(39, 40), "SF", "Settlement Service Level Code"));
+        tag.add(new GenericTag("4", tag.getValue().substring(40, 50), "SF", "Settlement Service ID Code"));
+        tag.add(new GenericTag("5", tag.getValue().substring(50, 51), "SF", "Settlement Foreign Exchange Rate Class Code"));
+        tag.add(new GenericTag("6", tag.getValue().substring(51, 57), "SF", "Reconciliation Date"));
+        tag.add(new GenericTag("7", tag.getValue().substring(57, 59), "SF", "Reconciliation Cycle"));
+        tag.add(new GenericTag("8", tag.getValue().substring(59, 65), "SF", "Settlement Date"));
+        tag.add(new GenericTag("9", tag.getValue().substring(65, 67), "SF", "Settlement Cycle"));
     }
 }

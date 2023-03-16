@@ -16,15 +16,26 @@ public class DE48Parser extends GenericTLVParser {
 
     private String tcc;
     private static final Map<String, String> de48SEList = new HashMap<>();
+    private static final Map<String, String> seDescriptions = new HashMap<>();
 
     static {
         de48SEList.put("37", "01,02,03,04");
         de48SEList.put("42", "01");
         de48SEList.put("66", "01,02");
+
+        seDescriptions.put("01", "AAAAAAAA");
+        seDescriptions.put("02", "AAAAAAAA");
+        seDescriptions.put("42", "Electronic Commerce Indicators");
+        seDescriptions.put("42.01", "Electronic Commerce Security Level Indicator and UCAF Collection Indicator");
+        seDescriptions.put("43", "Universal Cardholder Authentication Field [UCAF]");
+        seDescriptions.put("63", "Trace ID");
+        seDescriptions.put("66", "Authentication Data");
+        seDescriptions.put("66.01", "Program Protocol");
+        seDescriptions.put("66.02", "Directory Server Transaction ID");
     }
 
     public DE48Parser() {
-        super(48, 2, 2, "subelement", 0, 99);
+        super(48, 2, 2, "SE", 0, 99);
     }
 
     @Override
@@ -49,6 +60,7 @@ public class DE48Parser extends GenericTLVParser {
         super.parse(m);
 
         for (GenericTag e : getTags()) {
+            e.setDescription(seDescriptions.getOrDefault(e.getId(), ""));
             if (de48SEList.containsKey(e.getId())) {
                 int j = 0;
                 while (j < e.getLength()) {
@@ -59,7 +71,9 @@ public class DE48Parser extends GenericTLVParser {
                     int sFL = Integer.parseInt(subFieldLength);
                     String subFieldData = e.getValue().substring(j, j + sFL);
                     j = j + sFL;
-                    e.add(new GenericTag(" <subfield id=\"" + subTagId + "\" length=\"" + subFieldLength + "\" value=\"" + subFieldData + "\"/>", true));
+                    GenericTag ee = new GenericTag(subTagId, sFL, subFieldData, "SF");
+                    ee.setDescription(seDescriptions.getOrDefault(e.getId() + "." + ee.getId(), ""));
+                    e.add(ee);
                 }
             }
         }
@@ -68,8 +82,10 @@ public class DE48Parser extends GenericTLVParser {
     @Override
     public void dump(PrintStream p, String indent) {
         p.println(indent + getClass().getName() + " value='" + tcc + sourceTLVData + "'");
-        if (tcc != null)
+        if (tcc != null) {
             p.println(indent + " TCC=" + tcc);
+        }
+        p.println(" DE          LENGTH     DESCRIPTION");
         for (GenericTag e : getTags()) {
             e.dump(p, indent + " ");
         }

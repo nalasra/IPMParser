@@ -80,8 +80,8 @@ public class Main {
 
         /* Mastercard IPM Clearing (T112)*/
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves");
-        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mexico");
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
 
         /* Mastercard Currency Exchange Rates (T057) */
         //parseFile(T057Parser.class, T057_FILES_IN, T057_FILES_OUT, "");
@@ -103,7 +103,7 @@ public class Main {
         //parseDE(DE48Parser.class, "0100", 48, "T420701032124328kBNprVWW0r2tzwggEy9l7TkhY+EW66450101202365019c1b5-a061-4ee0-a9a3-672a06305088");
         //parseDE(DE48Parser.class, "0100", 48, "T420701032114328hJJLtQa+Iws8AREAEbjsA1MAAAA=660501011"); //SPA1Attempt
         //parseDE(DE48Parser.class, "0100", 48, "T420701032124328jJJLtQa+Iws8AREAEbjsBkEAAAA=660501011"); //SPA1FullyAuthenticated
-        //parseDE(DE48Parser.class, "0100", 48, "T420701032114328kLAfdvwQTySUPJTvhAEAABrOxpFx6645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2
+        parseDE(DE48Parser.class, "0100", 48, "T420701032114328kLAfdvwQTySUPJTvhAEAABrOxpFx6645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2
         //parseDE(DE48Parser.class, "0100", 48, "T010120236F38E6948-5388-41A6-BCA4-B49723C19437420701032174328kOWg7cqnaqcoEgABlDyU78kgL6sa6315MCCA1B2C3  66456645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2Partial
         //parseDE(DE48Parser.class, "0800", 48,"1154PK0001A8B5474DBEF0FBC689707EE1C6329CE658D4            ");
         //parseDE(DE48IPMParser.class, "0100", 48, "0002003MSO0003003MSO0148008826282620158030MSI4826001S212061402     NNNNN0165001M0177001N0191001201590679570       0942027400                  1EU00000008N2104190121041901");
@@ -123,7 +123,7 @@ public class Main {
 
     private static void init() {
         ID = "/" + System.currentTimeMillis() + "/";
-        l.addListener(new SimpleLogListener());
+        //l.addListener(new SimpleLogListener());
     }
 
     private static void startQ2() {
@@ -183,8 +183,12 @@ public class Main {
         try {
             File[] fs = getFiles(fileName, fileIn);
             if (fs != null) {
+                int index = 1;
+                System.out.println("Total files found " + fs.length);
                 for (File f : fs) {
                     if (f.isFile()) {
+                        System.out.println(
+                                String.format("Processing file... %d/%d %s", index, fs.length, f.getAbsolutePath()));
                         BufferedWriter writer = initializeWriter(fileOut, f.getName());
                         T parser = clazz.newInstance();
                         if (parser instanceof FileParserSupport) {
@@ -195,6 +199,7 @@ public class Main {
                         }
                         writer.close();
                     }
+                    index++;
                 }
             }
         } catch (Exception exception) {

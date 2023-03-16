@@ -19,7 +19,7 @@ public class DE108Parser extends GenericTLVParser {
     }
 
     public DE108Parser() {
-        super(108, 2, 3, "subelement", 0, 6);
+        super(108, 2, 3, "SE", 0, 6);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DE108Parser extends GenericTLVParser {
                     int sFL = Integer.parseInt(subFieldLength);
                     String subFieldData = e.getValue().substring(j, j + sFL);
                     j = j + sFL;
-                    e.add(new GenericTag(" <subfield id=\"" + subTagId + "\" length=\"" + subFieldLength + "\" value=\"" + subFieldData + "\"/>", true));
+                    e.add(new GenericTag(subTagId, sFL , subFieldData, "SF"));
                 }
             }
         }

@@ -77,6 +77,7 @@ public class T112Parser extends FileParserSupport {
                         writer.write("<!-- ########### " + description + " ########### -->");
                         writer.newLine();
                     }
+                    writer.write("");
                     writer.write(parseDE(DE48IPMParser.class, msg));
                     writer.newLine();
                 }
