@@ -69,8 +69,8 @@ public class DE48IPMParser extends GenericTLVParser {
 
     @Override
     public void dump(PrintStream p, String indent) {
-        p.println(indent + getClass().getName() + sourceTLVData + "'");
-        p.println(indent + " DE             LENGTH     DESCRIPTION");
+        p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
+        p.println(indent + " DE            LENGTH       DESCRIPTION");
         for (GenericTag e : getTags()) {
             e.dump(p, indent + " ");
         }

@@ -85,7 +85,7 @@ public class DE48Parser extends GenericTLVParser {
         if (tcc != null) {
             p.println(indent + " TCC=" + tcc);
         }
-        p.println(" DE          LENGTH     DESCRIPTION");
+        p.println(" DE            LENGTH       DESCRIPTION");
         for (GenericTag e : getTags()) {
             e.dump(p, indent + " ");
         }

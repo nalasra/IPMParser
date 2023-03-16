@@ -199,23 +199,18 @@ public class GenericTLVParser implements DEParserSupport {
             p.println(indent + StringUtils.rightPad("_", 100 - indent.length(), '_'));
 
             p.print(indent);
-
-            String pType = StringUtils.leftPad(getType(), 3 - indent.length(), ' ');
-            p.print(pType);
-            String pId = StringUtils.rightPad(getId(), 4, ' ');
-            p.print(pId);
-
-            String spaceBeforeLength = StringUtils.rightPad(" ", (pType + pId).length() + indent.length() , ' ');
-            p.print(spaceBeforeLength);
+            String pTypeId = StringUtils.rightPad(getType() + getId(), 15 - indent.length(), ' ');
+            p.print(pTypeId);
 
             p.print(StringUtils.leftPad(getLength() + "", 3, '0'));
 
-            String spaceAfterLength = StringUtils.rightPad(" ", (pType + pId).length() + indent.length() , ' ');
+            String spaceAfterLength = StringUtils.rightPad(" ", 10 , ' ');
             p.print(spaceAfterLength);
 
             p.println(getDescription());
-            p.print(StringUtils.rightPad(" ", (pType + pId + spaceBeforeLength + spaceAfterLength).length() + 3 + indent.length(), ' '));
+            p.print(StringUtils.rightPad(" ", (pTypeId + spaceAfterLength).length() + 3 + indent.length(), ' '));
             p.println(getValue());
+
             if (elements != null && !elements.isEmpty()) {
                 for (GenericTag e : elements) {
                     e.dump(p, indent + " ");
