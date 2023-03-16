@@ -196,7 +196,7 @@ public class GenericTLVParser implements DEParserSupport {
 
         @Override
         public void dump(PrintStream p, String indent) {
-            p.println(indent + StringUtils.rightPad("_", 100 - indent.length(), '_'));
+            p.println(indent + StringUtils.rightPad("-", 100 - indent.length(), '-'));
 
             p.print(indent);
             String pTypeId = StringUtils.rightPad(getType() + getId(), 15 - indent.length(), ' ');

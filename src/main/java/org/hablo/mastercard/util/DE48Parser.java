@@ -23,8 +23,8 @@ public class DE48Parser extends GenericTLVParser {
         de48SEList.put("42", "01");
         de48SEList.put("66", "01,02");
 
-        seDescriptions.put("01", "AAAAAAAA");
-        seDescriptions.put("02", "AAAAAAAA");
+        seDescriptions.put("01", "");
+        seDescriptions.put("02", "");
         seDescriptions.put("42", "Electronic Commerce Indicators");
         seDescriptions.put("42.01", "Electronic Commerce Security Level Indicator and UCAF Collection Indicator");
         seDescriptions.put("43", "Universal Cardholder Authentication Field [UCAF]");
@@ -85,7 +85,7 @@ public class DE48Parser extends GenericTLVParser {
         if (tcc != null) {
             p.println(indent + " TCC=" + tcc);
         }
-        p.println(" DE            LENGTH       DESCRIPTION");
+        p.println(" DATAELEMENT   LENGTH       DESCRIPTION");
         for (GenericTag e : getTags()) {
             e.dump(p, indent + " ");
         }

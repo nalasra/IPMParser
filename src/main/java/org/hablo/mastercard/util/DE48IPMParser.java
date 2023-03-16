@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hablo.mastercard.util.ipm.PDS0146Parser;
+import org.hablo.mastercard.util.ipm.PDS0158Parser;
 import org.hablo.mastercard.util.ipm.PDS0159Parser;
 import org.hablo.mastercard.util.ipm.PDS0164Parser;
 import org.jpos.ee.BLException;
@@ -22,6 +23,7 @@ public class DE48IPMParser extends GenericTLVParser {
 
     static {
         //pdsElementParsers.put("0146", PDS0146Parser.class);
+        pdsElementParsers.put("0158", PDS0158Parser.class);
         pdsElementParsers.put("0159", PDS0159Parser.class);
         //pdsElementParsers.put("0164", PDS0164Parser.class);
 
@@ -70,7 +72,7 @@ public class DE48IPMParser extends GenericTLVParser {
     @Override
     public void dump(PrintStream p, String indent) {
         p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
-        p.println(indent + " DE            LENGTH       DESCRIPTION");
+        p.println(indent + " DATAELEMENT   LENGTH       DESCRIPTION");
         for (GenericTag e : getTags()) {
             e.dump(p, indent + " ");
         }
