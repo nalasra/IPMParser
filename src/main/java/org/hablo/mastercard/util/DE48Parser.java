@@ -1,5 +1,6 @@
 package org.hablo.mastercard.util;
 
+import org.hablo.helper.PropertiesConverter;
 import org.hablo.helper.ISOMsgHelper;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
@@ -16,22 +17,12 @@ public class DE48Parser extends GenericTLVParser {
 
     private String tcc;
     private static final Map<String, String> de48SEList = new HashMap<>();
-    private static final Map<String, String> seDescriptions = new HashMap<>();
+    private static final PropertiesConverter seConverter = new PropertiesConverter("mc_de48_se_list.properties");
 
     static {
         de48SEList.put("37", "01,02,03,04");
         de48SEList.put("42", "01");
         de48SEList.put("66", "01,02");
-
-        seDescriptions.put("01", "");
-        seDescriptions.put("02", "");
-        seDescriptions.put("42", "Electronic Commerce Indicators");
-        seDescriptions.put("42.01", "Electronic Commerce Security Level Indicator and UCAF Collection Indicator");
-        seDescriptions.put("43", "Universal Cardholder Authentication Field [UCAF]");
-        seDescriptions.put("63", "Trace ID");
-        seDescriptions.put("66", "Authentication Data");
-        seDescriptions.put("66.01", "Program Protocol");
-        seDescriptions.put("66.02", "Directory Server Transaction ID");
     }
 
     public DE48Parser() {
@@ -60,7 +51,7 @@ public class DE48Parser extends GenericTLVParser {
         super.parse(m);
 
         for (GenericTag e : getTags()) {
-            e.setDescription(seDescriptions.getOrDefault(e.getId(), ""));
+            e.setDescription(seConverter.convert(e.getId()));
             if (de48SEList.containsKey(e.getId())) {
                 int j = 0;
                 while (j < e.getLength()) {
@@ -72,7 +63,7 @@ public class DE48Parser extends GenericTLVParser {
                     String subFieldData = e.getValue().substring(j, j + sFL);
                     j = j + sFL;
                     GenericTag ee = new GenericTag(subTagId, sFL, subFieldData, "SF");
-                    ee.setDescription(seDescriptions.getOrDefault(e.getId() + "." + ee.getId(), ""));
+                    ee.setDescription(seConverter.convert(e.getId() + "." + ee.getId()));
                     e.add(ee);
                 }
             }
