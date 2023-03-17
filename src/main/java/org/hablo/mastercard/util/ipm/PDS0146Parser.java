@@ -1,11 +1,11 @@
 package org.hablo.mastercard.util.ipm;
 
-import org.hablo.mastercard.util.GenericTLVParser.GenericTag;
+import org.hablo.mastercard.util.TLVParser.TLV;
 import org.hablo.mastercard.util.PDSParserSupport;
 
 public class PDS0146Parser extends PDSParserSupport {
 
-    public void parse(GenericTag tag) {
+    public void parse(TLV tag) {
         int i = 0;
         int counter = 1;
         String data = tag.getValue();
@@ -26,10 +26,10 @@ public class PDS0146Parser extends PDSParserSupport {
             String amtFeeRecon = data.substring(i, i + 12);
             i += 12;
 
-            GenericTag t1 = new GenericTag();
+            TLV t1 = new TLV();
 
 
-            tag.add(new GenericTag(
+            tag.add(new TLV(
                     " <p0146 idx=\"" + counter + "\" fee_type_code=\"" + feeTypeCode + "\" fee_proc_code=\""
                             + feeProcCode + "\" fee_sett_indc=\"" + feeSettIndc + "\" curr_code_fee=\"" + currCodeFee
                             + "\" amt_fee=\"" + amtFee + "\" curr_code_fee_recon=\"" + currCodeFeeRecon

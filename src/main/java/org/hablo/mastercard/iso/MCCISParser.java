@@ -8,7 +8,7 @@ import org.hablo.mastercard.util.DE108Parser;
 import org.hablo.mastercard.util.DE110Parser;
 import org.hablo.mastercard.util.DE48Parser;
 import org.hablo.mastercard.util.DE61Parser;
-import org.hablo.mastercard.util.DEParserSupport;
+import org.hablo.mastercard.util.ParserSupport;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
 import org.jpos.iso.packager.GenericPackager;
@@ -49,9 +49,9 @@ public class MCCISParser implements ISOMsgParserSupport {
         for (Class<T> c : dEParsers) {
             try {
                 T o = c.newInstance();
-                if (o instanceof DEParserSupport) {
-                    ((DEParserSupport) o).parse(m);
-                    ((DEParserSupport) o).dump(System.out, "");
+                if (o instanceof ParserSupport) {
+                    ((ParserSupport) o).parse(m);
+                    ((ParserSupport) o).dump(System.out, "");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.hablo.mastercard.util.DE48IPMParser;
-import org.hablo.mastercard.util.DEParserSupport;
+import org.hablo.mastercard.util.ParserSupport;
 import org.hablo.rdw.RDWReader;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
@@ -100,9 +100,9 @@ public class T112Parser extends FileParserSupport {
     public static <T> String parseDE(Class<T> clazz, ISOMsg m) throws BLException {
         try {
             T o = clazz.newInstance();
-            if (o instanceof DEParserSupport) {
-                ((DEParserSupport) o).parse(m);
-                return ISOMsgHelper.toString((DEParserSupport) o);
+            if (o instanceof ParserSupport) {
+                ((ParserSupport) o).parse(m);
+                return ISOMsgHelper.toString((ParserSupport) o);
             } else {
                 System.err.println("Unknown class type: " + clazz.getSimpleName());
             }

@@ -1,7 +1,6 @@
 package org.hablo.mastercard.util;
 
-import org.jpos.ee.BLException;
-import org.jpos.iso.ISOException;
+import org.hablo.mastercard.util.TLVParser.TLV;
 import org.jpos.iso.ISOMsg;
 
 import java.io.PrintStream;
@@ -9,7 +8,7 @@ import java.io.PrintStream;
 /**
  * Created by Arsalan Khan on 09/06/21.
  */
-public class DE61Parser implements DEParserSupport {
+public class DE61Parser implements ParserSupport {
 
     String de61;
 
@@ -63,44 +62,57 @@ public class DE61Parser implements DEParserSupport {
     }
 
     public String getPOSAuthorizationLifeCycle() {
-        if (de61.length() > 11)
+        if (de61.length() > 11) {
             return de61.substring(11, 13);
+        }
         return "";
     }
 
     public String getPOSCountryCode() {
-        if (de61.length() > 13)
+        if (de61.length() > 13) {
             return de61.substring(13, 16);
+        }
         return "";
     }
 
     public String getPOSPostalCode() {
-        if (de61.length() > 16)
+        if (de61.length() > 16) {
             return de61.substring(16);
+        }
         return "";
     }
 
     @Override
     public void dump(PrintStream p, String indent) {
         p.println(indent + getClass().getName() + " value='" + de61 + "'");
-        if (de61 == null || de61.isEmpty()) return;
-        p.println(indent + " SF01 POS Terminal Attendance " + getPOSTerminalAttendance());
-        p.println(indent + " SF02 RFU " + getSubField2RFU());
-        p.println(indent + " SF03 POS Terminal Location " + getPOSTerminalLocation());
-        p.println(indent + " SF04 POS Cardholder Presence " + getPOSCardholderPresence());
-        p.println(indent + " SF05 POS Card Presence " + getPOSCardPresence());
-        p.println(indent + " SF06 POS Card Capture Capabilities " + getPOSCardCaptureCapabilities());
-        p.println(indent + " SF07 POS Transaction Status Indicator " + getPOSTransactionStatusIndicator());
-        p.println(indent + " SF08 POS Transaction Security Indicator " + getPOSTransactionSecurityIndicator());
-        p.println(indent + " SF09 RFU " + getSubField9RFU());
-        p.println(indent + " SF10 Cardholder-Activated Terminal Level " + getCardholderActivatedTerminalLevel());
-        p.println(indent + " SF11 POS Card Data Terminal Input Capability Indicator " + getPOSCardDataTerminalInputCapabilityIndicator());
-        if (de61.length() > 11)
-            p.println(indent + " SF12 POS Authorization LifeCycle " + getPOSAuthorizationLifeCycle());
-        if (de61.length() > 13)
-            p.println(indent + " SF13 POS Country Code " + getPOSCountryCode());
-        if (de61.length() > 16)
-            p.println(indent + " SF14 POS Postal Code " + getPOSPostalCode());
+        if (de61 == null || de61.isEmpty()) {
+            return;
+        }
+
+        TLV t = new TLV("61", de61, "SE", "Point-of-Service [POS] Data");
+        t.add(new TLV("1", getPOSTerminalAttendance(), "SF", "POS Terminal Attendance"));
+        t.add(new TLV("2", getSubField2RFU(), "SF", "RFU"));
+        t.add(new TLV("3", getPOSTerminalLocation(), "SF", "POS Terminal Location"));
+        t.add(new TLV("4", getPOSCardholderPresence(), "SF", "POS Cardholder Presence"));
+        t.add(new TLV("5", getPOSCardPresence(), "SF", "POS Card Presence"));
+        t.add(new TLV("6", getPOSCardCaptureCapabilities(), "SF", "POS Card Capture Capabilities"));
+        t.add(new TLV("7", getPOSTransactionStatusIndicator(), "SF", "POS Transaction Status Indicator"));
+        t.add(new TLV("8", getPOSTransactionSecurityIndicator(), "SF", "POS Transaction Security Indicator"));
+        t.add(new TLV("9", getSubField9RFU(), "SF", "RFU"));
+        t.add(new TLV("10", getCardholderActivatedTerminalLevel(), "SF", "Cardholder-Activated Terminal Level"));
+        t.add(new TLV("11", getPOSCardDataTerminalInputCapabilityIndicator(), "SF",
+                "POS Card Data Terminal Input Capability Indicator"));
+        if (de61.length() > 11) {
+            t.add(new TLV("12", getPOSAuthorizationLifeCycle(), "SF", "POS Authorization LifeCycle"));
+        }
+        if (de61.length() > 13) {
+            t.add(new TLV("13", getPOSCountryCode(), "SF", "POS Country Code"));
+        }
+        if (de61.length() > 16) {
+            t.add(new TLV("14", getPOSPostalCode(), "SF", "POS Postal Code"));
+        }
+
+        t.dump(p, indent);
     }
 
 }

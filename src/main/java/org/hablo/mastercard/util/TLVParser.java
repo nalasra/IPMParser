@@ -14,10 +14,10 @@ import org.jpos.util.Loggeable;
 /**
  * Created by Arsalan Khan on 09/06/21.
  */
-public class GenericTLVParser implements DEParserSupport {
+public class TLVParser implements ParserSupport {
 
     String sourceTLVData;
-    private LinkedHashSet<GenericTag> tags;
+    private LinkedHashSet<TLV> tlvs;
     int MIN_TAG_ID = 0;
     int MAX_TAG_ID = 9999;
     private final int tagSize;
@@ -25,15 +25,15 @@ public class GenericTLVParser implements DEParserSupport {
     private final int tlvFieldId;
     private final String fieldType;
 
-    public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType) {
-        tags = new LinkedHashSet<>();
+    public TLVParser(int fieldId, int tagSize, int lengthSize, String fieldType) {
+        tlvs = new LinkedHashSet<>();
         this.tlvFieldId = fieldId;
         this.tagSize = tagSize;
         this.lengthSize = lengthSize;
         this.fieldType = fieldType;
     }
 
-    public GenericTLVParser(int fieldId, int tagSize, int lengthSize, String fieldType, int minTagId, int maxTagId) {
+    public TLVParser(int fieldId, int tagSize, int lengthSize, String fieldType, int minTagId, int maxTagId) {
         this(fieldId, tagSize, lengthSize, fieldType);
         this.MIN_TAG_ID = minTagId;
         this.MAX_TAG_ID = maxTagId;
@@ -70,14 +70,14 @@ public class GenericTLVParser implements DEParserSupport {
 
             String value = "";
             value = sourceTLVData.substring(i, i + tagLenInt);
-            tags.add(new GenericTag(tagId, tagLenInt, value, fieldType));
+            tlvs.add(new TLV(tagId, tagLenInt, value, fieldType));
             i = i + tagLenInt;
         }
     }
 
     public boolean hasElement(String id) {
         Objects.requireNonNull(id);
-        for (GenericTag e : tags) {
+        for (TLV e : tlvs) {
             if (e.getId().equals(id)) {
                 return true;
             }
@@ -85,9 +85,9 @@ public class GenericTLVParser implements DEParserSupport {
         return false;
     }
 
-    public GenericTag getElementById(String id) {
+    public TLV getElementById(String id) {
         Objects.requireNonNull(id);
-        for (GenericTag e : tags) {
+        for (TLV e : tlvs) {
             if (e.getId().equals(id)) {
                 return e;
             }
@@ -95,62 +95,61 @@ public class GenericTLVParser implements DEParserSupport {
         return null;
     }
 
-    protected Set<GenericTag> getTags() {
-        return tags;
+    protected Set<TLV> getTlvs() {
+        return tlvs;
     }
 
     @Override
     public void dump(PrintStream p, String indent) {
         p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
-        for (GenericTag e : getTags()) {
+        for (TLV e : getTlvs()) {
             e.dump(p, indent + " ");
         }
     }
 
-    public static class GenericTag implements Loggeable {
-
+    public static class TLV implements Loggeable {
         private String id;
         private int length;
         private String value;
         private String type;
         private String description;
-        LinkedHashSet<GenericTag> elements;
+        LinkedHashSet<TLV> elements;
 
-        public GenericTag() {
+        public TLV() {
             elements = new LinkedHashSet<>();
         }
 
-        public GenericTag(String id) {
+        public TLV(String id) {
             this();
             this.id = id;
         }
 
-        public GenericTag(String id, String value) {
+        public TLV(String id, String value) {
             this(id);
             this.value = value;
         }
 
-        public GenericTag(String id, String value, String type) {
+        public TLV(String id, String value, String type) {
             this(id, value);
             this.type = type;
         }
 
-        public GenericTag(String id, String value, String type, String description) {
+        public TLV(String id, String value, String type, String description) {
             this(id, value, type);
             this.description = description;
         }
 
-        public GenericTag(String id, int length, String value) {
+        public TLV(String id, int length, String value) {
             this(id, value);
             this.length = length;
         }
 
-        public GenericTag(String id, int length, String value, String type) {
+        public TLV(String id, int length, String value, String type) {
             this(id, length, value);
             this.type = type;
         }
 
-        public void add(GenericTag item) {
+        public void add(TLV item) {
             elements.add(item);
         }
 
@@ -212,7 +211,7 @@ public class GenericTLVParser implements DEParserSupport {
             p.println(getValue());
 
             if (elements != null && !elements.isEmpty()) {
-                for (GenericTag e : elements) {
+                for (TLV e : elements) {
                     e.dump(p, indent + " ");
                 }
             }

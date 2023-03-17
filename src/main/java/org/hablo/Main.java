@@ -11,19 +11,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hablo.mada.tlf.TLFParser;
 import org.hablo.mastercard.iso.MCCISParser;
-import org.hablo.mastercard.t057.T057Parser;
-import org.hablo.mastercard.t067.T067Parser;
-import org.hablo.mastercard.t112.T112Parser;
 import org.hablo.mastercard.util.DE108Parser;
 import org.hablo.mastercard.util.DE110Parser;
 import org.hablo.mastercard.util.DE48IPMParser;
-import org.hablo.mastercard.util.DE48Parser;
-import org.hablo.mastercard.util.DE61Parser;
-import org.hablo.mastercard.util.DEParserSupport;
-import org.hablo.visa.baseii.BaseIIParser;
-import org.hablo.visa.iso.VisaBaseIParser;
+import org.hablo.mastercard.util.ParserSupport;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -35,7 +27,6 @@ import org.jpos.security.SecureKeyBlock;
 import org.jpos.security.SecureKeyBlockBuilder;
 import org.jpos.security.jceadapter.SSM;
 import org.jpos.util.Logger;
-import org.jpos.util.SimpleLogListener;
 
 public class Main {
 
@@ -104,12 +95,12 @@ public class Main {
         //parseDE(DE48Parser.class, "0100", 48, "T420701032114328hJJLtQa+Iws8AREAEbjsA1MAAAA=660501011"); //SPA1Attempt
         //parseDE(DE48Parser.class, "0100", 48, "T420701032124328jJJLtQa+Iws8AREAEbjsBkEAAAA=660501011"); //SPA1FullyAuthenticated
         //parseDE(DE48Parser.class, "0100", 48, "T420701032114328kLAfdvwQTySUPJTvhAEAABrOxpFx6645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2
-        parseDE(DE48Parser.class, "0100", 48, "T010120236F38E6948-5388-41A6-BCA4-B49723C19437420701032174328kOWg7cqnaqcoEgABlDyU78kgL6sa6315MCCA1B2C3  66456645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2Partial
+        //parseDE(DE48Parser.class, "0100", 48, "T010120236F38E6948-5388-41A6-BCA4-B49723C19437420701032174328kOWg7cqnaqcoEgABlDyU78kgL6sa6315MCCA1B2C3  66456645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2Partial
         //parseDE(DE48Parser.class, "0800", 48, "1154PK0001A8B5474DBEF0FBC689707EE1C6329CE658D4            ");
         //parseDE(DE48IPMParser.class, "0100", 48, "0002003MSO0003003MSO0148008826282620158030MSI4826001S212061402     NNNNN0165001M0177001N0191001201590679570       0942027400                  1EU00000008N2104190121041901");
         //parseDE(DE61Parser.class, "0100", 61, "102510800600084063129-5210");
         //parseDE(DE108Parser.class, "0100", 108,"010640109FIRSTNAME0308LASTNAME0703USA1122123456789+123456789012180202020690109FIRSTNAME0308LASTNAME04121234 MAIN ST0703USA1111123456789101802050302301190877775555580121530");
-        //parseDE(DE110Parser.class, "0100", 110,"09080B0080P0TB00S000082E9F773BCFF20772A6D292A45F5F4C97EAD3C519679D1E95AC6A9E509F7BEE21000658D4C6"); //key block DKE
+        parseDE(DE110Parser.class, "0100", 110,"09080B0080P0TB00S000082E9F773BCFF20772A6D292A45F5F4C97EAD3C519679D1E95AC6A9E509F7BEE21000658D4C6"); //key block DKE
 
         /* TCP Socket Channels
          * For VTS/MAS Simulator
@@ -227,9 +218,9 @@ public class Main {
             m.setMTI(mti);
             m.set(key, data);
             T o = clazz.newInstance();
-            if (o instanceof DEParserSupport) {
-                ((DEParserSupport) o).parse(m);
-                ((DEParserSupport) o).dump(System.out, "");
+            if (o instanceof ParserSupport) {
+                ((ParserSupport) o).parse(m);
+                ((ParserSupport) o).dump(System.out, "");
             } else {
                 System.out.println("Unknown class type: " + clazz.getSimpleName());
             }

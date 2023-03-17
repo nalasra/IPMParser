@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class PropertiesConverter {
+public class PropertiesLoader {
 
     private static final Map<String, String> mapper = new HashMap<>();
 
-    public PropertiesConverter(String file) {
+    public PropertiesLoader(String file) {
         try {
             load(file);
         } catch (IOException ignored) {
@@ -26,7 +26,7 @@ public class PropertiesConverter {
 
     @Override
     public String toString() {
-        return "PropertiesConverter{" + mapper.toString() + "}";
+        return "PropertiesLoader{" + mapper.toString() + "}";
     }
 
     private static void load(String base) throws IOException {
@@ -45,7 +45,7 @@ public class PropertiesConverter {
         }
 
         if (in == null) {
-            in = PropertiesConverter.class.getClassLoader().getResourceAsStream(name);
+            in = PropertiesLoader.class.getClassLoader().getResourceAsStream(name);
         }
 
         return in;

@@ -1,6 +1,6 @@
 package org.hablo.mastercard.util;
 
-import org.hablo.helper.PropertiesConverter;
+import org.hablo.helper.PropertiesLoader;
 import org.hablo.helper.ISOMsgHelper;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
@@ -13,11 +13,11 @@ import java.util.Map;
 /**
  * Created by Arsalan Khan on 09/06/21.
  */
-public class DE48Parser extends GenericTLVParser {
+public class DE48Parser extends TLVParser {
 
     private String tcc;
     private static final Map<String, String> de48SEList = new HashMap<>();
-    private static final PropertiesConverter seConverter = new PropertiesConverter("mc_de48_se_list.properties");
+    private static final PropertiesLoader seConverter = new PropertiesLoader("mc_de48_se_list.properties");
 
     static {
         de48SEList.put("37", "01,02,03,04");
@@ -50,7 +50,7 @@ public class DE48Parser extends GenericTLVParser {
 
         super.parse(m);
 
-        for (GenericTag e : getTags()) {
+        for (TLV e : getTlvs()) {
             e.setDescription(seConverter.convert(e.getId()));
             if (de48SEList.containsKey(e.getId())) {
                 int j = 0;
@@ -62,7 +62,7 @@ public class DE48Parser extends GenericTLVParser {
                     int sFL = Integer.parseInt(subFieldLength);
                     String subFieldData = e.getValue().substring(j, j + sFL);
                     j = j + sFL;
-                    GenericTag ee = new GenericTag(subTagId, sFL, subFieldData, "SF");
+                    TLV ee = new TLV(subTagId, sFL, subFieldData, "SF");
                     ee.setDescription(seConverter.convert(e.getId() + "." + ee.getId()));
                     e.add(ee);
                 }
@@ -74,10 +74,10 @@ public class DE48Parser extends GenericTLVParser {
     public void dump(PrintStream p, String indent) {
         p.println(indent + getClass().getName() + " value='" + tcc + sourceTLVData + "'");
         if (tcc != null) {
-            p.println(indent + " TCC=" + tcc);
+            p.println(indent + " TCC=" + tcc + " (" + TCC.getEnum(tcc).name() + ")");
         }
         p.println(" DATAELEMENT   LENGTH       DESCRIPTION");
-        for (GenericTag e : getTags()) {
+        for (TLV e : getTlvs()) {
             e.dump(p, indent + " ");
         }
     }
@@ -87,6 +87,7 @@ public class DE48Parser extends GenericTLVParser {
     }
 
     public enum TCC {
+        UNKNOWN(" "),
         AUTO_VEHICLE_RENTAL("A"),
         CASH_DISBURSEMENT("C"),
         RESTAURANT("F"),
@@ -112,6 +113,15 @@ public class DE48Parser extends GenericTLVParser {
                 }
             }
             return false;
+        }
+
+        public static TCC getEnum(String value) {
+            for (TCC tcc : values()) {
+                if (tcc.toString().equals(value)) {
+                    return tcc;
+                }
+            }
+            return TCC.UNKNOWN;
         }
 
         @Override
