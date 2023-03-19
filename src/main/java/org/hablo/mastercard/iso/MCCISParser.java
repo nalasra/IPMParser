@@ -15,7 +15,7 @@ import org.jpos.iso.packager.GenericPackager;
 
 public class MCCISParser implements ISOMsgParserSupport {
 
-    static GenericPackager packager;
+    GenericPackager packager;
     static List<Class> mcDEParsers = new ArrayList<>();
 
     static {

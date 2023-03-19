@@ -116,9 +116,9 @@ public class TR31 {
     }
 
     private void buildBinaryKeyData() {
-        String randomNumber = this.getRandomNumber(6);
+        String randNumber = this.getRandomNumber(6);
         String str1 = String.join("", this.zpk);
-        String str2 = String.format("%04x", (str1.length() * 4)) + str1 + randomNumber;
+        String str2 = String.format("%04x", (str1.length() * 4)) + str1 + randNumber;
         String str3 = String.join("", this.keyblockHeaderAsciiHex, str2);
 
         this.binaryKeyData = new ArrayList<>();
@@ -157,10 +157,10 @@ public class TR31 {
 
     private String buildSubKey(String data) {
         String str = this.addHexStrings(data, data);
-        String Data1 = str.substring(str.length() - 16, 16);
+        String data1 = str.substring(str.length() - 16, 16);
         if (this.isBitSet(ISOUtil.hex2byte(data.substring(0, 2))[0], 7))
-            Data1 = ISOUtil.hexor(Data1, "000000000000001B");
-        return Data1;
+            data1 = ISOUtil.hexor(data1, "000000000000001B");
+        return data1;
     }
 
     private void buildKeyBlockKeys() {
@@ -212,8 +212,8 @@ public class TR31 {
             if (num == 1) {
                 tempStr1 = data;
             } else {
-                String Data2 = num >= this.headerAndBinaryKeyData.size() ? ISOUtil.hexor(data, this.km1) : data;
-                tempStr1 = ISOUtil.hexor(tempStr, Data2);
+                String data2 = num >= this.headerAndBinaryKeyData.size() ? ISOUtil.hexor(data, this.km1) : data;
+                tempStr1 = ISOUtil.hexor(tempStr, data2);
             }
             byte[] d = ISOUtil.hex2byte(tempStr1);
             try {
@@ -230,7 +230,7 @@ public class TR31 {
         String tempStr = "";
         String keyBlock = String.join("", this.keyblockEncryptionKey);
         int num = 1;
-        this.encryptedkeydata = new ArrayList<String>();
+        this.encryptedkeydata = new ArrayList<>();
         for (String str : this.binaryKeyData) {
             byte[] d = ISOUtil.hex2byte(num != 1 ? ISOUtil.hexor(tempStr, str) : ISOUtil.hexor(str, this.mac));
             try {
@@ -275,10 +275,10 @@ public class TR31 {
     }
 
     private List<String> parsedKeys(String kString) {
-        List<String> StringList = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         for (int startIndex = 0; startIndex < kString.length(); startIndex += 16)
-            StringList.add(kString.substring(startIndex, 16 + startIndex));
-        return StringList;
+            strings.add(kString.substring(startIndex, 16 + startIndex));
+        return strings;
     }
 
     private boolean isBitSet(byte b, int pos) {

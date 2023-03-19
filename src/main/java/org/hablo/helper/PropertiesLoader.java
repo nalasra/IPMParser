@@ -16,12 +16,11 @@ public class PropertiesLoader {
     }
 
     public String convert(String s) {
-        String rc = mapper.get(s);
-        if (rc == null) {
-            rc = "";
-        }
+        return mapper.get(s);
+    }
 
-        return rc;
+    public boolean hasKey(String key){
+        return mapper.containsKey(key);
     }
 
     @Override

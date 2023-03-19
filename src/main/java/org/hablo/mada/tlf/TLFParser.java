@@ -31,8 +31,8 @@ public class TLFParser extends FileParserSupport {
                         if ("02,04,06".contains(type)) {
                             msgCurrent = parseRecord_02_04_06(row);
                         } else if ("08".equals(type)) {
-                            msgCurrent = parseRecord_02_04_06(row);
-                        } else if ("12,14".equals(type)) {
+
+                        } else if ("12,14".contains(type)) {
 
                         }
                     }

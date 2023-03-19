@@ -21,13 +21,4 @@ public class DE110Parser extends TLVParser {
             e.setDescription(converter.convert(e.getId()));
         }
     }
-
-    @Override
-    public void dump(PrintStream p, String indent) {
-        p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
-        p.println(indent + " DATAELEMENT   LENGTH       DESCRIPTION");
-        for (TLV e : getTlvs()) {
-            e.dump(p, indent + " ");
-        }
-    }
 }

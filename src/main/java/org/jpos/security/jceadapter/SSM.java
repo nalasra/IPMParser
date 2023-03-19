@@ -51,8 +51,8 @@ public class SSM extends JCESecurityModule {
 
     public static SecureDESKey getSecureKey(String key, int keyLength, String keyType, String kcv) {
         byte[] keyBytes = ISOUtil.hex2byte(key);
-        byte[] KeyCheckValue = ISOUtil.hex2byte(kcv);
-        return new SecureDESKey((short) keyLength, keyType, keyBytes, KeyCheckValue);
+        byte[] keyCheckValue = ISOUtil.hex2byte(kcv);
+        return new SecureDESKey((short) keyLength, keyType, keyBytes, keyCheckValue);
     }
 
     public String encryptKeyTR31(String pek, String kek, String random, Exportability exportability){

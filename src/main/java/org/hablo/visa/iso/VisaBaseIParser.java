@@ -7,7 +7,7 @@ import org.jpos.iso.packager.GenericPackager;
 import org.jpos.util.Logger;
 
 public class VisaBaseIParser implements ISOMsgParserSupport {
-    static GenericPackager packager;
+    GenericPackager packager;
 
     public ISOMsg parse(byte[] d){
         ISOMsg m = null;
@@ -19,7 +19,7 @@ public class VisaBaseIParser implements ISOMsgParserSupport {
             m.unpack(d);
             m.dump(System.out, "");
         } catch (ISOException e) {
-            System.out.println("Exception occurred...");
+            System.err.println("Exception occurred...");
             e.printStackTrace();
         }
         return m;

@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.hablo.mastercard.iso.MCCISParser;
+import org.hablo.mastercard.t112.T112Parser;
 import org.hablo.mastercard.util.DE108Parser;
 import org.hablo.mastercard.util.DE110Parser;
 import org.hablo.mastercard.util.DE48IPMParser;
+import org.hablo.mastercard.util.DE61Parser;
 import org.hablo.mastercard.util.ParserSupport;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
@@ -100,7 +102,7 @@ public class Main {
         //parseDE(DE48IPMParser.class, "0100", 48, "0002003MSO0003003MSO0148008826282620158030MSI4826001S212061402     NNNNN0165001M0177001N0191001201590679570       0942027400                  1EU00000008N2104190121041901");
         //parseDE(DE61Parser.class, "0100", 61, "102510800600084063129-5210");
         //parseDE(DE108Parser.class, "0100", 108,"010640109FIRSTNAME0308LASTNAME0703USA1122123456789+123456789012180202020690109FIRSTNAME0308LASTNAME04121234 MAIN ST0703USA1111123456789101802050302301190877775555580121530");
-        parseDE(DE110Parser.class, "0100", 110,"09080B0080P0TB00S000082E9F773BCFF20772A6D292A45F5F4C97EAD3C519679D1E95AC6A9E509F7BEE21000658D4C6"); //key block DKE
+        //parseDE(DE110Parser.class, "0100", 110,"09080B0080P0TB00S000082E9F773BCFF20772A6D292A45F5F4C97EAD3C519679D1E95AC6A9E509F7BEE21000658D4C6"); //key block DKE
 
         /* TCP Socket Channels
          * For VTS/MAS Simulator
