@@ -16,6 +16,7 @@ import org.hablo.mastercard.t112.T112Parser;
 import org.hablo.mastercard.util.DE108Parser;
 import org.hablo.mastercard.util.DE110Parser;
 import org.hablo.mastercard.util.DE48IPMParser;
+import org.hablo.mastercard.util.DE48Parser;
 import org.hablo.mastercard.util.DE61Parser;
 import org.hablo.mastercard.util.ParserSupport;
 import org.jpos.ee.BLException;
@@ -73,7 +74,7 @@ public class Main {
 
         /* Mastercard IPM Clearing (T112)*/
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mexico");
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "pmt28");
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
 
         /* Mastercard Currency Exchange Rates (T057) */
@@ -93,6 +94,8 @@ public class Main {
 
         //parseDE(DE48Parser.class, "0100", 48, "R15100313114225");
         //parseDE(DE48Parser.class, "0100", 48, "Z37340111000000123450315A-00009876543218002TV"); //Additional Merchant Data
+        //parseDE(DE48Parser.class, "0100", 48, "P6105000017703C528002TV5618AQV000AQS000AQF000753201030760202200303076040220050200710818C 33V "); //Payment Transaction
+        //parseDE(DE48Parser.class, "0100", 48, "P6105000017703C55753201032400202200303240040220050200710818C 33V "); //Payment Transaction
         //parseDE(DE48Parser.class, "0100", 48, "T420701032124328kBNprVWW0r2tzwggEy9l7TkhY+EW66450101202365019c1b5-a061-4ee0-a9a3-672a06305088");
         //parseDE(DE48Parser.class, "0100", 48, "T420701032114328hJJLtQa+Iws8AREAEbjsA1MAAAA=660501011"); //SPA1Attempt
         //parseDE(DE48Parser.class, "0100", 48, "T420701032124328jJJLtQa+Iws8AREAEbjsBkEAAAA=660501011"); //SPA1FullyAuthenticated
