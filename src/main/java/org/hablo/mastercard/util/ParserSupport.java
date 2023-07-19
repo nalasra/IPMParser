@@ -6,6 +6,6 @@ import org.jpos.iso.ISOMsg;
 import org.jpos.util.Loggeable;
 
 public interface ParserSupport extends Loggeable {
-    void parse(ISOMsg m) throws ISOException, BLException;
+    void parse(ISOMsg m) throws ISOException, BLException, ClassNotFoundException;
 }
 

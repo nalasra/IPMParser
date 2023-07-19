@@ -8,17 +8,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hablo.mastercard.iso.MCCISParser;
+import org.apache.commons.lang3.StringUtils;
+import org.hablo.helper.FilenameComparator;
 import org.hablo.mastercard.t112.T112Parser;
-import org.hablo.mastercard.util.DE108Parser;
-import org.hablo.mastercard.util.DE110Parser;
-import org.hablo.mastercard.util.DE48IPMParser;
-import org.hablo.mastercard.util.DE48Parser;
-import org.hablo.mastercard.util.DE61Parser;
 import org.hablo.mastercard.util.ParserSupport;
+import org.hablo.visa.baseii.BaseIIParser;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -63,6 +61,8 @@ public class Main {
     public static void main(String[] args) {
         init();
 
+
+
         /* Mada (TLF) */
         //parseFile(TLFParser.class, MADA_TLF_FILES_IN, MADA_TLF_FILES_OUT, "");
         //parseFile(TLFParser.class, MADA_TLF_FILES_IN, MADA_TLF_FILES_OUT, "TLF04.20210321.SPAN.588850"); //TLF04.20210321.SPAN.588850
@@ -70,11 +70,14 @@ public class Main {
         /* Visa BASE II */
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"");
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
-        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
+        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"INCTF01.EPD.20211020.203029.CTF"); //VISAIN_BAE_410896_090921.txt
+        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISAIN_BAE_410896_090921.txt"); //VISAIN_BAE_410896_090921.txt
+        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"702432020230618A1037OCE.itf"); //VISAIN_BAE_410896_090921.txt
 
         /* Mastercard IPM Clearing (T112)*/
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "pmt28");
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "test1014_ebcdic.ipm"); //ebcdic
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mibo");  //by directory
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
 
         /* Mastercard Currency Exchange Rates (T057) */
@@ -167,39 +170,52 @@ public class Main {
         return fs;
     }
 
-    public static BufferedWriter initializeWriter(String path, String fileName) throws IOException {
-        File theDir = new File(path + ID);
+    public static BufferedWriter initializeWriter(String fileIn, String fileOut, File file) throws IOException {
+        String dir = StringUtils.mid(file.getAbsolutePath(), fileIn.length(),
+                file.getAbsolutePath().length() - file.getName().length() - fileIn.length());
+        File theDir = new File(fileOut + ID + dir);
         if (!theDir.exists()) {
             theDir.mkdirs();
         }
-        return new BufferedWriter(new FileWriter(path + ID + fileName + ".txt"));
+        return new BufferedWriter(new FileWriter(fileOut + ID + dir + file.getName() + ".txt"));
     }
 
     public static <T> void parseFile(Class<T> clazz, String fileIn, String fileOut, String fileName) {
         try {
-            File[] fs = getFiles(fileName, fileIn);
-            if (fs != null) {
-                int index = 1;
-                System.out.println("Total files found " + fs.length);
-                for (File f : fs) {
-                    if (f.isFile()) {
-                        System.out.println(
-                                String.format("Processing file... %d/%d %s", index, fs.length, f.getAbsolutePath()));
-                        BufferedWriter writer = initializeWriter(fileOut, f.getName());
-                        T parser = clazz.newInstance();
-                        if (parser instanceof FileParserSupport) {
-                            FileParserSupport fps = (FileParserSupport) parser;
-                            fps.setOutputParsedFile(true);
-                            fps.setWriter(writer);
-                            fps.parse(f);
-                        }
-                        writer.close();
-                    }
-                    index++;
-                }
+            File[] f = getFiles(fileName, fileIn);
+            if (f != null) {
+                Arrays.sort(f, new FilenameComparator());
+                System.out.printf("Total %d files/folders found\n", f.length);
+                processFile(clazz, fileIn, fileOut, f);
             }
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
+        }
+    }
+
+    private static <T> void processFile(Class<T> clazz, String fileIn, String fileOut, File[] fs)
+            throws IOException, InstantiationException, IllegalAccessException {
+        int index = 1;
+        for (File f : fs) {
+            if (!f.isFile()) {
+                File[] files = f.listFiles();
+                if(files != null) {
+                    Arrays.sort(files, new FilenameComparator());
+                    processFile(clazz, fileIn, fileOut, files);
+                }
+            } else {
+                System.out.printf("Processing file... %d/%d %s%n", index, fs.length, f.getAbsolutePath());
+                BufferedWriter writer = initializeWriter(fileIn, fileOut, f);
+                T parser = clazz.newInstance();
+                if (parser instanceof FileParserSupport) {
+                    FileParserSupport fps = (FileParserSupport) parser;
+                    fps.setOutputParsedFile(true);
+                    fps.setWriter(writer);
+                    fps.parse(f);
+                }
+                index++;
+                writer.close();
+            }
         }
     }
 
@@ -229,7 +245,7 @@ public class Main {
             } else {
                 System.out.println("Unknown class type: " + clazz.getSimpleName());
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (BLException | ISOException blException) {
             blException.printStackTrace();

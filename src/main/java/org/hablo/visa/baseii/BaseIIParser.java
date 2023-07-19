@@ -27,10 +27,10 @@ public class BaseIIParser extends FileParserSupport {
                 }
                 counter++;
             }
-        } catch (FileNotFoundException e){
-            System.out.println("Error at line# " + counter);
         } catch (Exception e){
+            System.out.println("Error at line# " + counter);
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

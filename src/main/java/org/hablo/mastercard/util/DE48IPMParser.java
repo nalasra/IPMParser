@@ -1,12 +1,19 @@
 package org.hablo.mastercard.util;
 
+import static java.lang.Class.forName;
+
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.hablo.helper.PropertiesLoader;
+import org.hablo.mastercard.util.ipm.PDS0146Parser;
 import org.hablo.mastercard.util.ipm.PDS0158Parser;
 import org.hablo.mastercard.util.ipm.PDS0159Parser;
+import org.hablo.mastercard.util.ipm.PDS0170Parser;
+import org.hablo.mastercard.util.ipm.PDS0208Parser;
+import org.hablo.mastercard.util.ipm.PDS0218Parser;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -17,15 +24,8 @@ import org.jpos.iso.ISOMsg;
  */
 public class DE48IPMParser extends TLVParser {
 
-    private static final Map<String, Class> pdsElementParsers = new HashMap<>();
+    private static final Map<String, Class<PDSParserSupport>> pdsElementParsers = new HashMap<>();
     private static final PropertiesLoader converter = new PropertiesLoader("mc_de48_pds_list.properties");
-
-    static {
-        //pdsElementParsers.put("0146", PDS0146Parser.class);
-        pdsElementParsers.put("0158", PDS0158Parser.class);
-        pdsElementParsers.put("0159", PDS0159Parser.class);
-        //pdsElementParsers.put("0164", PDS0164Parser.class);
-    }
 
     public DE48IPMParser() {
         super(48, 4, 3, "PDS", 0, 9999);
@@ -41,15 +41,26 @@ public class DE48IPMParser extends TLVParser {
 
         for (TLV e : getTlvs()) {
             e.setDescription(converter.convert(e.getId()));
-            if (pdsElementParsers.containsKey(e.getId())) {
-                Class<PDSParserSupport> clazz = pdsElementParsers.get(e.getId());
-                PDSParserSupport parserSupport;
+            Class clazz = null;
+            if(pdsElementParsers.containsKey(e.getId())) {
+                clazz = pdsElementParsers.get(e.getId());
+            } else {
                 try {
-                    parserSupport = clazz.newInstance();
-                    parserSupport.parse(e);
-                } catch (InstantiationException | IllegalAccessException instantiationException) {
-                    instantiationException.printStackTrace();
+                    clazz = Class.forName("org.hablo.mastercard.util.ipm.PDS" + e.getId() + "Parser");
+                    pdsElementParsers.put(e.getId(), clazz);
+                } catch (ClassNotFoundException ex) {
+                    //throw new RuntimeException(ex);
                 }
+            }
+            PDSParserSupport parserSupport;
+            try {
+                if(clazz == null) continue;
+                parserSupport = (PDSParserSupport) clazz.getDeclaredConstructor().newInstance();
+                parserSupport.parse(e);
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException instantiationException) {
+                instantiationException.printStackTrace();
+            } catch (InvocationTargetException ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
