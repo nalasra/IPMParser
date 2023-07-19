@@ -78,7 +78,7 @@ public class Main {
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "test1014_ebcdic.ipm"); //ebcdic
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mibo");  //by directory
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
+        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
 
         /* Mastercard Currency Exchange Rates (T057) */
         //parseFile(T057Parser.class, T057_FILES_IN, T057_FILES_OUT, "");
