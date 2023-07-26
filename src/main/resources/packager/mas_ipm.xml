@@ -51,99 +51,8 @@
     <isofield id="45" length="76" name="Track 1 data" class="org.jpos.iso.IFA_LLCHAR"/>
     <isofield id="46" length="204" name="Amounts, Fees" class="org.jpos.iso.IFA_LLLCHAR"/>
     <isofield id="47" length="999" name="Additional data - national" class="org.jpos.iso.IFA_LLLCHAR"/>
-    <!--    <isofieldpackager-->
-    <!--      id="48"-->
-    <!--      length="999"-->
-    <!--      name="Additional Data"-->
-    <!--      class="org.jpos.iso.IFA_LLLCHAR"-->
-    <!--      token="0000"-->
-    <!--      packager="org.jpos.tlv.packager.TaggedSequencePackager">-->
-    <!--        <isofield-->
-    <!--          id="1"-->
-    <!--          length="999"-->
-    <!--          token="###"-->
-    <!--          name="Default Tag Packager"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="3"-->
-    <!--          length="999"-->
-    <!--          token="0122"-->
-    <!--          name="Processing Mode"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="4"-->
-    <!--          length="999"-->
-    <!--          token="0301"-->
-    <!--          name="File Amount , Checksum"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="5"-->
-    <!--          length="999"-->
-    <!--          token="0306"-->
-    <!--          name="File Message Counts"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="6"-->
-    <!--          length="999"-->
-    <!--          token="0023"-->
-    <!--          name="Terminal Type"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="7"-->
-    <!--          length="999"-->
-    <!--          token="0025"-->
-    <!--          name="Message Reversal Indicator"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="8"-->
-    <!--          length="999"-->
-    <!--          token="0165"-->
-    <!--          name="Settlement indicator"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="9"-->
-    <!--          length="999"-->
-    <!--          token="0262"-->
-    <!--          name="Documentation Indicator"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="10"-->
-    <!--          length="999"-->
-    <!--          token="1002"-->
-    <!--          name="Transaction type"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="11"-->
-    <!--          length="999"-->
-    <!--          token="0005"-->
-    <!--          name="Message Error Indicator"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="12"-->
-    <!--          length="999"-->
-    <!--          token="0138"-->
-    <!--          name="Source Message Number ID"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="13"-->
-    <!--          length="999"-->
-    <!--          token="0280"-->
-    <!--          name="Source File ID"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="14"-->
-    <!--          length="999"-->
-    <!--          token="1148"-->
-    <!--          name="Currency Exponent"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--        <isofield-->
-    <!--          id="15"-->
-    <!--          length="999"-->
-    <!--          token="1158"-->
-    <!--          name="Business Activity"-->
-    <!--          class="org.jpos.tlv.packager.IFTA_LLLCHAR"/>-->
-    <!--    </isofieldpackager>-->
     <isofield id="48" length="999" name="Additional Data—Private Use" class="org.jpos.iso.IFA_LLLCHAR"/>
+<!--    <isofieldpackager id="48" length="999" name="Additional Data—Private Use" class="org.jpos.iso.IFA_LLLBINARY" packager="org.jpos.iso.IPMSubFieldPackager"/>-->
     <isofield id="49" length="3" name="Currency code, Transaction" class="org.jpos.iso.IF_CHAR"/>
     <isofield id="50" length="3" name="Currency code, Reconciliation" class="org.jpos.iso.IF_CHAR"/>
     <isofield id="51" length="3" name="Currency code, Cardholder billing" class="org.jpos.iso.IF_CHAR"/>
@@ -165,7 +74,8 @@
     <isofield id="67" length="2" name="Extended payment data" class="org.jpos.iso.IFA_NUMERIC"/>
     <isofield id="68" length="3" name="Country code, receiving institution" class="org.jpos.iso.IFA_NUMERIC"/>
     <isofield id="69" length="3" name="Country code, settlement institution" class="org.jpos.iso.IFA_NUMERIC"/>
-    <isofield id="70" length="3" name="Country code, authorizing agent Inst." pad="false" class="org.jpos.iso.IFA_NUMERIC"/>
+    <isofield id="70" length="3" name="Country code, authorizing agent Inst." pad="false"
+      class="org.jpos.iso.IFA_NUMERIC"/>
     <isofield id="71" length="8" name="Message number" class="org.jpos.iso.IFA_NUMERIC"/>
     <isofield id="72" length="999" name="Data record" class="org.jpos.iso.IFA_LLLCHAR"/>
     <isofield id="73" length="6" name="Date, action" class="org.jpos.iso.IFA_NUMERIC"/>

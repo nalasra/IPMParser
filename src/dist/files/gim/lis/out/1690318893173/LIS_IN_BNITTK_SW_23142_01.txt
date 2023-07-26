@@ -1,0 +1,844 @@
+TC90 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '90'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  centerInformationBlock: '000105'
+  processingDate: '05520'
+  destinationAmount: '120523245 3.038'
+  numberOfMonetaryTrans: '          10'
+  batchNumber: '1010  '
+  numberOfTCRs: '            '
+  reserved1: '      '
+  centerBatchID: '        '
+  numberOfTransactions: '         '
+  reserved2: '                  '
+  sourceAmount: '               '
+  reserved3: '               '
+  reserved4: '               '
+  reserved5: '               '
+  reserved6: '       '
+</fsdmsg>
+TC92 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '92'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  filler: '00020                                                                                                                                                                                                                                                  '
+</fsdmsg>
+TC93 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '93'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  totalNumberOfTCRRecords: '000300'
+  totalNumberOfMerchantCredit: '000020'
+  totalNumberOfCashWithdrawalRemittanceCredit: '000000'
+  totalNumberOfCashAdvanceRemittanceCredit: '000000'
+  totalNumberOfMerchantDebit: '000000'
+  totalNumberOfCashWithdrawalRemittanceDebit: '000000'
+  totalNumberOfCashAdvanceRemittanceDebit: '000000'
+  totalNumberOfTC050607TCR0F141: '000000'
+  totalNumberOfTC05TCR01: '000000'
+  totalNumberOfTC252627: '000000'
+</fsdmsg>
+TC94 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '94'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  filler: '00040                                                                                                                                                                                                                                                  '
+</fsdmsg>
+TC95 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '95'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  totalNumberOfTCRRecords: '000500'
+  totalNumberOfMerchantCredit: '000020'
+  totalNumberOfCashWithdrawalRemittanceCredit: '000000'
+  totalNumberOfCashAdvanceRemittanceCredit: '000000'
+  totalNumberOfMerchantDebit: '000000'
+  totalNumberOfCashWithdrawalRemittanceDebit: '000000'
+  totalNumberOfCashAdvanceRemittanceDebit: '000000'
+  totalNumberOfTC050607TCR0F141: '000000'
+  totalNumberOfTC05TCR01: '000000'
+  totalNumberOfTC252627: '000000'
+</fsdmsg>
+TC96 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '96'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  filler: '00060                                                                                                                                                                                                                                                  '
+</fsdmsg>
+TC97 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '97'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  totalNumberOfTCRRecords: '000700'
+  totalNumberOfMerchantCredit: '000020'
+  totalNumberOfCashWithdrawalRemittanceCredit: '000000'
+  totalNumberOfCashAdvanceRemittanceCredit: '000000'
+  totalNumberOfMerchantDebit: '000000'
+  totalNumberOfCashWithdrawalRemittanceDebit: '000000'
+  totalNumberOfCashAdvanceRemittanceDebit: '000000'
+  totalNumberOfTC050607TCR0F141: '000000'
+  totalNumberOfTC05TCR01: '000000'
+  totalNumberOfTC252627: '000000'
+</fsdmsg>
+TC98 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '98'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  filler: '00080                                                                                                                                                                                                                                                  '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '009008162300025'
+  merchantName: '019  BGFI CI ABIDJAN     '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '010111052395220'
+  merchantName: '0247281623313210028972063'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '011008121300028'
+  merchantName: '015  II PLATEAUX AGBAN   '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '012105052328190'
+  merchantName: '0207420446312575804355340'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '013000059900015'
+  merchantName: '011  SGMDCI02            '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '014108042331050'
+  merchantName: '0208000599309865629102137'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '015000092900015'
+  merchantName: '010  RIVIERA 3           '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '016111052325950'
+  merchantName: '0247000929313210028963130'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '017008008300021'
+  merchantName: '016  SGCI YOP ANANERAIE 2'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '018111052342870'
+  merchantName: '0247280083313210028969514'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '019000092900015'
+  merchantName: '010  ANGRE CHU           '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '020111052383570'
+  merchantName: '0247000929313210028961515'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '021000092900015'
+  merchantName: '010  RIVIERA PALMERAIE   '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '022111052371000'
+  merchantName: '0247000929313210028963851'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '023000032100003'
+  merchantName: '003  LUNE                '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '024110052364860'
+  merchantName: '0207432157313204180418918'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '025323CCB1EFB0B'
+  merchantName: 'A44AC8006011203A02001    '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '026000092900015'
+  merchantName: '010  ABIDJAN JOSEPH ANOMA'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '027111052302530'
+  merchantName: '0247000929313210028961982'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '028000092900015'
+  merchantName: '010  AGENCE PLATEAU ALLIA'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '029111052391940'
+  merchantName: '0247000929313210028961902'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '030000543000022'
+  merchantName: '014  FIRSTBANKCI_YOPOUGON'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '031111052319350'
+  merchantName: '0247505430313210028969116'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '032000543000022'
+  merchantName: '014  FIRSTBANKCI_YOPOUGON'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '033111052362740'
+  merchantName: '0247505430313210028969101'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '034000543000022'
+  merchantName: '014  FIRSTBANKCI_YOPOUGON'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '035111052318370'
+  merchantName: '0247505430313210028967361'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '036008008300021'
+  merchantName: '016  T C PRIMA           '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '037108052369200'
+  merchantName: '0207280083312910096373532'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '038000000000001'
+  merchantName: '979  CARREFOUR SDA       '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '039107052318020'
+  merchantName: '0507505540312961290698743'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '040008121300028'
+  merchantName: '015  CAP SUD MARCORY     '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '041108052302390'
+  merchantName: '0207420446312876039057400'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '042000092900015'
+  merchantName: '010  ABIDJAN JOSEPH ANOMA'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '043111052301730'
+  merchantName: '0247000929313210028962472'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '044000092900015'
+  merchantName: '010  AGENCE KOUMASSI     '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '045111052308220'
+  merchantName: '0247000929313210028962268'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '046000092900015'
+  merchantName: '010  YOPOUGON KENEYA     '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '047111052389160'
+  merchantName: '0247000929313210028962950'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '048000092900015'
+  merchantName: '010  AGENCE COCODY DANGA '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '049111052328500'
+  merchantName: '0247000929313210028962185'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '050008008300021'
+  merchantName: '016  SUPER U PLATEAU     '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '051108052363250'
+  merchantName: '0207280083312910096373841'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '052000059900015'
+  merchantName: '011  0059900015011 Allian'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '053111052392950'
+  merchantName: '0247000599313210028957727'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '054000032100003'
+  merchantName: '003  PLEIN SUD BEAUTE    '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '055110052302820'
+  merchantName: '0207432157313207760776126'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '0563CE03A22114C'
+  merchantName: '15F1A8006011203A02001    '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '057008008300021'
+  merchantName: '016  SGCI KOUMASI REMBLAI'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '058111052311230'
+  merchantName: '0247280083313210028973834'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '059000092900015'
+  merchantName: '010  YOPOUGON KENEYA     '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '060111052376320'
+  merchantName: '0247000929313210028962637'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '061008162300025'
+  merchantName: '019  CDL                 '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '062111052312990'
+  merchantName: '0207432157313200820082323'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '063339B01A53349'
+  merchantName: 'B1BF18006011203A03003    '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '064008007300018'
+  merchantName: '008  SIB ABIDJAN         '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '065111052327650'
+  merchantName: '0247280073313210028970832'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '066000092900015'
+  merchantName: '010  AGENCE YOPOUGON NIAN'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '067111052376020'
+  merchantName: '0247000929313210028963720'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '068008007300018'
+  merchantName: '008  SIB ABIDJAN         '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '069111052376880'
+  merchantName: '0247280073313210028966942'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '070008008300021'
+  merchantName: '016  DUFRY CI            '
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '071108052388430'
+  merchantName: '0207280083312910096373019'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '072000092900015'
+  merchantName: '010  AGENCE PORT-BOUET   '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '073111052388680'
+  merchantName: '0247000929313210028961475'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '074008121300028'
+  merchantName: '015  PROSUMA CASINO ALLAB'
+</fsdmsg>
+TC05 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '05'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '075106052374940'
+  merchantName: '0207420446312675924796280'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '076000092900015'
+  merchantName: '010  ABIDJAN JOSEPH ANOMA'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '077111052355580'
+  merchantName: '0247000929313210028962022'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '078008007300018'
+  merchantName: '008  SIB ABIDJAN         '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '079111052365260'
+  merchantName: '0247280073313210028968237'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '080000092900015'
+  merchantName: '010  ABIDJAN JOSEPH ANOMA'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '081111052327610'
+  merchantName: '0247000929313210028963007'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '082008007300018'
+  merchantName: '008  SIB ABIDJAN         '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '083111052337930'
+  merchantName: '0247280073313210028970026'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '084000092900015'
+  merchantName: '010  AGENCE YOPOUGON NIAN'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '085111052383900'
+  merchantName: '0247000929313210028962817'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '086000092900015'
+  merchantName: '010  AGENCE DE GAGNOA    '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '087111052309460'
+  merchantName: '0247000929313210028960760'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '088000092900015'
+  merchantName: '010  AGENCE YOPOUGON NIAN'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '089111052370890'
+  merchantName: '0247000929313210028961461'
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '090000032100003'
+  merchantName: '003  DAB II ZONE 4       '
+</fsdmsg>
+TC07 TCR0
+<fsdmsg schema='file:src/dist/cfg/gim/lis/tc-base'>
+  transactionCode: '07'
+  queueRecordSequenceNumber: '0'
+  tcrSeqNumber: '0'
+  transactionRouteIndicator: '0'
+  merchantEstablishmentNumber: '091111052324940'
+  merchantName: '0247000321313210028952473'
+</fsdmsg>

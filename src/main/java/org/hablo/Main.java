@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hablo.gim.lis.LISParser;
 import org.hablo.helper.FilenameComparator;
 import org.hablo.mastercard.t112.T112Parser;
 import org.hablo.mastercard.util.ParserSupport;
@@ -28,6 +29,7 @@ import org.jpos.security.SecureKeyBlock;
 import org.jpos.security.SecureKeyBlockBuilder;
 import org.jpos.security.jceadapter.SSM;
 import org.jpos.util.Logger;
+import org.jpos.util.SimpleLogListener;
 
 public class Main {
 
@@ -37,6 +39,7 @@ public class Main {
     static String VISA_FILES_DIR = "visa/";
     static String MC_FILES_DIR = "mastercard/";
     static String MADA_FILES_DIR = "mada/";
+    static String GIM_FILES_DIR = "gim/";
 
     static String BASEII_FILES_IN = USER_DIR + FILES_DIR + VISA_FILES_DIR + "baseii/in/";
     static String BASEII_FILES_OUT = USER_DIR + FILES_DIR + VISA_FILES_DIR + "baseii/out/";
@@ -46,6 +49,9 @@ public class Main {
 
     static String T112_FILES_IN = USER_DIR + FILES_DIR + MC_FILES_DIR + "t112/in/";
     static String T112_FILES_OUT = USER_DIR + FILES_DIR + MC_FILES_DIR + "t112/out/";
+
+    static String LIS_FILES_IN = USER_DIR + FILES_DIR + GIM_FILES_DIR + "lis/in/";
+    static String LIS_FILES_OUT = USER_DIR + FILES_DIR + GIM_FILES_DIR + "lis/out/";
 
     static String T057_FILES_IN = USER_DIR + FILES_DIR + MC_FILES_DIR + "t057/in/";
     static String T057_FILES_OUT = USER_DIR + FILES_DIR + MC_FILES_DIR + "t057/out/";
@@ -61,8 +67,6 @@ public class Main {
     public static void main(String[] args) {
         init();
 
-
-
         /* Mada (TLF) */
         //parseFile(TLFParser.class, MADA_TLF_FILES_IN, MADA_TLF_FILES_OUT, "");
         //parseFile(TLFParser.class, MADA_TLF_FILES_IN, MADA_TLF_FILES_OUT, "TLF04.20210321.SPAN.588850"); //TLF04.20210321.SPAN.588850
@@ -76,9 +80,11 @@ public class Main {
 
         /* Mastercard IPM Clearing (T112)*/
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "test1014_ebcdic.ipm"); //ebcdic
+        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "TT112T0.2018-06-01-17-04-48.001"); //ebcdic
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mibo");  //by directory
-        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001");
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mexico"); //jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001
+
+        //parseFile(LISParser.class, LIS_FILES_IN, LIS_FILES_OUT, "");
 
         /* Mastercard Currency Exchange Rates (T057) */
         //parseFile(T057Parser.class, T057_FILES_IN, T057_FILES_OUT, "");
@@ -122,6 +128,7 @@ public class Main {
 
     private static void init() {
         ID = "/" + System.currentTimeMillis() + "/";
+        //Disable Console log listener to speed up parsing of large files
         //l.addListener(new SimpleLogListener());
     }
 

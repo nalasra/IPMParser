@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='totalNumberOfTCRRecords' type='AN' length='6' />
+    <field id='totalNumberOfMerchantCredit' type='AN' length='6' />
+    <field id='totalNumberOfCashWithdrawalRemittanceCredit' type='N' length='6' />
+    <field id='totalNumberOfCashAdvanceRemittanceCredit' type='N' length='6' />
+    <field id='totalNumberOfMerchantDebit' type='N' length='6' />
+    <field id='totalNumberOfCashWithdrawalRemittanceDebit' type='N' length='6' />
+    <field id='totalNumberOfCashAdvanceRemittanceDebit' type='N' length='6' />
+    <field id='totalNumberOfTC050607TCR0F141' type='N' length='6' />
+    <field id='totalNumberOfTC05TCR01' type='N' length='6' />
+    <field id='totalNumberOfTC252627' type='N' length='6' />
+</schema>

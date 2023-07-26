@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='transactionRouteIndicator' type='N' length='1' />
+    <field id='merchantEstablishmentNumber' type='AN' length='15' />
+    <field id='merchantName' type='AN' length='25' />
+</schema>

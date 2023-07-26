@@ -12,7 +12,6 @@ import java.io.InputStream;
 public class RDWReader implements AutoCloseable {
 
     private InputStream f;
-    final int BYTE_BLOCK_SIZE = 1014;
     final int DATA_BLOCK_SIZE = 1012;
     final int RDW_SIZE = 4;
     final int UNUSED_SIZE = 2;
@@ -93,7 +92,7 @@ public class RDWReader implements AutoCloseable {
 
     private int readInternal2(int numBytes, byte[] bytesRead) throws IOException {
         if (numBytes == 0) {
-            System.out.println("Why you are reading zero bytes?");
+            //System.out.println("Why you are reading zero bytes?");
             return 0;
         }
 
