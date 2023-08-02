@@ -1,6 +1,5 @@
 package org.hablo.mastercard.util;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +11,7 @@ import org.jpos.iso.ISOMsg;
 public class DE108Parser extends TLVParser {
 
     private static final Map<String, Object> de108SEList = new HashMap<>();
-    private static final PropertiesLoader converter = new PropertiesLoader("mc_de108_se_list.properties");
+    private static final PropertiesLoader converter = new PropertiesLoader("mc_cis_de108_se_list.properties");
 
     static {
         de108SEList.put("01", "01,03,07,11,18");

@@ -1,14 +1,14 @@
 package org.hablo.mastercard.util;
 
-import org.hablo.helper.PropertiesLoader;
-import org.hablo.helper.ISOMsgHelper;
-import org.jpos.ee.BLException;
-import org.jpos.iso.ISOException;
-import org.jpos.iso.ISOMsg;
-
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.hablo.helper.ISOMsgHelper;
+import org.hablo.helper.PropertiesLoader;
+import org.jpos.ee.BLException;
+import org.jpos.iso.ISOException;
+import org.jpos.iso.ISOMsg;
 
 /**
  * Created by Arsalan Khan on 09/06/21.
@@ -17,7 +17,7 @@ public class DE48Parser extends TLVParser {
 
     private String tcc;
     private static final Map<String, String> de48SEList = new HashMap<>();
-    private static final PropertiesLoader seConverter = new PropertiesLoader("mc_de48_se_list.properties");
+    private static final PropertiesLoader seConverter = new PropertiesLoader("mc_cis_se_list.properties");
 
     static {
         de48SEList.put("37", "01,02,03,04");

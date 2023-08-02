@@ -17,7 +17,7 @@ import org.jpos.util.Loggeable;
 public class TLVParser implements ParserSupport {
 
     String sourceTLVData;
-    private LinkedHashSet<TLV> tlvs;
+    private final LinkedHashSet<TLV> tlvs;
     int MIN_TAG_ID = 0;
     int MAX_TAG_ID = 9999;
     private final int tagSize;
@@ -101,6 +101,7 @@ public class TLVParser implements ParserSupport {
 
     @Override
     public void dump(PrintStream p, String indent) {
+        if(sourceTLVData == null || sourceTLVData.isEmpty()) return;
         p.println(indent + getClass().getName() + " value='" + sourceTLVData + "'");
         p.println(indent + " DATAELEMENT   LENGTH       DESCRIPTION");
         for (TLV e : getTlvs()) {

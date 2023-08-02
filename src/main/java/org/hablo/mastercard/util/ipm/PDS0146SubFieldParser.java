@@ -1,9 +1,9 @@
 package org.hablo.mastercard.util.ipm;
 
+import org.hablo.mastercard.util.PDSSubFieldParserSupport;
 import org.hablo.mastercard.util.TLVParser.TLV;
-import org.hablo.mastercard.util.PDSParserSupport;
 
-public class PDS0146Parser extends PDSParserSupport {
+public class PDS0146SubFieldParser extends PDSSubFieldParserSupport {
 
     public void parse(TLV tag) {
         int i = 0;

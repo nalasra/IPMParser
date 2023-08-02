@@ -1,58 +1,12 @@
 package org.hablo.mastercard.util;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.hablo.helper.PropertiesLoader;
-import org.jpos.ee.BLException;
-import org.jpos.iso.ISOException;
-import org.jpos.iso.ISOMsg;
-
 /**
  * Created by Arsalan Khan on 09/06/21.
  * For MC DE48 (IPM Clearing Format)
  */
-public class DE48IPMParser extends TLVParser {
-
-    private static final Map<String, Class<PDSParserSupport>> pdsElementParsers = new HashMap<>();
-    private static final PropertiesLoader converter = new PropertiesLoader("mc_de48_pds_list.properties");
+public class DE48IPMParser extends PDSParser {
 
     public DE48IPMParser() {
         super(48, 4, 3, "PDS", 0, 9999);
-    }
-
-    public static PropertiesLoader getConverter() {
-        return converter;
-    }
-
-    @Override
-    public void parse(ISOMsg m) throws BLException, ISOException {
-        super.parse(m);
-
-        for (TLV e : getTlvs()) {
-            e.setDescription(converter.convert(e.getId()));
-            Class clazz = null;
-            if(pdsElementParsers.containsKey(e.getId())) {
-                clazz = pdsElementParsers.get(e.getId());
-            } else {
-                try {
-                    clazz = Class.forName("org.hablo.mastercard.util.ipm.PDS" + e.getId() + "Parser");
-                    pdsElementParsers.put(e.getId(), clazz);
-                } catch (ClassNotFoundException ex) {
-                    //throw new RuntimeException(ex);
-                }
-            }
-            PDSParserSupport parserSupport;
-            try {
-                if(clazz == null) continue;
-                parserSupport = (PDSParserSupport) clazz.getDeclaredConstructor().newInstance();
-                parserSupport.parse(e);
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException instantiationException) {
-                instantiationException.printStackTrace();
-            } catch (InvocationTargetException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
     }
 }

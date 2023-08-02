@@ -1,10 +1,18 @@
 package org.hablo.mastercard.t112;
 
+import static org.hablo.helper.ISOMsgHelper.createISOMsg;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.hablo.helper.PropertiesLoader;
 import org.hablo.mastercard.util.DE48IPMParser;
+import org.hablo.mastercard.util.DE62IPMParser;
 import org.hablo.mastercard.util.ParserSupport;
 import org.hablo.rdw.RDWReader;
 import org.jpos.ee.BLException;
@@ -14,19 +22,13 @@ import org.jpos.iso.ISOUtil;
 import org.jpos.iso.packager.GenericPackager;
 import org.jpos.util.Logger;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-
-import static org.hablo.helper.ISOMsgHelper.createISOMsg;
-
 public class T112Parser extends FileParserSupport {
 
     static String MC_IPM = "mas_ipm.xml";
     static String MC_IPM_EBCDIC = "mas_ipm_ebcdic.xml";
     private String mtiFilter;
-    private static final PropertiesLoader seConverter = new PropertiesLoader("mc_mti_fc_desc_list.properties");
+    private static final PropertiesLoader mtiNameConverter = new PropertiesLoader(
+            "mc_ipm_mti_func_code_desc_list.properties");
 
     public void setMtiFilter(String mtiFilter) {
         this.mtiFilter = mtiFilter;
@@ -38,9 +40,7 @@ public class T112Parser extends FileParserSupport {
         int counter = 0;
         try (RDWReader reader = new RDWReader(file.getPath())) {
             reader.open();
-
             GenericPackager packager = null;
-
             byte[] r;
             while ((r = reader.read()) != null) {
                 if (packager == null) {
@@ -56,13 +56,14 @@ public class T112Parser extends FileParserSupport {
                     writer.write(ISOMsgHelper.toString(msg));
                     //dump description
                     String key = msg.getMTI() + "." + msg.getString(24);
-                    if (seConverter.hasKey(key)) {
-                        String description = seConverter.convert(key);
+                    if (mtiNameConverter.hasKey(key)) {
+                        String description = mtiNameConverter.convert(key);
                         writer.write("<!-- ########### " + description + " ########### -->");
                         writer.newLine();
                     }
                     writer.write("");
                     writer.write(parseDE(DE48IPMParser.class, msg));
+                    writer.write(parseDE(DE62IPMParser.class, msg));
                     writer.newLine();
                 }
                 if (counter % 100 == 0) {

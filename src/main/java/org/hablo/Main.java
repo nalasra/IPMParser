@@ -13,11 +13,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hablo.gim.lis.LISParser;
 import org.hablo.helper.FilenameComparator;
 import org.hablo.mastercard.t112.T112Parser;
 import org.hablo.mastercard.util.ParserSupport;
-import org.hablo.visa.baseii.BaseIIParser;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -29,7 +27,6 @@ import org.jpos.security.SecureKeyBlock;
 import org.jpos.security.SecureKeyBlockBuilder;
 import org.jpos.security.jceadapter.SSM;
 import org.jpos.util.Logger;
-import org.jpos.util.SimpleLogListener;
 
 public class Main {
 
@@ -80,9 +77,9 @@ public class Main {
 
         /* Mastercard IPM Clearing (T112)*/
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
-        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "TT112T0.2018-06-01-17-04-48.001"); //ebcdic
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "TT112T0.2018-06-01-17-04-48.001"); //ebcdic
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mibo");  //by directory
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mexico"); //jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001
+        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mexico"); //jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001
 
         //parseFile(LISParser.class, LIS_FILES_IN, LIS_FILES_OUT, "");
 
