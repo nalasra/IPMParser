@@ -38,7 +38,7 @@ public class PDSParser extends TLVParser {
                 clazz = pdsElementParsers.get(e.getId());
             } else {
                 try {
-                    clazz = Class.forName("org.hablo.mastercard.util.ipm.PDS" + e.getId() + "Parser");
+                    clazz = Class.forName("org.hablo.mastercard.util.ipm.PDS" + e.getId() + "SubFieldParser");
                     pdsElementParsers.put(e.getId(), clazz);
                 } catch (ClassNotFoundException ex) {
                     //we don't have a parser for this PDS

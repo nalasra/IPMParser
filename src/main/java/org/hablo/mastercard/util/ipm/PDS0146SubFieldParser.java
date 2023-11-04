@@ -35,12 +35,12 @@ public class PDS0146SubFieldParser extends PDSSubFieldParserSupport {
             t1.setValue(data.substring(startPos, i));
             t1.setDescription(tag.getDescription());
             t1.add(createTLV("1", feeTypeCode, "Fee Type Code"));
-            t1.add(createTLV("2", feeProcCode, "Fee Proc Code"));
-            t1.add(createTLV("3", feeSettIndc, "Fee Sett Indicator"));
-            t1.add(createTLV("4", currCodeFee, "Currency Code Fee"));
-            t1.add(createTLV("5", amtFee, "Amount Fee"));
-            t1.add(createTLV("6", currCodeFeeRecon, "Currency Code Fee Recon"));
-            t1.add(createTLV("7", amtFeeRecon, "Amount Fee Recon"));
+            t1.add(createTLV("2", feeProcCode, "Fee Processing Code"));
+            t1.add(createTLV("3", feeSettIndc, "Fee Settlement Indicator"));
+            t1.add(createTLV("4", currCodeFee, "Currency Code, Fee"));
+            t1.add(createTLV("5", amtFee, "Amount, Fee"));
+            t1.add(createTLV("6", currCodeFeeRecon, "Currency Code, Fee, Reconciliation"));
+            t1.add(createTLV("7", amtFeeRecon, "Amount, Fee, Reconciliation"));
             tag.add(t1);
             counter++;
         }

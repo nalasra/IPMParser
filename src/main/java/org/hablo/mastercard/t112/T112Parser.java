@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hablo.FileParserSupport;
@@ -13,6 +15,7 @@ import org.hablo.helper.ISOMsgHelper;
 import org.hablo.helper.PropertiesLoader;
 import org.hablo.mastercard.util.DE48IPMParser;
 import org.hablo.mastercard.util.DE62IPMParser;
+import org.hablo.mastercard.util.PDSParser;
 import org.hablo.mastercard.util.ParserSupport;
 import org.hablo.rdw.RDWReader;
 import org.jpos.ee.BLException;
@@ -27,11 +30,40 @@ public class T112Parser extends FileParserSupport {
     static String MC_IPM = "mas_ipm.xml";
     static String MC_IPM_EBCDIC = "mas_ipm_ebcdic.xml";
     private String mtiFilter;
+    private String funcCodeFilter;
+    private String fileId;
+    private int cycleNumber;
     private static final PropertiesLoader mtiNameConverter = new PropertiesLoader(
             "mc_ipm_mti_func_code_desc_list.properties");
 
+    private static Map<String, PDSParser> parsersCache = new HashMap<>();
+
     public void setMtiFilter(String mtiFilter) {
         this.mtiFilter = mtiFilter;
+    }
+
+    public void setFuncCodeFilter(String funcCodeFilter) {
+        this.funcCodeFilter = funcCodeFilter;
+    }
+
+    public PDSParser getParser(String key) {
+        return parsersCache.get(key);
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
+    }
+
+    public int getCycleNumber() {
+        return cycleNumber;
+    }
+
+    public void setCycleNumber(int cycleNumber) {
+        this.cycleNumber = cycleNumber;
     }
 
     @Override
@@ -52,20 +84,34 @@ public class T112Parser extends FileParserSupport {
                 }
 
                 ISOMsg msg = createISOMsg(r, packager);
-                if (outputParsedFile && (StringUtils.isBlank(mtiFilter) || mtiFilter.contains(msg.getMTI()))) {
-                    writer.write(ISOMsgHelper.toString(msg));
+                if (outputParsedFile && (
+                        StringUtils.isBlank(mtiFilter) || mtiFilter.contains(msg.getMTI()) &&
+                                StringUtils.isBlank(funcCodeFilter) || funcCodeFilter.contains(msg.getString(24))
+                )) {
                     //dump description
                     String key = msg.getMTI() + "." + msg.getString(24);
                     if (mtiNameConverter.hasKey(key)) {
                         String description = mtiNameConverter.convert(key);
-                        writer.write("<!-- ########### " + description + " ########### -->");
-                        writer.newLine();
+                        writer.write("<!-- ########### " + description + " (" + key + ") ########### -->");
+                    } else {
+                        writer.write("<!-- ########### Cannot identify description for (" + key + ") ########### -->");
                     }
-                    writer.write("");
-                    writer.write(parseDE(DE48IPMParser.class, msg));
-                    writer.write(parseDE(DE62IPMParser.class, msg));
+                    writer.newLine();
+                    writer.write(ISOMsgHelper.toString(msg));
+                    writer.newLine();
+                    if (msg.hasField(48)) {
+                        String de48o = parseDE(DE48IPMParser.class, msg);
+                        writer.write(de48o);
+                    }
+                    if (msg.hasField(62)) {
+                        String de62o = parseDE(DE62IPMParser.class, msg);
+                        writer.write(de62o);
+                    }
+
+                    //TODO: add other DE that contains PDS
                     writer.newLine();
                 }
+                addISOMessage(msg);
                 if (counter % 100 == 0) {
                     writer.flush();
                 }
@@ -80,12 +126,17 @@ public class T112Parser extends FileParserSupport {
         }
     }
 
+    public static String getKey(ISOMsg m) {
+        return String.format("%s_%s_%s_%s", m.getString(0), m.getString(3), m.getString(24), m.getString(71));
+    }
+
     public static <T> String parseDE(Class<T> clazz, ISOMsg m) throws BLException {
         try {
-            T o = clazz.getDeclaredConstructor().newInstance();
-            if (o instanceof ParserSupport) {
-                ((ParserSupport) o).parse(m);
-                return ISOMsgHelper.toString((ParserSupport) o);
+            T parserObj = clazz.getDeclaredConstructor().newInstance();
+            if (parserObj instanceof ParserSupport) {
+                ((ParserSupport) parserObj).parse(m);
+                parsersCache.put(getKey(m) + "_" + clazz.getSimpleName().substring(0, 4), (PDSParser) parserObj);
+                return ISOMsgHelper.toString((ParserSupport) parserObj);
             } else {
                 System.err.println("Unknown class type: " + clazz.getSimpleName());
             }

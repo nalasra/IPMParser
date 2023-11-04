@@ -1,18 +1,18 @@
 package org.hablo.visa.baseii;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.jpos.util.FSDMsg;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 
 public class BaseIIParser extends FileParserSupport {
     private static final String HEADER_SCHEMA = "file:src/dist/cfg/visa/baseii/baseii-90-";
     private static final String TC_SCHEMA = "file:src/dist/cfg/visa/baseii/baseii-";
     private int counter;
+    private String lastRecord;
     @Override
     public void parse(File file) {
         FSDMsg msgBase;
@@ -26,11 +26,15 @@ public class BaseIIParser extends FileParserSupport {
                     writer.write(ISOMsgHelper.toString(msgBase));
                 }
                 counter++;
+                lastRecord = row;
             }
         } catch (Exception e){
             System.out.println("Error at line# " + counter);
             System.out.println(e.getMessage());
             e.printStackTrace();
+        } finally {
+            System.out.println("Last processed record line#: " + counter);
+            System.out.println("Last processed record line: " + lastRecord);
         }
     }
 }

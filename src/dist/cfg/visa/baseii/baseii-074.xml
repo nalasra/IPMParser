@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='agentUniqueID' type='AN' length='5' />
+    <field id='reserved' type='AN' length='5' />
+    <field id='businessFormatCode' type='AN' length='2' />
+    <field id='networkIdentCode' type='AN' length='4' />
+    <field id='contactForInformation' type='AN' length='25' />
+    <field id='adjustmentProcessIndicator' type='AN' length='1' />
+    <field id='messageReasonCode' type='AN' length='4' />
+    <field id='surchargeAmount' type='AN' length='8' />
+    <field id='surchargeCDIndicator' type='AN' length='2' />
+    <field id='visaInternalUse' type='AN' length='16' />
+    <field id='reserved' type='AN' length='27' />
+    <field id='surchageAmountBillingCurrency' type='AN' length='8' />
+    <field id='moneyTransferExchangeFee' type='AN' length='8' />
+    <field id='paymentAccountReference' type='AN' length='29' />
+    <field id='tokenRequestorID' type='AN' length='11' />
+    <field id='reserved' type='AN' length='9' />
+</schema>

@@ -1,20 +1,16 @@
 package org.hablo;
 
+import static org.hablo.helper.FileHelper.getFiles;
+
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hablo.helper.FilenameComparator;
-import org.hablo.mastercard.t112.T112Parser;
+import org.hablo.mastercard.util.DE48IPMParser;
 import org.hablo.mastercard.util.ParserSupport;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
@@ -73,13 +69,14 @@ public class Main {
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"INCTF01.EPD.20211020.203029.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISAIN_BAE_410896_090921.txt"); //VISAIN_BAE_410896_090921.txt
+        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"Success_VISAIN_ADQ_409887_240723.txt"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"702432020230618A1037OCE.itf"); //VISAIN_BAE_410896_090921.txt
 
         /* Mastercard IPM Clearing (T112)*/
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "TT112T0.2018-06-01-17-04-48.001"); //ebcdic
-        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mibo");  //by directory
-        parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mexico"); //jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "analysis");  //by directory
+        //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "mexico"); //jeeves/MCI.AR.T112.M.E0030014.D230222.T185119.A001
 
         //parseFile(LISParser.class, LIS_FILES_IN, LIS_FILES_OUT, "");
 
@@ -108,6 +105,7 @@ public class Main {
         //parseDE(DE48Parser.class, "0100", 48, "T420701032114328kLAfdvwQTySUPJTvhAEAABrOxpFx6645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2
         //parseDE(DE48Parser.class, "0100", 48, "T010120236F38E6948-5388-41A6-BCA4-B49723C19437420701032174328kOWg7cqnaqcoEgABlDyU78kgL6sa6315MCCA1B2C3  66456645010120236F38E6948-5388-41A6-BCA4-B49723C19437"); //SPA2Partial
         //parseDE(DE48Parser.class, "0800", 48, "1154PK0001A8B5474DBEF0FBC689707EE1C6329CE658D4            ");
+        parseDE(DE48IPMParser.class, "0100", 48, "0001018H 53174365999981950002003MRG0003003MRG001500723091110023003POI0044002 I00580020000590115012083469301460360029018260000000000028260000000000020147048002901826000000000000027760826000000000000027760014800482620158031MCC4826001P223091303 MRGNNNNNNN015906722153      04075400000123              3EU00082601N23091303230913010165001M0177002N 019100120207003216");
         //parseDE(DE48IPMParser.class, "0100", 48, "0002003MSO0003003MSO0148008826282620158030MSI4826001S212061402     NNNNN0165001M0177001N0191001201590679570       0942027400                  1EU00000008N2104190121041901");
         //parseDE(DE61Parser.class, "0100", 61, "102510800600084063129-5210");
         //parseDE(DE108Parser.class, "0100", 108,"010640109FIRSTNAME0308LASTNAME0703USA1122123456789+123456789012180202020690109FIRSTNAME0308LASTNAME04121234 MAIN ST0703USA1111123456789101802050302301190877775555580121530");
@@ -141,38 +139,7 @@ public class Main {
         q2.start();
     }
 
-    public static File[] getFiles(String desiredFile, String parentFolder) throws Exception {
-        File[] fs;
-        File fp;
-        //process all files under parent
-        if (desiredFile == null || desiredFile.isEmpty()) {
 
-            List<Path> filePaths = Files
-                    .find(Paths.get(parentFolder), Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
-                    .collect(Collectors.toList());
-
-            File[] files = new File[filePaths.size()];
-            int i = 0;
-            for (Path p : filePaths) {
-                files[i] = p.toFile();
-                i++;
-            }
-            return files;
-        } else {
-            //process desired file
-            fp = new File(parentFolder + desiredFile);
-            if (!fp.exists()) {
-                throw new FileNotFoundException();
-            }
-            //process desired folder
-            if (fp.isDirectory()) {
-                fs = fp.listFiles();
-            } else {
-                fs = new File[]{fp};
-            }
-        }
-        return fs;
-    }
 
     public static BufferedWriter initializeWriter(String fileIn, String fileOut, File file) throws IOException {
         String dir = StringUtils.mid(file.getAbsolutePath(), fileIn.length(),
