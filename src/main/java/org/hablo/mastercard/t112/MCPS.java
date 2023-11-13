@@ -61,12 +61,13 @@ public class MCPS {
         businessTypeCodeMap.put("2", "INTRAREGIONAL");
         businessTypeCodeMap.put("3", "INTERCOUNTRY");
         businessTypeCodeMap.put("4", "INTRACOUNTRY");
-        businessTypeCodeMap.put("8", "MBR. TO MBR.");
+        businessTypeCodeMap.put("8", "MBR-TO-MBR");
         businessTypeCodeMap.put(" ", "CUSTOM");
     }
 
     public static void main(String[] args) {
         try {
+            //File[] fs = getFiles("mox", filePath);
             File[] fs = getFiles("mox", filePath);
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
@@ -215,7 +216,7 @@ public class MCPS {
                                     StringUtils.leftPad(formatDecimal(currentReconFigures.sumFeeAmounts()), 30, ' '));
 
                             //fee curr code
-                            Currency c2 = null;
+                            Currency c2;
                             if (reconObject.getFeeCurrency() != null) {
                                 c2 = CurrencyHelper.getInstance(reconObject.getFeeCurrency());
                                 if (c2 != null) {
@@ -536,8 +537,15 @@ public class MCPS {
         String tranCode = de3.substring(0, 2);
         String de24 = m.getString(24);
         String transactionKey;
-        String de6 = m.getString(6);
-        String de51 = m.getString(51);
+        String amount, currencyCode;
+        if(m.hasField(5)) {
+            amount = m.getString(5);
+            currencyCode = m.getString(50);
+        } else {
+            amount = m.getString(6);
+            currencyCode = m.getString(51);
+        }
+
         String ind = "ORIG";
         String ird = "";
         String bstype = "";
@@ -571,7 +579,7 @@ public class MCPS {
         if (isReversal) {
             ind = "RVSL";
         }
-        transactionKey = bstype + "." + bsid + "." + mti + "." + de24 + "." + tranCode + "." + ind + "." + ird;
+        transactionKey = bstype + "." + bsid + "." + mti + "." + de24 + "." + tranCode + "." + ind + "." + ird + "." + currencyCode;
 
         ReconObject reconObject;
         ReconFigures reconFigures;
@@ -581,11 +589,11 @@ public class MCPS {
             reconObject = new ReconObject(mti, de24, tranCode, ind, ird, bstype, bsid);
             transactionReconMap.put(transactionKey, reconObject);
         }
-        reconObject.setReconCurrency(de51);
+        reconObject.setReconCurrency(currencyCode);
         reconFigures = reconObject.getReconFigures(cycle);
         reconFigures.setFileId(parser.getFileId());
 
-        BigDecimal billingAmount = convertAmountToDecimal(de6, de51);
+        BigDecimal billingAmount = convertAmountToDecimal(amount, currencyCode);
 
         MathContext mc = new MathContext(0);
 

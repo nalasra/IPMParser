@@ -26,6 +26,14 @@ class RDWTest {
         Assertions.assertEquals("    2,546.77 CR", s);
         Assertions.assertEquals(new BigDecimal("-2546.77"), dd);
     }
+    @Test
+    void test3() {
+        String t = "0000000000755399";
+        BigDecimal d = convertAmountToDecimal(t, "157");
+        String s = formatDecimal(d);
+
+        Assertions.assertEquals("    7,553.99 CR", s);
+    }
 
     @Test
     void test2() {

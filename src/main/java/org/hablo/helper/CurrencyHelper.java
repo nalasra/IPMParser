@@ -1,6 +1,7 @@
 package org.hablo.helper;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -60,7 +61,7 @@ public class CurrencyHelper {
                 String a = amount.substring(0, amount.length() - 2);
                 String b = amount.substring(amount.length() - 2);
                 bd = new BigDecimal(a);
-                bd = bd.setScale(Integer.parseInt(b));
+                bd = bd.add(new BigDecimal("0." + b), new MathContext(0));
             }
         }
         return bd;
