@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='issuerAcquirerIndicator' type='AN' length='1' />
+    <field id='mvvCode' type='AN' length='10' />
+    <field id='remoteTerminalIndicator' type='AN' length='1' />
+    <field id='chargeIndicator' type='AN' length='1' />
+    <field id='productID' type='AN' length='2' />
+    <field id='businessApplicationIdentifier' type='AN' length='2' />
+    <field id='sourceOfFunds' type='AN' length='1' />
+    <field id='productSubtype' type='AN' length='2' />
+    <field id='accountFundingSource' type='AN' length='1' />
+    <field id='affiliateID' type='AN' length='10' />
+    <field id='settlementDate' type='N' length='6' />
+    <field id='transactionIdentifier' type='N' length='15' />
+    <field id='validationCode' type='AN' length='4' />
+    <field id='retrievalRefNumber' type='AN' length='12' />
+    <field id='traceNumber' type='N' length='6' />
+</schema>

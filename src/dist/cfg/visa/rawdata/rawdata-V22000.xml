@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='onlineSettlementDate' type='N' length='6' />
+    <field id='rawDataRecipient' type='N' length='10' />
+    <field id='filler' type='AN' length='10' />
+    <field id='settlementSystem' type='AN' length='9' />
+    <field id='vssProcessingDate' type='N' length='6' />
+    <field id='filler2' type='AN' length='83' />
+</schema>

@@ -68,7 +68,7 @@ public class MCPS {
     public static void main(String[] args) {
         try {
             //File[] fs = getFiles("mox", filePath);
-            File[] fs = getFiles("mox", filePath);
+            File[] fs = getFiles("dopay", filePath);
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
                 System.out.printf("Total %d files/folders found\n", fs.length);
@@ -118,7 +118,7 @@ public class MCPS {
         writer.newLine();
     }
 
-    private static Map<String, List<ReconObject>> getDataByBusinessServiceLevels() {
+    private static Map<String, List<ReconObject>> getDataGroupedByBusinessServiceLevels() {
         Map<String, List<ReconObject>> map = new TreeMap<>();
 
         for (String txnType : transactionReconMap.keySet()) {
@@ -164,9 +164,9 @@ public class MCPS {
                 BigDecimal totalTxnAmountAsOfCycle = BigDecimal.ZERO;
                 BigDecimal totalFeeAmountAsOfCycle = BigDecimal.ZERO;
 
-                var data = getDataByBusinessServiceLevels();
+                var data = getDataGroupedByBusinessServiceLevels();
                 for (String t : data.keySet()) {
-                    List<ReconObject> list = getDataByBusinessServiceLevels().get(t);
+                    List<ReconObject> list = getDataGroupedByBusinessServiceLevels().get(t);
                     writer.newLine();
                     writer.newLine();
                     String[] bs = t.split("\\.");

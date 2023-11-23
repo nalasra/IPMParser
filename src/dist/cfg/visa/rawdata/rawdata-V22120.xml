@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='fundsTransferSRE' type='N' length='10' />
+    <field id='processorID' type='N' length='10' />
+    <field id='affiliateID' type='N' length='10' />
+    <field id='SRE' type='N' length='10' />
+    <field id='settlementServiceIndicator' type='N' length='3' />
+    <field id='issuerInterchangeAmount' type='N' length='16' />
+    <field id='acquirerInterchangeAmount' type='N' length='16' />
+    <field id='otherInterchangeAmount' type='N' length='16' />
+    <field id='grossInterchangeAmount' type='N' length='16' />
+    <field id='filler' type='AN' length='17' />
+</schema>

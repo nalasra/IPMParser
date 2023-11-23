@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='recordType' type='AN' length='6' key="true" />
+</schema>
