@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='panToken' type='AN' length='19' />
+    <field id='tokenAssuranceMethod' type='AN' length='2' />
+    <field id='tokenRequesterId' type='N' length='11' />
+    <field id='visaMerchantId' type='N' length='8' />
+    <field id='filler' type='N' length='84' />
+</schema>

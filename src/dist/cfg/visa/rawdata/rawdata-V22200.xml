@@ -15,4 +15,11 @@
     <field id='validationCode' type='AN' length='4' />
     <field id='retrievalRefNumber' type='AN' length='12' />
     <field id='traceNumber' type='N' length='6' />
+    <field id='batchNumber' type='N' length='4' />
+    <field id='requestMessageType' type='AN' length='4' />
+    <field id='responseCode' type='AN' length='2' />
+    <field id='processingCode' type='N' length='6' />
+    <field id='cardNumber' type='AN' length='19' />
+    <field id='transactionAmount' type='N' length='12' />
+    <field id='currencyCodeTxnAmount' type='N' length='3' />
 </schema>

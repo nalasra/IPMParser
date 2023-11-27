@@ -7,7 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
@@ -65,20 +67,34 @@ public class BaseIIParser extends FileParserSupport {
     private void generateRawDataReports(List<FSDMsg> list) throws IOException, JDOMException {
         System.out.println(list.size());
 
+        Map<String, String> reportTypes = new HashMap<>();
+        reportTypes.put("V22000", "Header Record");
+        reportTypes.put("V22120", "Settlement Information");
+        reportTypes.put("V22200", "Financial Transaction 1");
+        reportTypes.put("V22201", "Financial Transaction 1.1");
+        reportTypes.put("V22210", "Financial Transaction 2");
+        reportTypes.put("V22220", "Financial Transaction 3");
+        reportTypes.put("V22226", "Financial Transaction 5");
+        reportTypes.put("V22230", "Financial Transaction Record Payment Service-Specific");
+        reportTypes.put("V22900", "Trailer Record");
+
+        int unknownRecords = 0;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("SMS_RAW_DATA.txt"))) {
             for (FSDMsg m : list) {
-                if (
-                        m.get("reportText").startsWith("V22000") ||
-                        m.get("reportText").startsWith("V22200") ||
-                        m.get("reportText").startsWith("V22120")
-                ) {
+                String reportId = m.get("reportText").substring(0, 6);
+                if (reportTypes.containsKey(reportId)) {
+                    String reportName = reportTypes.get(reportId);
                     FSDMsg r = new FSDMsg(RAW_DATA_SCHEMA);
                     r.unpack(m.get("reportText").getBytes());
+                    writer.write("###### " + reportName);
+                    writer.newLine();
                     writer.write(ISOMsgHelper.toString(r));
                 } else {
 //                    System.out.println("ID="+m.get("reportText"));
+                    unknownRecords++;
                 }
             }
+            System.out.println("Unknown records: " + unknownRecords);
         }
     }
 }

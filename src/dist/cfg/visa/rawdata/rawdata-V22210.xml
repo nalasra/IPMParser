@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='issuerAcquirerIndicator' type='AN' length='1' />
+    <field id='localTxnDate' type='N' length='4' />
+    <field id='localTxnTime' type='N' length='6' />
 </schema>

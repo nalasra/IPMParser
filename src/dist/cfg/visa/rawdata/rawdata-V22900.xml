@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='subscriberId' type='N' length='10' />
+    <field id='filler' type='N' length='10' />
+    <field id='totalRecordCount' type='N' length='11' />
+    <field id='filler2' type='AN' length='93' />
+</schema>

@@ -68,7 +68,7 @@ public class MCPS {
     public static void main(String[] args) {
         try {
             //File[] fs = getFiles("mox", filePath);
-            File[] fs = getFiles("dopay", filePath);
+            File[] fs = getFiles("analysis", filePath);
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
                 System.out.printf("Total %d files/folders found\n", fs.length);
