@@ -1,7 +1,5 @@
 package org.hablo.mastercard.t112;
 
-import static org.hablo.helper.ISOMsgHelper.createISOMsg;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hablo.FileParserSupport;
 import org.hablo.helper.ISOMsgHelper;
 import org.hablo.helper.PropertiesLoader;
+import org.hablo.mastercard.iso.MCIPMMsgParser;
 import org.hablo.mastercard.util.DE48IPMParser;
 import org.hablo.mastercard.util.DE62IPMParser;
 import org.hablo.mastercard.util.PDSParser;
@@ -21,14 +20,10 @@ import org.hablo.rdw.RDWReader;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
-import org.jpos.iso.ISOUtil;
-import org.jpos.iso.packager.GenericPackager;
-import org.jpos.util.Logger;
 
 public class T112Parser extends FileParserSupport {
 
-    static String MC_IPM = "mas_ipm.xml";
-    static String MC_IPM_EBCDIC = "mas_ipm_ebcdic.xml";
+    private final MCIPMMsgParser msgParser;
     private String mtiFilter;
     private String funcCodeFilter;
     private String fileId;
@@ -36,7 +31,12 @@ public class T112Parser extends FileParserSupport {
     private static final PropertiesLoader mtiNameConverter = new PropertiesLoader(
             "mc_ipm_mti_func_code_desc_list.properties");
 
-    private static Map<String, PDSParser> parsersCache = new HashMap<>();
+    private static Map<String, PDSParser> pdsParsersCache = new HashMap<>();
+
+
+    public T112Parser(){
+        this.msgParser = new MCIPMMsgParser();
+    }
 
     public void setMtiFilter(String mtiFilter) {
         this.mtiFilter = mtiFilter;
@@ -46,8 +46,8 @@ public class T112Parser extends FileParserSupport {
         this.funcCodeFilter = funcCodeFilter;
     }
 
-    public PDSParser getParser(String key) {
-        return parsersCache.get(key);
+    public PDSParser getPDSParser(String key) {
+        return pdsParsersCache.get(key);
     }
 
     public String getFileId() {
@@ -68,22 +68,13 @@ public class T112Parser extends FileParserSupport {
 
     @Override
     public void parse(File file) {
-        String encoding = MC_IPM;
         int counter = 0;
         try (RDWReader reader = new RDWReader(file.getPath())) {
             reader.open();
-            GenericPackager packager = null;
             byte[] r;
             while ((r = reader.read()) != null) {
-                if (packager == null) {
-                    if (ISOUtil.hexString(new byte[]{r[0]}).startsWith("F")) {
-                        encoding = MC_IPM_EBCDIC;
-                    }
-                    packager = new GenericPackager("jar:packager/" + encoding);
-                    packager.setLogger(Logger.getLogger("Q2"), "packager");
-                }
 
-                ISOMsg msg = createISOMsg(r, packager);
+                ISOMsg msg = msgParser.parse(r);
                 if (outputParsedFile && (
                         StringUtils.isBlank(mtiFilter) || mtiFilter.contains(msg.getMTI()) &&
                                 StringUtils.isBlank(funcCodeFilter) || funcCodeFilter.contains(msg.getString(24))
@@ -99,6 +90,7 @@ public class T112Parser extends FileParserSupport {
                     writer.newLine();
                     writer.write(ISOMsgHelper.toString(msg));
                     writer.newLine();
+
                     if (msg.hasField(48)) {
                         String de48o = parseDE(DE48IPMParser.class, msg);
                         writer.write(de48o);
@@ -108,7 +100,6 @@ public class T112Parser extends FileParserSupport {
                         writer.write(de62o);
                     }
 
-                    //TODO: add other DE that contains PDS
                     writer.newLine();
                 }
                 addISOMessage(msg);
@@ -135,7 +126,7 @@ public class T112Parser extends FileParserSupport {
             T parserObj = clazz.getDeclaredConstructor().newInstance();
             if (parserObj instanceof ParserSupport) {
                 ((ParserSupport) parserObj).parse(m);
-                parsersCache.put(getKey(m) + "_" + clazz.getSimpleName().substring(0, 4), (PDSParser) parserObj);
+                pdsParsersCache.put(getKey(m) + "_" + clazz.getSimpleName().substring(0, 4), (PDSParser) parserObj);
                 return ISOMsgHelper.toString((ParserSupport) parserObj);
             } else {
                 System.err.println("Unknown class type: " + clazz.getSimpleName());

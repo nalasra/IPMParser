@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='fileId' type='AN' length='25' />
+    <field id='messageNumber' type='N' length='8' />
+    <field id='claimId' type='N' length='19' />
+    <field id='eventId' type='N' length='19' />
+    <field id='cycleId' type='N' length='10' />
+    <field id='arn' type='N' length='23' />
+    <field id='mti' type='N' length='4' />
+    <field id='pan' type='A' length='19' />
+    <field id='procCode' type='N' length='6' />
+    <field id='funcCode' type='N' length='3' />
+    <field id='messageReasonCode' type='N' length='4' />
+    <field id='amountTransaction' type='N' length='12' />
+    <field id='amountReconciliation' type='N' length='12' />
+    <field id='amountCardholderBilling' type='N' length='12' />
+    <field id='transactionCurrencyCode' type='N' length='3' />
+    <field id='reconciliationCurrencyCode' type='N' length='3' />
+    <field id='cardholderBillingCurrencyCode' type='N' length='3' />
+    <field id='currencyExponent' type='N' length='12' />
+    <field id='currencyExponentApi' type='N' length='12' />
+    <field id='rrn' type='AN' length='12' />
+    <field id='cardAcceptorBusinessCode' type='AN' length='4' />
+    <field id='cardAcceptorId' type='A' length='15' />
+    <field id='cardAcceptorName' type='A' length='22' />
+    <field id='dateTimeTransaction' type='A' length='12' />
+    <field id='transactionOrigInstIdCode' type='N' length='5' />
+    <field id='transactionDestInstIdCode' type='N' length='5' />
+    <field id='transactionStatus' type='A' length='7' />
+    <field id='reasonForRejection' type='A' length='512' />
+    <field id='reversalFlag' type='A' length='1' />
+</schema>
