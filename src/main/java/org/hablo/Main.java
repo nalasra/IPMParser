@@ -10,7 +10,6 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hablo.helper.FilenameComparator;
-import org.hablo.mastercard.tqr4.TQR4Parser;
 import org.hablo.mastercard.util.ParserSupport;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
@@ -90,7 +89,7 @@ public class Main {
 
         // Mastercard TQR4
 //        parseFile(TQR4Parser.class, TQR4_FILES_IN, TQR4_FILES_OUT, "MCI.AR.TQR4.M.E0072218.D220511.T085007.A006");
-        parseFile(TQR4Parser.class, TQR4_FILES_IN, TQR4_FILES_OUT, "MCI.AR.TQR4.M.E0072218.D220511.T195631.A001");
+//        parseFile(TQR4Parser.class, TQR4_FILES_IN, TQR4_FILES_OUT, "MCI.AR.TQR4.M.E0072218.D220511.T195631.A001");
 
         //parseFile(LISParser.class, LIS_FILES_IN, LIS_FILES_OUT, "");
 

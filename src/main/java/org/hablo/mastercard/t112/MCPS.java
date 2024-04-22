@@ -49,11 +49,11 @@ public class MCPS {
     static Map<String, ReconObject> currencyReconMap = Collections.synchronizedMap(new LinkedHashMap<>());
     static Map<String, ReconObject> presentmentsReconMap = Collections.synchronizedMap(new TreeMap<>());
     static Map<String, ReconObject> financialAddendumMap = Collections.synchronizedMap(new TreeMap<>());
+    //used for accessing objects by DE71 as a key
+    static Map<String, ReconObject> presentmentsMap = Collections.synchronizedMap(new TreeMap<>());
 
     static Map<String, String> businessTypeCodeMap = new HashMap<>();
     static Map<String, String> transactionCodeMap = new HashMap<>();
-
-    static ReconObject lastObj;
 
     static {
 
@@ -103,7 +103,7 @@ public class MCPS {
                 Thread.sleep(1000);
 
                 System.out.printf("Generate presentment report...\n");
-                generatePresentmentReport();
+                generateT140Report();
 
                 System.out.printf("Generate summary report...");
                 generateSummaryReport();
@@ -150,15 +150,22 @@ public class MCPS {
         for (String txnType : financialAddendumMap.keySet()) {
             ReconObject reconObject = financialAddendumMap.get(txnType);
 
-            if(reconObject.getBsId().equals(bsId))
+            if (reconObject.getBsId().equals(bsId)) {
                 count++;
+            }
         }
 
         return count;
     }
 
-    private static void generatePresentmentReport() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePathO + ID + "presentment.txt"))) {
+    private static String formatFileId(String pds0105) {
+        //001/231013/00000005891/01101
+        return pds0105.substring(0, 3) + "/" + pds0105.substring(3, 9) + "/" + pds0105.substring(9, 20) + "/"
+                + pds0105.substring(20);
+    }
+
+    private static void generateT140Report() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePathO + ID + "t140_report.txt"))) {
             var presentments = getPresentmentsGroupedByBusinessServiceLevels();
             for (int cycleNumber = 1; cycleNumber <= MAX_CYCLES; cycleNumber++) {
                 writer.newLine();
@@ -191,7 +198,7 @@ public class MCPS {
                     writer.write("BUSINESS SERVICE ID: " + bs[1]);
                     writer.newLine();
                     if (bs.length > 3) {
-                        writer.write("FILE ID: " + bs[3]);
+                        writer.write("FILE ID: " + formatFileId(bs[3]));
                     }
                     writer.newLine();
                     writer.newLine();
@@ -199,7 +206,9 @@ public class MCPS {
                     int businessServiceCount = 0;
                     BigDecimal businessServiceReconAmount = BigDecimal.ZERO;
                     BigDecimal businessServiceFeeAmount = BigDecimal.ZERO;
-
+                    writer.write("MASTERCARD SETTLED");
+                    writer.newLine();
+                    writer.newLine();
                     printHeader(writer,
                             StringUtils.leftPad("TRANS. FUNC", 12, ' '),
                             StringUtils.leftPad("PROC CODE", 13, ' '),
@@ -262,6 +271,11 @@ public class MCPS {
                     }
                     writer.write(
                             "-------------------------------------------------------------------------------------------------------------------------------------\n");
+                    writer.newLine();
+                    writer.write(businessTypeCodeMap.get(bs[0]));
+                    writer.newLine();
+                    writer.write("MASTERCARD SETTLED");
+                    writer.newLine();
                     writer.write("BUSINESS SERVICE ID SUB TOTAL ");
                     writer.write(
                             StringUtils.leftPad(businessServiceCount + "", 17, ' '));
@@ -270,8 +284,8 @@ public class MCPS {
                     writer.newLine();
 
                     //addendums
-                    var addendums = getAddendumsByBusinessServiceId(bs[1]);
-                    writer.write("COUNT="+addendums);
+                    //var addendums = getAddendumsByBusinessServiceId(bs[1]);
+                    //writer.write("FINANCIAL DETAIL ADDENDUM COUNT = " + addendums);
                 }
 
                 writer.newLine();
@@ -672,6 +686,9 @@ public class MCPS {
             reconObject = new ReconObject(mti, de24, tranCode, ind, ird, brand, bstype, bsid, cycle);
             presentmentsReconMap.put(transactionKey, reconObject);
         }
+
+        presentmentsMap.put(m.getString(71), reconObject);
+
         reconObject.setReconCurrency(de50);
         reconObject.setFileId(parser.getFileId());
         reconFigures = reconObject.getReconFigures(cycle);
@@ -709,25 +726,37 @@ public class MCPS {
         reconFigures.getTransactionAmounts().add(de5Decimal);
         reconFigures.getFeeAmounts().add(feeAmount);
         reconFigures.getReconAmounts().add(reconAmount);
-
-        lastObj = reconObject;
     }
 
     private static void process1644Addendum(ISOMsg m, T112Parser parser) {
-//        PDSParser p = parser.getPDSParser(getKey(m) + "_DE48");
+        PDSParser p = parser.getPDSParser(getKey(m) + "_DE48");
 
         int cycle = parser.getCycleNumber();
         String transactionKey = m.getString(71);
 
         ReconObject reconObject;
 
-        var lastPresentment = lastObj;
+        //find matching presentment
+        if (!p.hasElement("0501")) {
+            System.out.println("Important PDS0501 not present in financial addendum");
+            return;
+        }
+        String pds501 = p.getElementById("0501").getValue();
 
-        reconObject = new ReconObject(m.getString(0), m.getString(24), "", "", lastPresentment.getIrd(),
-                lastPresentment.getBrand(), lastPresentment.getBsType(),
-                lastPresentment.getBsId(), cycle);
+        //Addendum.PDS0501.SF4 = Presentment.DE71
+        String msgNumber = pds501.substring(8);
+        ReconObject matchingPresentment = findAssociatedPresentment(msgNumber);
+
+        reconObject = new ReconObject(m.getString(0), m.getString(24), "", "", matchingPresentment.getIrd(),
+                matchingPresentment.getBrand(), matchingPresentment.getBsType(),
+                matchingPresentment.getBsId(), cycle);
         financialAddendumMap.put(transactionKey, reconObject);
     }
+
+    private static ReconObject findAssociatedPresentment(String msgNumber) {
+        return presentmentsMap.get(msgNumber);
+    }
+
 
     private static void process1644Reconciliation(ISOMsg m, T112Parser parser) {
         //get interchange amount from PDS395
