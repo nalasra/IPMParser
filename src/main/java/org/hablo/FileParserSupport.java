@@ -13,6 +13,8 @@ public abstract class FileParserSupport {
     protected BufferedWriter summaryWriter;
     protected boolean outputParsedFile;
     protected List<ISOMsg> messages;
+    protected String outputDir;
+    protected String sessionId;
 
     public abstract void parse(File file);
 
@@ -38,5 +40,13 @@ public abstract class FileParserSupport {
 
     public void setOutputParsedFile(boolean outputParsedFile) {
         this.outputParsedFile = outputParsedFile;
+    }
+
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

@@ -145,10 +145,10 @@ public class MCPS {
         return map;
     }
 
-    private static int getAddendumsByBusinessServiceId(String bsId) {
+    private static int getAddendumCountByBusinessServiceId(String bsId) {
         int count = 0;
-        for (String txnType : financialAddendumMap.keySet()) {
-            ReconObject reconObject = financialAddendumMap.get(txnType);
+        for (String s : financialAddendumMap.keySet()) {
+            ReconObject reconObject = financialAddendumMap.get(s);
 
             if (reconObject.getBsId().equals(bsId)) {
                 count++;
@@ -284,8 +284,8 @@ public class MCPS {
                     writer.newLine();
 
                     //addendums
-                    //var addendums = getAddendumsByBusinessServiceId(bs[1]);
-                    //writer.write("FINANCIAL DETAIL ADDENDUM COUNT = " + addendums);
+                    var addendums = getAddendumCountByBusinessServiceId(bs[1]);
+                    writer.write("FINANCIAL DETAIL ADDENDUM COUNT = " + addendums);
                 }
 
                 writer.newLine();

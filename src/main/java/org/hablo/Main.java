@@ -11,6 +11,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.hablo.helper.FilenameComparator;
 import org.hablo.mastercard.util.ParserSupport;
+import org.hablo.visa.baseii.BaseIIParser;
 import org.jpos.ee.BLException;
 import org.jpos.iso.ISOException;
 import org.jpos.iso.ISOMsg;
@@ -77,6 +78,7 @@ public class Main {
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"");
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"INCTF01.EPD.20211020.203029.CTF"); //VISAIN_BAE_410896_090921.txt
+        parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"INCTF01.EPD.20230731.190045.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISAIN_BAE_410896_090921.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"Success_VISAIN_ADQ_409887_240723.txt"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"Test_CTF_BAE_TCR_3_22_Dec_8"); //VISAIN_BAE_410896_090921.txt
@@ -196,6 +198,8 @@ public class Main {
                 T parser = clazz.newInstance();
                 if (parser instanceof FileParserSupport) {
                     FileParserSupport fps = (FileParserSupport) parser;
+                    fps.setOutputDir(fileOut);
+                    fps.setSessionId(ID);
                     fps.setOutputParsedFile(true);
                     fps.setWriter(writer);
                     fps.parse(f);

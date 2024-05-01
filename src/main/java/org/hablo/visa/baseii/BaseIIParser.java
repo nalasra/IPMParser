@@ -65,8 +65,6 @@ public class BaseIIParser extends FileParserSupport {
     }
 
     private void generateRawDataReports(List<FSDMsg> list) throws IOException, JDOMException {
-        System.out.println(list.size());
-
         Map<String, String> reportTypes = new HashMap<>();
         reportTypes.put("V22000", "Header Record");
         reportTypes.put("V22120", "Settlement Information");
@@ -79,7 +77,7 @@ public class BaseIIParser extends FileParserSupport {
         reportTypes.put("V22900", "Trailer Record");
 
         int unknownRecords = 0;
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("SMS_RAW_DATA.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputDir + "/" + sessionId + "/TC33_SMSRawData.txt"))) {
             for (FSDMsg m : list) {
                 String reportId = m.get("reportText").substring(0, 6);
                 if (reportTypes.containsKey(reportId)) {
@@ -94,7 +92,7 @@ public class BaseIIParser extends FileParserSupport {
                     unknownRecords++;
                 }
             }
-            System.out.println("Unknown records: " + unknownRecords);
+            System.out.println("generateRawDataReports -> Unknown records: " + unknownRecords);
         }
     }
 }
