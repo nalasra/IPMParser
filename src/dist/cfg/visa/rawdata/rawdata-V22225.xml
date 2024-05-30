@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='Original Data Elements - MTI' type='AN' length='4'/>
+    <field id='Original Data Elements - STAN' type='AN' length='6'/>
+    <field id='Original Data Elements - Transmission Date' type='AN' length='4'/>
+    <field id='Original Data Elements - Transmission Time' type='AN' length='6'/>
+    <field id='Original Data Elements - Acquiring Institution ID' type='AN' length='11'/>
+    <field id='Original Data Elements - Forwarding Institution ID' type='AN' length='11'/>
+    <field id='Usage Code' type='AN' length='1'/>
+    <field id='Documentation Indicator' type='AN' length='1'/>
+    <field id='Chargeback Reference Number' type='AN' length='6'/>
+    <field id='Message Text' type='AN' length='74'/>
+    <field id='Dispute Condition' type='AN' length='3'/>
+    <field id='VROL Financial ID' type='AN' length='11'/>
+    <field id='VROL Case Number' type='AN' length='10'/>
+    <field id='VROL Bundle Case Number' type='AN' length='10'/>
+    <field id='Client Case Number' type='AN' length='20'/>
+    <field id='Dispute Status' type='AN' length='2'/>
+    <field id='Filler' type='AN' length='25'/>
+</schema>

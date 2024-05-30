@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='scaLowExemptionIndicator' type='AN' length='1' />
+    <field id='SCA - Low Value Exemption Indicator' type='AN' length='1' />
+    <field id='SCA - Transaction Risk Analysis Exemption Indicator' type='AN' length='1' />
+    <field id='SCA - Trusted Merchant Exemption Indicator' type='AN' length='1' />
+    <field id='SCA - Secure Corporate Payment Exemption Indicator' type='AN' length='1' />
+    <field id='Delegated Authentication Indicator' type='AN' length='1' />
+    <field id='Initiating Party Indicator' type='AN' length='1' />
+    <field id='Reserved' type='AN' length='1' />
+    <field id='Field 54 Original Amount - Clearing Currency' type='N' length='12' />
+    <field id='Amount Type'  type='N' length='2' />
+    <field id='Plan Registration System' type='AN' length='10' />
+    <field id='Purpose of Payment' type='AN' length='12' />
+    <field id='Pre-Currency Conversion Currency Code' type='AN' length='3' />
+    <field id='Pre-Currency Conversion Amount' type='N' length='12' />
+    <field id='Reserved' type='N' length='13' />
+    <field id='Funding Card Number' type='AN' length='28' />
+    <field id='Sender Reference Number' type='AN' length='16' />
+    <field id='Number of Forms of Payment' type='AN' length='1' />
+    <field id='Auto Substantiation Amount Sub Type' type='AN' length='2' />
+    <field id='Filler' type='AN' length='6' />
 </schema>

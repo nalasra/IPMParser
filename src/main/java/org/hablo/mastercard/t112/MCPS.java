@@ -73,7 +73,7 @@ public class MCPS {
 
     public static void main(String[] args) {
         try {
-            File[] fs = getFiles("mox/TT112T0.2023-10-13-00-15-26.001_PASS1_D20231013_T002000", filePath);
+            File[] fs = getFiles("", filePath);
             //File[] fs = getFiles("analysis", filePath);
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
@@ -106,7 +106,7 @@ public class MCPS {
                 generateT140Report();
 
                 System.out.printf("Generate summary report...");
-                generateSummaryReport();
+                //generateSummaryReport();
             }
         } catch (Exception exception) {
             exception.printStackTrace();

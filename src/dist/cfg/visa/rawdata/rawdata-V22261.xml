@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='Reimbursement Fee' type='AN' length='15'/>
+    <field id='Reimbursement Fee Debit/Credit Indicator' type='AN' length='1'/>
+    <field id='Cash-back IRF Amount - Settlement Currency' type='AN' length='15'/>
+    <field id='Transaction Integrity Fee' type='AN' length='11'/>
+    <field id='Transaction Integrity Fee Debit/Credit Indicator' type='AN' length='1'/>
+    <field id='Agreement ID' type='AN' length='4'/>
+    <field id='Additional Token Response Information' type='AN' length='1'/>
+    <field id='B2B Program ID' type='AN' length='2'/>
+    <field id='Filler' type='AN' length='74'/>
+</schema>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='Transaction Identifier Data' type='AN' length='40' />
+    <field id='Cardholder Authentication Verification Value (CAVV)' type='AN' length='40' />
+    <field id='Agent Unique ID' type='AN' length='5' />
+    <field id='Authentication Program' type='AN' length='2' />
+    <field id='Filler' type='AN' length='37' />
+</schema>

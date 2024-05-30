@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='posConditionCode' type='N' length='2' />
+    <field id='POS Condition Code' type='N' length='2' />
+    <field id='POS Entry Mode' type='N' length='3' />
+    <field id='POS Terminal Type' type='N' length='2' />
+    <field id='POS Terminal Entry Capability' type='N' length='1' />
+    <field id='Merchants Type' type='N' length='4' />
+    <field id='Card Acceptor Terminal ID' type='N' length='8' />
+    <field id='Card Acceptor ID' type='N' length='15' />
+    <field id='Card Acceptor Name' type='N' length='25' />
+    <field id='Card Acceptor City' type='N' length='13' />
+    <field id='Card Acceptor Country' type='N' length='2' />
+    <field id='Geo State Code' type='N' length='2' />
+    <field id='Geo ZIP 5' type='N' length='5' />
+    <field id='Geo ZIP 4' type='N' length='4' />
+    <field id='Geo Country Code' type='N' length='3' />
+    <field id='Acquiring Institution Country Code' type='N' length='3' />
+    <field id='PAN Extended Country Code' type='N' length='3' />
+    <field id='Forwarding Institution ID' type='N' length='11' />
+    <field id='Forwarding Institution Country Code' type='N' length='3' />
+    <field id='Customer IdentificationIdentification Method' type='N' length='1' />
+    <field id='Issuer Affiliate ID' type='N' length='10' />
+    <field id='E-Commerce Goods Indicator' type='N' length='2' />
+    <field id='E-Commerce CAVV Result Code' type='N' length='1' />
+    <field id='Recurring Payment Indicator Flag' type='N' length='1' />
 </schema>

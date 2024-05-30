@@ -1,5 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='localTxnDate' type='N' length='4' />
-    <field id='localTxnTime' type='N' length='6' />
+    <field id='Local Transaction Date' type='N' length='4'/>
+    <field id='Local Transaction Time' type='N' length='6'/>
+    <field id='GIV Flag' type='N' length='1'/>
+    <field id='GIV Flag Previous' type='N' length='1'/>
+    <field id='Acquiring Institution ID' type='N' length='11'/>
+    <field id='Acquirer Business ID' type='N' length='8'/>
+    <field id='Source Station ID' type='N' length='6'/>
+    <field id='Destination Station ID' type='N' length='6'/>
+    <field id='Message Reason Code' type='N' length='4'/>
+    <field id='STIP Reason Code' type='N' length='4'/>
+    <field id='Authorization ID Resp. Code' type='N' length='6'/>
+    <field id='Network ID' type='N' length='4'/>
+    <field id='Advice Source Flag' type='N' length='1'/>
+    <field id='Advice Transaction Flag' type='N' length='1'/>
+    <field id='BASE I Bill Flag' type='N' length='1'/>
+    <field id='Track Data Indicator' type='N' length='1'/>
+    <field id='Reimbursement Attribute' type='N' length='1'/>
+    <field id='Spend Qualified Indicator' type='N' length='1'/>
+    <field id='Multiple Clearing Sequence No.' type='N' length='2'/>
+    <field id='Multiple Clearing Sequence Count' type='N' length='2'/>
+    <field id='Durbin Regulated Status Indicator' type='N' length='1'/>
+    <field id='Prepaid Program Indicator' type='N' length='1'/>
+    <field id='Reserved' type='N' length='1'/>
+    <field id='PVS Performed Indicator' type='N' length='1'/>
+    <field id='Transmission Date' type='N' length='4'/>
+    <field id='Transmission Time' type='N' length='6'/>
+    <field id='Transaction Other Amount' type='N' length='12'/>
+    <field id='Downgrade Reason Code' type='N' length='2'/>
+    <field id='Authorization Characteristics Indicator' type='N' length='1'/>
+    <field id='Response Message Type' type='N' length='4'/>
+    <field id='Card Sequence Number' type='N' length='3'/>
+    <field id='Card Expiration Date' type='N' length='4'/>
+    <field id='CVV Result Code' type='N' length='1'/>
+    <field id='Settlement Service Requested' type='N' length='1'/>
+    <field id='Settlement Service Selected' type='N' length='1'/>
+    <field id='IRF Option' type='N' length='1'/>
+    <field id='Mail/Telephone or Electronic Commerce Indicator' type='N' length='1'/>
+    <field id='Merchant Volume Indicator' type='N' length='2'/>
+    <field id='DCC Indicator' type='N' length='1'/>
+    <field id='Fee Program Indicator' type='N' length='3'/>
+    <field id='Extended STIP Reason Code' type='N' length='1'/>
+    <field id='Filler' type='N' length='1'/>
 </schema>

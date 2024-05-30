@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='avsResponseCode' type='AN' length='1' />
+    <field id='AVS Response Code' type='AN' length='1'/>
+    <field id='Purchase Identifier Format' type='AN' length='1'/>
+    <field id='Purchase ID Number' type='AN' length='16'/>
+    <field id='Check In/Check Out' type='AN' length='6'/>
+    <field id='No Show Indicator' type='AN' length='1'/>
+    <field id='Extra Charges' type='AN' length='6'/>
+    <field id='Multiple Clearing Sequence No.' type='AN' length='2'/>
+    <field id='Multiple Clearing Seq. Count' type='AN' length='2'/>
+    <field id='Restricted Ticket Indicator' type='AN' length='1'/>
+    <field id='Total Amount Authorized' type='AN' length='12'/>
+    <field id='Requested Payment Service' type='AN' length='1'/>
+    <field id='Chargeback Rights Indicator' type='AN' length='2'/>
+    <field id='Replacement Amount' type='AN' length='12'/>
+    <field id='CRS Validation Return Codes' type='AN' length='15'/>
+    <field id='Chargeback Floor Limit Indicator' type='AN' length='1'/>
+    <field id='Chargeback CRB Indicator' type='AN' length='1'/>
+    <field id='Chargeback STIP Indicator' type='AN' length='1'/>
+    <field id='Chargeback Mail/Phone Indicator' type='AN' length='1'/>
+    <field id='Special Chargeback Indicator' type='AN' length='1'/>
+    <field id='Chargeback Special Condition Risk Indicator' type='AN' length='1'/>
+    <field id='Chargeback Special Condition Merchant Indicator' type='AN' length='1'/>
+    <field id='Market-Specific Data Identifier' type='AN' length='1'/>
+    <field id='Filler' type='AN' length='38'/>
 </schema>

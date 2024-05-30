@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema>
+    <field id='Rate Table Date' type='AN' length='4'/>
+    <field id='Transaction Amount' type='AN' length='12'/>
+    <field id='Transaction Currency Code' type='AN' length='3'/>
+    <field id='Settlement Amount' type='AN' length='12'/>
+    <field id='Settlement Currency Code' type='AN' length='3'/>
+    <field id='Cardholder Billing Amount' type='AN' length='12'/>
+    <field id='Cardholder Billing Currency Code' type='AN' length='3'/>
+    <field id='Cardholder Billing Other Amount' type='AN' length='12'/>
+    <field id='Rate Table ID' type='AN' length='5'/>
+    <field id='Persistent FX Eligible Indicator' type='AN' length='1'/>
+    <field id='Persistent FX Applied Indicator' type='AN' length='1'/>
+    <field id='Filler' type='AN' length='11'/>
+    <field id='Optional Issuer Fee – Settlement Currency' type='AN' length='9'/>
+    <field id='Optional Issuer Fee – Cardholder Billing Currency' type='AN' length='9'/>
+    <field id='Filler' type='AN' length='18'/>
+    <field id='Optional Issuer ISA Amount in Settlement Currency' type='AN' length='9'/>
+</schema>

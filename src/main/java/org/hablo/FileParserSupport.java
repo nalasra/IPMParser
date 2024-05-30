@@ -2,15 +2,17 @@ package org.hablo;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jdom2.JDOMException;
 import org.jpos.iso.ISOMsg;
+import org.jpos.util.FSDMsg;
 
 public abstract class FileParserSupport {
 
     protected BufferedWriter writer;
-    protected BufferedWriter summaryWriter;
     protected boolean outputParsedFile;
     protected List<ISOMsg> messages;
     protected String outputDir;
@@ -18,13 +20,12 @@ public abstract class FileParserSupport {
 
     public abstract void parse(File file);
 
+    public FSDMsg parseRecord(String record) throws IOException, JDOMException {
+        return null;
+    }
 
     public void setWriter(BufferedWriter writer) {
         this.writer = writer;
-    }
-
-    public void setSummaryWriter(BufferedWriter summaryWriter) {
-        this.summaryWriter = summaryWriter;
     }
 
     public void addISOMessage(ISOMsg t) {

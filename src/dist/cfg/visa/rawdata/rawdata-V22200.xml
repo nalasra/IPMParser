@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='issuerAcquirerIndicator' type='AN' length='1' />
-    <field id='mvvCode' type='AN' length='10' />
-    <field id='remoteTerminalIndicator' type='AN' length='1' />
-    <field id='chargeIndicator' type='AN' length='1' />
-    <field id='productID' type='AN' length='2' />
-    <field id='businessApplicationIdentifier' type='AN' length='2' />
-    <field id='sourceOfFunds' type='AN' length='1' />
-    <field id='productSubtype' type='AN' length='2' />
-    <field id='accountFundingSource' type='AN' length='1' />
-    <field id='affiliateID' type='AN' length='10' />
-    <field id='settlementDate' type='N' length='6' />
-    <field id='transactionIdentifier' type='N' length='15' />
-    <field id='validationCode' type='AN' length='4' />
-    <field id='retrievalRefNumber' type='AN' length='12' />
-    <field id='traceNumber' type='N' length='6' />
-    <field id='batchNumber' type='N' length='4' />
-    <field id='requestMessageType' type='AN' length='4' />
-    <field id='responseCode' type='AN' length='2' />
-    <field id='processingCode' type='N' length='6' />
-    <field id='cardNumber' type='AN' length='19' />
-    <field id='transactionAmount' type='N' length='12' />
-    <field id='currencyCodeTxnAmount' type='N' length='3' />
+    <field id='Issuer-Acquirer Indicator' type='AN' length='1'/>
+    <field id='MVV Code' type='AN' length='10'/>
+    <field id='Remote Terminal Indicator' type='AN' length='1'/>
+    <field id='Charge Indicator' type='AN' length='1'/>
+    <field id='Product ID' type='AN' length='2'/>
+    <field id='Business Application Identifier' type='AN' length='2'/>
+    <field id='Source of Funds' type='AN' length='1'/>
+    <field id='Product Subtype' type='AN' length='2'/>
+    <field id='Account Funding Source' type='AN' length='1'/>
+    <field id='Affiliate ID' type='AN' length='10'/>
+    <field id='Settlement Date' type='N' length='6'/>
+    <field id='Transaction Identifier' type='N' length='15'/>
+    <field id='Validation Code' type='AN' length='4'/>
+    <field id='Retrieval Reference Number' type='AN' length='12'/>
+    <field id='Trace Number' type='N' length='6'/>
+    <field id='Batch Number' type='N' length='4'/>
+    <field id='Request Message Type' type='AN' length='4'/>
+    <field id='Response Code' type='AN' length='2'/>
+    <field id='Processing Code' type='N' length='6'/>
+    <field id='Card Number' type='AN' length='19'/>
+    <field id='Transaction Amount' type='N' length='12'/>
+    <field id='Currency Code, Transaction Amount' type='N' length='3'/>
 </schema>
