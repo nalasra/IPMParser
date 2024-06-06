@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='ipmMpeFileId' type='AFS' length='17' key="true" />
+    <field id='IPM MPE File Id' type='AFS' length='17' key="true" />
 </schema>

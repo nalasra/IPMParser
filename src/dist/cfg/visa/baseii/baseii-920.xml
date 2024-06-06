@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='centerInformationBlock' type='AN' length='6' />
-    <field id='processingDate' type='N' length='5' />
-    <field id='destinationAmount' type='N' length='15' />
-    <field id='numberOfMonetaryTrans' type='N' length='12' />
-    <field id='batchNumber' type='N' length='6' />
-    <field id='numberOfTCRs' type='N' length='12' />
-    <field id='reserved1' type='N' length='6' />
-    <field id='centerBatchID' type='N' length='8' />
-    <field id='numberOfTransactions' type='N' length='9' />
-    <field id='reserved2' type='N' length='18' />
-    <field id='sourceAmount' type='N' length='15' />
-    <field id='reserved3' type='N' length='15' />
-    <field id='reserved4' type='N' length='15' />
-    <field id='reserved5' type='N' length='15' />
-    <field id='reserved6' type='N' length='7' />
+    <field id='Center Information Block (CIB)' type='AN' length='6' />
+    <field id='Processing Date' type='N' length='5' />
+    <field id='Destination Amount' type='N' length='15' />
+    <field id='Number Of Monetary Transactions' type='N' length='12' />
+    <field id='Batch Number' type='N' length='6' />
+    <field id='Number Of TCRs' type='N' length='12' />
+    <field id='Reserved1' type='N' length='6' />
+    <field id='Center Batch ID' type='N' length='8' />
+    <field id='Number Of Transactions' type='N' length='9' />
+    <field id='Reserved2' type='N' length='18' />
+    <field id='Source Amount' type='N' length='15' />
+    <field id='Reserved3' type='N' length='15' />
+    <field id='Reserved4' type='N' length='15' />
+    <field id='Reserved5' type='N' length='15' />
+    <field id='Reserved6' type='N' length='7' />
 </schema>

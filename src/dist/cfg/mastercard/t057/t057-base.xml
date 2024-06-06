@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='description' type='A' length='1' key="true" />
+    <field id='Description' type='A' length='1' key="true" />
 </schema>

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='businessFormatCode' type='AN' length='2' />
-    <field id='recipientName' type='AN' length='30' />
-    <field id='purposeOfPayment' type='AN' length='12' />
+    <field id='Business Format Code' type='AN' length='2' />
+    <field id='Data to be parsed' type='AFS' length='116' />
 </schema>
-
-

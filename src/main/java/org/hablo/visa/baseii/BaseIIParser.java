@@ -25,6 +25,8 @@ public class BaseIIParser extends FileParserSupport {
     private int counter;
     private String lastRecord;
     private List<FSDMsg> rawData = null;
+    static String TRANSACTION_CODE = "Transaction Code";
+    static String TRANSACTION_COMPONENT_SEQ = "Transaction Component Sequence";
 
     static Map<String, String> reportTypes = new HashMap<>();
 
@@ -46,15 +48,19 @@ public class BaseIIParser extends FileParserSupport {
         reportTypes.put("V22250", "Financial Transaction Record/ATM-Specific");
         reportTypes.put("V22260", "Financial Transaction Record/Multicurrency-Specific");
         reportTypes.put("V22261", "Financial Transaction Fee Record");
+        //22280
+        //22281
+        //22282
         reportTypes.put("V22900", "Trailer Record");
     }
+
     @Override
     public FSDMsg parseRecord(String f) throws IOException, JDOMException {
         FSDMsg msgBase = new FSDMsg(f.startsWith("90") ? HEADER_SCHEMA : TC_SCHEMA);
         msgBase.unpack(f.getBytes());
 
         //if TC33 is found
-        if (msgBase.get("transactionCode").equals("33")) {
+        if (msgBase.get(TRANSACTION_CODE).equals("33")) {
             if (rawData == null) {
                 rawData = new ArrayList<>();
             }
@@ -71,8 +77,8 @@ public class BaseIIParser extends FileParserSupport {
             while ((row = bufferedReader.readLine()) != null && row.length() > 0) {
                 msgBase = parseRecord(row);
                 if (outputParsedFile) {
-                    writer.write("TC" + msgBase.get("transactionCode") + (msgBase.hasField("transactionComponentSeq") ?
-                            " TCR" + msgBase.get("transactionComponentSeq") : "") + "\n");
+                    writer.write("TC" + msgBase.get(TRANSACTION_CODE) + (msgBase.hasField(TRANSACTION_COMPONENT_SEQ) ?
+                            " TCR" + msgBase.get(TRANSACTION_COMPONENT_SEQ) : "") + "\n");
                     writer.write(ISOMsgHelper.toString(msgBase));
                 }
                 counter++;
@@ -102,16 +108,16 @@ public class BaseIIParser extends FileParserSupport {
         }
         try (BufferedWriter writer = new BufferedWriter(fw)) {
             for (FSDMsg m : rawData) {
-                String reportId = m.get("reportText").substring(0, 6);
+                String reportId = m.get("Report Text").substring(0, 6);
                 if (reportTypes.containsKey(reportId)) {
                     String reportName = reportTypes.get(reportId);
                     FSDMsg r = new FSDMsg(RAW_DATA_SCHEMA);
-                    r.unpack(m.get("reportText").getBytes());
+                    r.unpack(m.get("Report Text").getBytes());
                     writer.write("###### " + reportName);
                     writer.newLine();
                     writer.write(ISOMsgHelper.toString(r));
                 } else {
-                    System.out.println("ID="+m.get("reportText"));
+                    System.out.println("ID=" + m.get("Report Text"));
                     unknownRecords++;
                 }
             }

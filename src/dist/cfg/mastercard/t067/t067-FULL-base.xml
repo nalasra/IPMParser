@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='date' type='N' length='8' />
-    <field id='time' type='N' length='6' />
-    <field id='rateFileFormatVersion' type='AN' length='1' />
-    <field id='filler' type='ADS' length='109' />
+    <field id='Date' type='N' length='8' />
+    <field id='Time' type='N' length='6' />
+    <field id='Rate File Format Version' type='AN' length='1' />
+    <field id='Filler' type='ADS' length='109' />
 </schema>

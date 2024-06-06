@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='sourceCurrencyCode' type='N' length='3' />
-    <field id='referenceCurrencyCode' type='N' length='3' />
-    <field id='sourceCurrencyExponent' type='N' length='1' />
-    <field id='rateClass' type='AN' length='1' />
-    <field id='rateFormatIndicator' type='AN' length='1' />
-    <field id='buyCurrencyRate' type='N' length='15' />
-    <field id='midCurrencyRate' type='N' length='15' />
-    <field id='sellCurrencyRate' type='N' length='15' />
-    <field id='reserved' type='N' length='15' />
-    <field id='filler' type='ADS' length='55' />
+    <field id='Source Currency Code' type='N' length='3' />
+    <field id='Reference Currency Code' type='N' length='3' />
+    <field id='Source Currency Exponent' type='N' length='1' />
+    <field id='Rate Class' type='AN' length='1' />
+    <field id='Rate Format Indicator' type='AN' length='1' />
+    <field id='Buy Currency Rate' type='N' length='15' />
+    <field id='Mid Currency Rate' type='N' length='15' />
+    <field id='Sell Currency Rate' type='N' length='15' />
+    <field id='Reserved' type='N' length='15' />
+    <field id='Filler' type='ADS' length='55' />
 </schema>

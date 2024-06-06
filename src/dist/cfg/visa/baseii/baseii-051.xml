@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='businessFormatCode' type='AN' length='1' />
-    <field id='tokenAssurance' type='AN' length='2' />
-    <field id='rateTableID' type='AN' length='5' />
-    <field id='reserved1' type='AN' length='4' />
-    <field id='reserved2' type='AN' length='6' />
-    <field id='documentationIndicator' type='AN' length='1' />
-    <field id='memberMsgText' type='AN' length='50' />
-    <field id='specialCondIndicator' type='AN' length='2' />
-    <field id='feeProgramIndicator' type='AN' length='3' />
-    <field id='issuerCharge' type='AN' length='1' />
-    <field id='persistentFxIndicator' type='AN' length='1' />
-    <field id='cardAcceptorID' type='AN' length='15' />
-    <field id='terminalID' type='AN' length='8' />
-    <field id='nationalReimbursementFEe' type='N' length='12' />
-    <field id='paymentIndicator' type='AN' length='1' />
-    <field id='chargeBackIndicator' type='AN' length='1' />
-    <field id='conversionDate' type='AN' length='4' />
-    <field id='additionalTokenResp' type='AN' length='1' />
-    <field id='reserved4' type='AN' length='1' />
-    <field id='acceptTerminalIndicator' type='AN' length='1' />
-    <field id='prepaidCardIndicator' type='AN' length='1' />
-    <field id='serviceDevField' type='AN' length='1' />
-    <field id='avsRespCode' type='AN' length='1' />
-    <field id='authSourceCode' type='AN' length='1' />
-    <field id='purchaseFormat' type='AN' length='1' />
-    <field id='accountSelection' type='AN' length='1' />
-    <field id='installmentCount' type='AN' length='2' />
-    <field id='purchaseID' type='AN' length='25' />
-    <field id='cashBack' type='N' length='9' />
-    <field id='chipConditionCode' type='AN' length='1' />
-    <field id='posEnv' type='AN' length='1' />
+    <field id='Business Format Code' type='AN' length='1' />
+    <field id='Token Assurance Level' type='AN' length='2' />
+    <field id='Rate Table ID' type='AN' length='5' />
+    <field id='Reserved1' type='AN' length='4' />
+    <field id='Reserved2' type='AN' length='6' />
+    <field id='Documentation Indicator' type='AN' length='1' />
+    <field id='Member Message Text' type='AN' length='50' />
+    <field id='Special Condition Indicators' type='AN' length='2' />
+    <field id='Fee Program Indicator' type='AN' length='3' />
+    <field id='Issuer Charge' type='AN' length='1' />
+    <field id='Persistent FX Applied Indicator' type='AN' length='1' />
+    <field id='Card Acceptor ID' type='AN' length='15' />
+    <field id='Terminal ID' type='AN' length='8' />
+    <field id='National Reimbursement Fee' type='N' length='12' />
+    <field id='Mail/Phone/Electronic Commerce and Payment Indicator' type='AN' length='1' />
+    <field id='Special Chargeback Indicator' type='AN' length='1' />
+    <field id='Conversion Date' type='AN' length='4' />
+    <field id='Additional Token Response Information' type='AN' length='1' />
+    <field id='Reserved4' type='AN' length='1' />
+    <field id='Acceptance Terminal Indicator' type='AN' length='1' />
+    <field id='Prepaid Card Indicator' type='AN' length='1' />
+    <field id='Service Development Field' type='AN' length='1' />
+    <field id='AVS Response Code' type='AN' length='1' />
+    <field id='Authorization Source Code' type='AN' length='1' />
+    <field id='Purchase Identifier Format' type='AN' length='1' />
+    <field id='Account Selection' type='AN' length='1' />
+    <field id='Installment Payment Count' type='AN' length='2' />
+    <field id='Purchase Identifier' type='AN' length='25' />
+    <field id='Cashback' type='N' length='9' />
+    <field id='Chip Condition Code' type='AN' length='1' />
+    <field id='POS Environment' type='AN' length='1' />
 </schema>

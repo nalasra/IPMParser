@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>    
-    <field id='accountNumber' type='N' length='16' />
-    <field id='accountNumberExtension' type='N' length='3' />
-    <field id='floorLimitIndicator' type='AN' length='1' />
-    <field id='extensionFileIndicator' type='AN' length='1' />
-    <field id='pcas' type='AN' length='1' />
-    <field id='acqRefNumber' type='N' length='23' />
-    <field id='acqBusinessID' type='N' length='8' />
-    <field id='purchaseDate' type='N' length='4' />
-    <field id='destinationAmount' type='N' length='12' />
-    <field id='destinationCurrencyCode' type='AN' length='3' />
-    <field id='sourceAmount' type='N' length='12' />
-    <field id='sourceCurrencyCode' type='AN' length='3' />
-    <field id='merchantName' type='AN' length='25' />
-    <field id='merchantCity' type='AN' length='13' />
-    <field id='merchantCountryCode' type='AN' length='3' />
-    <field id='merchantCategoryCode' type='N' length='4' />
-    <field id='merchantZipCode' type='N' length='5' />
-    <field id='merchantState' type='AN' length='3' />
-    <field id='reqPaymentService' type='AN' length='1' />
-    <field id='numOfPaymentForms' type='AN' length='1' />
-    <field id='usageCode' type='N' length='1' />
-    <field id='reasonCode' type='N' length='2' />
-    <field id='settlementFlag' type='N' length='1' />
-    <field id='authIndicator' type='AN' length='1' />
-    <field id='authCode' type='AN' length='6' />
-    <field id='posTermCapability' type='AN' length='1' />
-    <field id='reserved' type='AN' length='1' />
-    <field id='cardholderIDMethod' type='AN' length='1' />
-    <field id='collectionOnlyFlag' type='AN' length='1' />
-    <field id='posEntryMode' type='AN' length='2' />
-    <field id='centralProcDate' type='N' length='4' />
-    <field id='reimbursementAttribute' type='AN' length='1' />
+    <field id='Account Number' type='N' length='16' />
+    <field id='Account Number Extension' type='N' length='3' />
+    <field id='Floor Limit Indicator' type='AN' length='1' />
+    <field id='CRB/Exception File Indicator' type='AN' length='1' />
+    <field id='Reserved' type='AN' length='1' />
+    <field id='Acquirer Reference Number' type='N' length='23' />
+    <field id='Acquirers Business ID' type='N' length='8' />
+    <field id='Purchase Date (MMDD)' type='N' length='4' />
+    <field id='Destination Amount' type='N' length='12' />
+    <field id='Destination Currency Code' type='AN' length='3' />
+    <field id='Source Amount' type='N' length='12' />
+    <field id='Source Currency Code' type='AN' length='3' />
+    <field id='Merchant Name' type='AN' length='25' />
+    <field id='Merchant City' type='AN' length='13' />
+    <field id='Merchant Country Code' type='AN' length='3' />
+    <field id='Merchant Category Code' type='N' length='4' />
+    <field id='Merchant ZIP Code' type='N' length='5' />
+    <field id='Merchant State/Province Code' type='AN' length='3' />
+    <field id='Requested Payment Service' type='AN' length='1' />
+    <field id='Number of Payment Forms' type='AN' length='1' />
+    <field id='Usage Code' type='N' length='1' />
+    <field id='Reason Code' type='N' length='2' />
+    <field id='Settlement Flag' type='N' length='1' />
+    <field id='Authorization Characteristics Indicator' type='AN' length='1' />
+    <field id='Authorization Code' type='AN' length='6' />
+    <field id='POS Terminal Capability' type='AN' length='1' />
+    <field id='Reserved' type='AN' length='1' />
+    <field id='Cardholder ID Method' type='AN' length='1' />
+    <field id='Collection-Only Flag' type='AN' length='1' />
+    <field id='POS Entry Mode' type='AN' length='2' />
+    <field id='Central Processing Date (YDDD)' type='N' length='4' />
+    <field id='Reimbursement Attribute' type='AN' length='1' />
 </schema>

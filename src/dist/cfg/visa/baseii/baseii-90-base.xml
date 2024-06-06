@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='transactionCode' type='N' length='2' />
-    <field id='cib' type='AN' length='6' />
-    <field id='processingDate' type='N' length='5' />
-    <field id='reserved' type='AN' length='16' />
-    <field id='testOption' type='AN' length='4' />
-    <field id='reserved2' type='AN' length='29' />
-    <field id='securityCode' type='AN' length='8' />
-    <field id='reserved3' type='AN' length='6' />
-    <field id='outFileId' type='N' length='3' />
-    <field id='reserved4' type='AN' length='80' />
+    <field id='Transaction Code' type='N' length='2' />
+    <field id='Center Information Block (CIB)' type='AN' length='6' />
+    <field id='Processing Date' type='N' length='5' />
+    <field id='Reserved1' type='AN' length='16' />
+    <field id='Test Option' type='AN' length='4' />
+    <field id='Reserved2' type='AN' length='29' />
+    <field id='Security Code' type='AN' length='8' />
+    <field id='Reserved3' type='AN' length='6' />
+    <field id='Outgoing File Id' type='N' length='3' />
+    <field id='Reserved4' type='AN' length='80' />
 </schema>

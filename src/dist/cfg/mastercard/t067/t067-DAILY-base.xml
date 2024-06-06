@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='ipmMPEFileId' type='A' length='19' />
-    <field id='dateCreated' type='N' length='8' />
-    <field id='timeCreated' type='N' length='4' />
-    <field id='filler' type='A' length='3' />
+    <field id='IPM MPE File Id' type='A' length='19' />
+    <field id='Date Created' type='N' length='8' />
+    <field id='Time Created' type='N' length='4' />
+    <field id='Filler' type='A' length='3' />
 </schema>
