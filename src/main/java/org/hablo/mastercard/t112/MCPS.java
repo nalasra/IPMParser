@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,10 +18,10 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -46,35 +45,39 @@ public class MCPS {
     static String filePath = System.getProperty("user.dir") + "/src/dist/files/mastercard/t112/in/";
     static String filePathO = System.getProperty("user.dir") + "/src/dist/files/mastercard/t112/out/";
 
-    static Map<String, ReconObject> currencyReconMap = Collections.synchronizedMap(new LinkedHashMap<>());
-    static Map<String, ReconObject> presentmentsReconMap = Collections.synchronizedMap(new TreeMap<>());
+    //static Map<String, ReconObject> currencyReconMap = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    static Map<String, ReconObject> messageReconMap = Collections.synchronizedMap(new TreeMap<>());
     static Map<String, ReconObject> financialAddendumMap = Collections.synchronizedMap(new TreeMap<>());
+
     //used for accessing objects by DE71 as a key
     static Map<String, ReconObject> presentmentsMap = Collections.synchronizedMap(new TreeMap<>());
 
-    static Map<String, String> businessTypeCodeMap = new HashMap<>();
+    //used for storing summary results
+    static Map<String, ReconSummary> reconSummaryPerBsLevel = Collections.synchronizedMap(new TreeMap<>());
+
+    static Map<String, String> businessServiceLevelMap = new HashMap<>();
     static Map<String, String> transactionCodeMap = new HashMap<>();
 
     static {
-
         transactionCodeMap.put("00", "PURCHASE");
         transactionCodeMap.put("01", "ATM CASH");
         transactionCodeMap.put("18", "UNIQUE TXN");
         transactionCodeMap.put("19", "FEE COL CR");
         transactionCodeMap.put("20", "CREDIT");
 
-        businessTypeCodeMap.put("1", "INTERREGIONAL");
-        businessTypeCodeMap.put("2", "INTRAREGIONAL");
-        businessTypeCodeMap.put("3", "INTERCOUNTRY");
-        businessTypeCodeMap.put("4", "INTRACOUNTRY");
-        businessTypeCodeMap.put("8", "MBR-TO-MBR");
-        businessTypeCodeMap.put(" ", "CUSTOM");
+        businessServiceLevelMap.put("1", "INTERREGIONAL");
+        businessServiceLevelMap.put("2", "INTRAREGIONAL");
+        businessServiceLevelMap.put("3", "INTERCOUNTRY");
+        businessServiceLevelMap.put("4", "INTRACOUNTRY");
+        businessServiceLevelMap.put("8", "MBR-TO-MBR AGREEMENT");
+        businessServiceLevelMap.put(" ", "CUSTOM");
     }
 
     public static void main(String[] args) {
         try {
-            File[] fs = getFiles("", filePath);
-            //File[] fs = getFiles("analysis", filePath);
+            //File[] fs = getFiles("", filePath);
+            File[] fs = getFiles("mox/TT112T0.2023-10-13-00-15-26.001_PASS1_D20231013_T002000", filePath);
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
                 System.out.printf("Total %d files/folders found\n", fs.length);
@@ -96,7 +99,7 @@ public class MCPS {
                     fileWriter.close();
                     Thread.sleep(1000);
                     //process messages parsed from the file
-                    processMsgs(FilenameUtils.getExtension(f.getName()), parser);
+                    processMessages(FilenameUtils.getExtension(f.getName()), parser);
                     Thread.sleep(1000);
                 }
 
@@ -127,11 +130,12 @@ public class MCPS {
     private static Map<String, List<ReconObject>> getPresentmentsGroupedByBusinessServiceLevels() {
         Map<String, List<ReconObject>> map = new TreeMap<>();
 
-        for (String txnType : presentmentsReconMap.keySet()) {
-            ReconObject reconObject = presentmentsReconMap.get(txnType);
+        for (String txnType : messageReconMap.keySet()) {
+            ReconObject reconObject = messageReconMap.get(txnType);
 
             List<ReconObject> tt;
-            String key = reconObject.getBsType() + "." + reconObject.getBsId() + "." + reconObject.getBrand() + "."
+            String key = reconObject.getBrand() + "." + reconObject.getBsLevel() + "." + reconObject.getBsId() + "."
+                    + reconObject.getReconCurrency() + "."
                     + reconObject.getFileId();
             if (map.containsKey(key)) {
                 tt = map.get(key);
@@ -145,17 +149,30 @@ public class MCPS {
         return map;
     }
 
-    private static int getAddendumCountByBusinessServiceId(String bsId) {
-        int count = 0;
+    private static Map<String, Integer> getAddendumCountGroupedByBusinessServiceId(int cycleNumber) {
+        Map<String, Integer> map = new TreeMap<>();
+
+        Integer count = 0;
         for (String s : financialAddendumMap.keySet()) {
             ReconObject reconObject = financialAddendumMap.get(s);
-
-            if (reconObject.getBsId().equals(bsId)) {
-                count++;
+            if (reconObject.getCycle() != cycleNumber) {
+                continue;
             }
+
+            String key = reconObject.getBrand() + "." + reconObject.getBsLevel() + "."
+                    + reconObject.getBsId() + "."
+                    + reconObject.getReconCurrency() + "." + reconObject.getFileId();
+            if (map.containsKey(key)) {
+                count = map.get(key);
+            } else {
+                count = 0;
+                map.put(key, count);
+            }
+            count = count + 1;
+            map.put(key, count);
         }
 
-        return count;
+        return map;
     }
 
     private static String formatFileId(String pds0105) {
@@ -166,42 +183,21 @@ public class MCPS {
 
     private static void generateT140Report() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePathO + ID + "t140_report.txt"))) {
-            var presentments = getPresentmentsGroupedByBusinessServiceLevels();
+            Map<String, List<ReconObject>> presentments = getPresentmentsGroupedByBusinessServiceLevels();
             for (int cycleNumber = 1; cycleNumber <= MAX_CYCLES; cycleNumber++) {
                 writer.newLine();
                 writer.newLine();
                 writer.newLine();
                 writer.write("CYCLE : " + cycleNumber);
 
-                BigInteger totalTxnCount = BigInteger.ZERO;
-                BigDecimal totalTxnAmount = BigDecimal.ZERO;
-                BigDecimal totalFeeAmount = BigDecimal.ZERO;
-
-                BigInteger totalTxnCountAsOfCycle = BigInteger.ZERO;
-                BigDecimal totalTxnAmountAsOfCycle = BigDecimal.ZERO;
-                BigDecimal totalFeeAmountAsOfCycle = BigDecimal.ZERO;
-
+                String[] bs;
                 for (String t : presentments.keySet()) {
-                    String[] bs = t.split("\\.");
+                    bs = t.split("\\.");
                     //if (!("" + i).equals(bs[2])) {
                     //    continue;
                     //}
                     List<ReconObject> presentmentsList = presentments.get(t);
-                    writer.newLine();
-                    writer.newLine();
-                    if (bs.length > 2) {
-                        writer.write("ACCEPTANCE BRAND: " + bs[2]);
-                    }
-                    writer.newLine();
-                    writer.write("BUSINESS SERVICE LEVEL: " + businessTypeCodeMap.get(bs[0]));
-                    writer.newLine();
-                    writer.write("BUSINESS SERVICE ID: " + bs[1]);
-                    writer.newLine();
-                    if (bs.length > 3) {
-                        writer.write("FILE ID: " + formatFileId(bs[3]));
-                    }
-                    writer.newLine();
-                    writer.newLine();
+                    printDataHeader(writer, bs);
 
                     int businessServiceCount = 0;
                     BigDecimal businessServiceReconAmount = BigDecimal.ZERO;
@@ -231,8 +227,8 @@ public class MCPS {
                                         currentReconFigures.getReconAmounts().isEmpty()
                         ) {
                             //skip printing
-                            System.out.printf("Empty figures for BRAND[%s] BSID[%s] BSLVL[%s] FILEID[%s] CYCLE[%s]%n",
-                                    reconObject.getBrand(), reconObject.getBsId(), reconObject.getBsType(),
+                            System.out.printf("Empty figures for BRAND[%s] BSLVL[%s] BSID[%s] FILEID[%s] CYCLE[%s]%n",
+                                    reconObject.getBrand(), reconObject.getBsLevel(), reconObject.getBsId(),
                                     reconObject.getFileId(), cycleNumber);
                         } else {
                             printReconAmount(writer, reconObject, currentReconFigures);
@@ -240,39 +236,14 @@ public class MCPS {
                             writer.newLine();
 
                             businessServiceCount += currentReconFigures.getReconAmounts().size();
-                            businessServiceReconAmount = businessServiceReconAmount.add(
-                                    currentReconFigures.sumReconAmounts());
-                            businessServiceFeeAmount = businessServiceFeeAmount.add(
-                                    currentReconFigures.sumFeeAmounts());
-                            totalTxnCount = totalTxnCount.add(
-                                    new BigInteger(String.valueOf(currentReconFigures.getReconAmounts().size())));
-                            totalTxnAmount = totalTxnAmount.add(currentReconFigures.sumReconAmounts());
-                            totalFeeAmount = totalFeeAmount.add(currentReconFigures.sumFeeAmounts());
+                            businessServiceReconAmount = businessServiceReconAmount.add(currentReconFigures.sumReconAmounts());
+                            businessServiceFeeAmount = businessServiceFeeAmount.add(currentReconFigures.sumFeeAmounts());
                         }
-                        //Clearing Day Totals
-                        Set<ReconFigures> reconFiguresList = reconObject.getReconFiguresTillCycle(cycleNumber);
-                        BigDecimal tmpTxnAmount = BigDecimal.ZERO;
-                        BigDecimal tmpFeeAmount = BigDecimal.ZERO;
-                        int tmpTxnCount = 0;
-
-                        for (ReconFigures reconFigures : reconFiguresList) {
-                            if (reconFigures == null) {
-                                continue;
-                            }
-                            tmpTxnAmount = tmpTxnAmount.add(reconFigures.sumReconAmounts());
-                            tmpFeeAmount = tmpFeeAmount.add(reconFigures.sumFeeAmounts());
-                            tmpTxnCount += reconFigures.getReconAmounts().size();
-                        }
-
-                        totalTxnCountAsOfCycle = totalTxnCountAsOfCycle.add(
-                                new BigInteger(String.valueOf(tmpTxnCount)));
-                        totalTxnAmountAsOfCycle = totalTxnAmountAsOfCycle.add(tmpTxnAmount);
-                        totalFeeAmountAsOfCycle = totalFeeAmountAsOfCycle.add(tmpFeeAmount);
                     }
                     writer.write(
                             "-------------------------------------------------------------------------------------------------------------------------------------\n");
                     writer.newLine();
-                    writer.write(businessTypeCodeMap.get(bs[0]));
+                    writer.write(businessServiceLevelMap.get(bs[1]));
                     writer.newLine();
                     writer.write("MASTERCARD SETTLED");
                     writer.newLine();
@@ -280,55 +251,125 @@ public class MCPS {
                     writer.write(
                             StringUtils.leftPad(businessServiceCount + "", 17, ' '));
                     writer.write(StringUtils.leftPad(formatDecimal(businessServiceReconAmount), 30, ' '));
-                    writer.write(StringUtils.leftPad(formatDecimal(businessServiceFeeAmount), 40, ' '));
+                    writer.write(StringUtils.leftPad(getFormattedCurrency(bs[3]), 5, ' '));
+                    writer.write(StringUtils.leftPad(formatDecimal(businessServiceFeeAmount), 30, ' '));
                     writer.newLine();
 
-                    //addendums
-                    var addendums = getAddendumCountByBusinessServiceId(bs[1]);
-                    writer.write("FINANCIAL DETAIL ADDENDUM COUNT = " + addendums);
+                    reconSummaryPerBsLevel.put(t,
+                            new ReconSummary(bs[2], formatFileId(bs[4]), "indicator", businessServiceReconAmount,
+                                    businessServiceFeeAmount));
                 }
 
-                writer.newLine();
-                writer.write(
-                        "_____________________________________________________________________________________________________________________________________\n");
-                writer.write(StringUtils.leftPad("CYCLE SUBTOTAL:", 21, ' '));
-                writer.write(StringUtils.leftPad(totalTxnCount.toString(), 26, ' '));
-                writer.write(StringUtils.leftPad(formatDecimal(totalTxnAmount), 30, ' '));
-                writer.write(StringUtils.leftPad(formatDecimal(totalFeeAmount), 40, ' '));
-                writer.newLine();
-                writer.newLine();
+                //addendums
+                prepareAddendumsInfo(writer, cycleNumber);
 
-                //CLEARING DAY TOTAL AS OF CYCLE: X
-                writer.write(StringUtils.rightPad("TOTAL AS OF CYCLE - " + cycleNumber, 21, ' '));
-                writer.write(StringUtils.leftPad(totalTxnCountAsOfCycle.toString(), 26, ' '));
-                writer.write(StringUtils.leftPad(formatDecimal(totalTxnAmountAsOfCycle), 30, ' '));
-                writer.write(StringUtils.leftPad(formatDecimal(totalFeeAmountAsOfCycle), 40, ' '));
-
+                //summary
+                prepareSummaryByBusinessServiceIds(writer);
             }
         }
     }
 
-    private static void printFeeAmount(BufferedWriter writer, ReconObject reconObject, ReconFigures currentReconFigures)
+    private static void prepareSummaryByBusinessServiceIds(BufferedWriter writer) throws IOException {
+        String lastKey = null;
+        boolean started = false;
+
+        BigDecimal tmpReconAmount = BigDecimal.ZERO;
+        BigDecimal tmpFeeAmount = BigDecimal.ZERO;
+
+        for (Entry<String, ReconSummary> entry : reconSummaryPerBsLevel.entrySet()) {
+
+            String[] bs2 = entry.getKey().split("\\.");
+            bs2[2] = bs2[4] = null;
+            String currentKey = String.format("%s.%s.%s", bs2[0], bs2[1], bs2[3]);
+            if (!started) {
+                printDataHeader(writer, bs2);
+                writer.newLine();
+                writer.write("BS ID               FILE ID                       RECON AMOUNT                   TRANSACTION FEE    ");
+                writer.newLine();
+                writer.write("------    ----------------------------     --------------------------      -------------------------");
+                writer.newLine();
+                started = true;
+            } else if ((lastKey != null && !lastKey.equals(currentKey))) {
+                writer.newLine();
+                writer.write("                            GRAND TOTAL");
+                writer.write(StringUtils.leftPad(formatDecimal(tmpReconAmount), 30, ' '));
+                writer.write(" ");
+                writer.write(StringUtils.leftPad(formatDecimal(tmpFeeAmount), 30, ' '));
+                tmpReconAmount = BigDecimal.ZERO;
+                tmpFeeAmount = BigDecimal.ZERO;
+                printDataHeader(writer, bs2);
+                writer.newLine();
+                writer.write("BS ID               FILE ID                       RECON AMOUNT                   TRANSACTION FEE    ");
+                writer.newLine();
+                writer.write("------    ----------------------------     --------------------------      -------------------------");
+                writer.newLine();
+            }
+            lastKey = currentKey;
+
+            writer.write(entry.getValue().getBsId());
+            writer.write("    ");
+            writer.write(entry.getValue().getFileId());
+            writer.write(" ");
+            writer.write(StringUtils.leftPad(formatDecimal(entry.getValue().getReconAmount()), 30, ' '));
+            writer.write(" ");
+            writer.write(StringUtils.leftPad(formatDecimal(entry.getValue().getTransactionFee()), 30, ' '));
+            writer.newLine();
+            tmpReconAmount = tmpReconAmount.add(entry.getValue().getReconAmount());
+            tmpFeeAmount = tmpFeeAmount.add(entry.getValue().getTransactionFee());
+        }
+    }
+
+    private static void prepareAddendumsInfo(BufferedWriter writer, int cycleNumber) throws IOException {
+        var addendums = getAddendumCountGroupedByBusinessServiceId(cycleNumber);
+        for (String t : addendums.keySet()) {
+            String[] bs2 = t.split("\\.");
+            bs2[3] = null;
+            printDataHeader(writer, bs2);
+            writer.newLine();
+
+            writer.write("NON-FINANCIAL DETAIL                              COUNTS");
+            writer.newLine();
+            writer.write("ORIGINALS:");
+            writer.newLine();
+            writer.write("               FINANCIAL DETAIL ADDENDUM          " + addendums.get(t));
+        }
+    }
+
+    //key[] = brand, bslevel, bsId, currency, fileId
+    private static void printDataHeader(BufferedWriter writer, String[] key) throws IOException {
+        writer.newLine();
+        if (key.length > 1) {
+            writer.newLine();
+            writer.write("ACCEPTANCE BRAND: " + key[0]);
+        }
+        if (key.length > 2) {
+            writer.newLine();
+            writer.write("BUSINESS SERVICE LEVEL: " + businessServiceLevelMap.get(key[1]));
+        }
+        if (key.length > 3 && key[2] != null && !key[2].isEmpty()) {
+            writer.newLine();
+            writer.write("BUSINESS SERVICE ID: " + key[2]);
+        }
+        if (key.length > 4&& key[3] != null && !key[3].isEmpty()) {
+            writer.newLine();
+            writer.write("CURRENCY CODE: " + getFormattedCurrency(key[3]));
+        }
+        if (key.length > 5 && key[4] != null && !key[4].isEmpty()) {
+            writer.newLine();
+            writer.write("FILE ID: " + formatFileId(key[4]));
+        }
+        writer.newLine();
+    }
+
+    private static void printFeeAmount(BufferedWriter writer, ReconObject reconObject, ReconFigures
+            currentReconFigures)
             throws IOException {
         //trans fee
         writer.write(
                 StringUtils.leftPad(formatDecimal(currentReconFigures.sumFeeAmounts()), 30, ' '));
 
         //fee curr code
-        Currency c2;
-        if (reconObject.getFeeCurrency() != null) {
-            c2 = CurrencyHelper.getInstance(reconObject.getFeeCurrency());
-            if (c2 != null) {
-                writer.write(
-                        StringUtils.leftPad(
-                                reconObject.getFeeCurrency() + "-" + c2.getCurrencyCode(),
-                                10,
-                                ' '));
-            } else {
-                writer.write(
-                        StringUtils.leftPad(reconObject.getFeeCurrency() + "-???", 10, ' '));
-            }
-        }
+        writer.write(getFormattedCurrency(reconObject.getFeeCurrency()));
     }
 
     private static String getTxnDescription(String tranCode, String funcCode) {
@@ -360,172 +401,174 @@ public class MCPS {
                 StringUtils.leftPad(formatDecimal(currentReconFigures.sumReconAmounts()), 30, ' '));
 
         //recon curr
+        writer.write(getFormattedCurrency(reconObject.getReconCurrency()));
+    }
+
+    private static String getFormattedCurrency(String numericCurr) {
         Currency c1 = null;
-        if (reconObject.getReconCurrency() != null) {
-            c1 = CurrencyHelper.getInstance(reconObject.getReconCurrency());
+        if (numericCurr != null && !numericCurr.isEmpty()) {
+            c1 = CurrencyHelper.getInstance(numericCurr);
         }
         if (c1 != null) {
-            writer.write(
-                    StringUtils.leftPad(reconObject.getReconCurrency() + "-" + c1.getCurrencyCode(),
-                            10,
-                            ' '));
+            return
+                    StringUtils.leftPad(numericCurr + "-" + c1.getCurrencyCode(), 10, ' ');
         } else {
-            writer.write(
-                    StringUtils.leftPad(reconObject.getReconCurrency() + "-???", 10, ' '));
+            return
+                    StringUtils.leftPad(numericCurr + "-???", 10, ' ');
         }
     }
 
-    private static void generateSummaryReport() throws IOException {
-        try (BufferedWriter summaryWriter = new BufferedWriter(new FileWriter(filePathO + ID + "summary.txt"))) {
-
-            //Clearing Cycle Summary Reconciliation Report
-
-            int cycleSpaces = 5;
-            int currencySpaces = 10;
-            int netAmountSpaces = 28;
-
-            summaryWriter.write("=========================\n");
-            summaryWriter.write("  CLEARING CYCLE DETAIL  \n");
-            summaryWriter.write("=========================\n");
-            summaryWriter.newLine();
-
-            summaryWriter.write("\t");
-            summaryWriter.write("CYCLE ACTIVITY");
-            summaryWriter.write(StringUtils.rightPad(" ", cycleSpaces, ' '));
-            summaryWriter.write("FILE ID TO MC");
-            summaryWriter.write(StringUtils.leftPad(" ", currencySpaces, ' '));
-            summaryWriter.write("FILE ID FROM MC");
-            summaryWriter.write(StringUtils.leftPad(" ", 19, ' '));
-            summaryWriter.write("NET RECON CURRENCY AMOUNT");
-            summaryWriter.newLine();
-            summaryWriter.write("\t");
-            summaryWriter.write("______________");
-            summaryWriter.write(StringUtils.rightPad(" ", cycleSpaces, ' '));
-            summaryWriter.write("______________");
-            summaryWriter.write(StringUtils.leftPad(" ", 9, ' '));
-            summaryWriter.write("_________________________");
-            summaryWriter.write(StringUtils.leftPad(" ", 9, ' '));
-            summaryWriter.write("_________________________");
-            summaryWriter.newLine();
-
-            for (String r : currencyReconMap.keySet()) {
-                summaryWriter.newLine();
-                ReconObject reconObject = currencyReconMap.get(r);
-                Currency curr = CurrencyHelper.getInstance(r);
-                if (curr != null) {
-                    summaryWriter.write("CURRENCY : " + r + "-" + curr.getCurrencyCode());
-                } else {
-                    summaryWriter.write("CURRENCY : " + r + "-");
-                }
-
-                summaryWriter.newLine();
-                summaryWriter.newLine();
-
-                for (int i = 1; i <= MAX_CYCLES; i++) {
-                    ReconFigures reconFigures = reconObject.getReconFigures(i);
-                    summaryWriter.write("\t");
-                    summaryWriter.write(StringUtils.rightPad("CYCLE " + i + "", cycleSpaces, ' '));
-                    if (reconObject.getFileId() != null) {
-                        summaryWriter.write(StringUtils.leftPad(reconObject.getFileId(), 60, ' '));
-                    } else {
-                        summaryWriter.write(StringUtils.leftPad(" ", 60, ' '));
-                    }
-                    summaryWriter.write(
-                            StringUtils.leftPad(formatDecimal(reconFigures.sumNetTotalAmounts()), 30, ' '));
-                    summaryWriter.newLine();
-                }
-                summaryWriter.newLine();
-
-                summaryWriter.write("\t");
-                summaryWriter.write("TOTAL");
-                summaryWriter.write(
-                        StringUtils.leftPad(formatDecimal(reconObject.getTotalNetAmount()), 92, ' '));
-                summaryWriter.newLine();
-                summaryWriter.newLine();
-            }
-            summaryWriter.newLine();
-            summaryWriter.newLine();
-            summaryWriter.newLine();
-
-            summaryWriter.write("=====================================\n");
-            summaryWriter.write("   CLEARING TOTALS BY END OF CYCLE   \n");
-            summaryWriter.write("=====================================\n");
-            summaryWriter.newLine();
-
-            summaryWriter.write("CYCLE");
-            summaryWriter.write(StringUtils.rightPad(" ", 12, ' '));
-            summaryWriter.write("NET TRANSACTION");
-            summaryWriter.write(StringUtils.leftPad(" ", 16, ' '));
-            summaryWriter.write("NET FEE");
-            summaryWriter.write(StringUtils.leftPad(" ", 18, ' '));
-            summaryWriter.write("NET TOTAL");
-            summaryWriter.newLine();
-            summaryWriter.newLine();
-
-            for (String r : currencyReconMap.keySet()) {
-                summaryWriter.write("CURRENCY : " + r);
-                summaryWriter.newLine();
-                summaryWriter.newLine();
-                for (int i = 1; i <= MAX_CYCLES; i++) {
-                    ReconObject reconObject = currencyReconMap.get(r);
-                    Set<ReconFigures> reconFiguresList = reconObject.getReconFiguresTillCycle(i);
-                    BigDecimal tmpTxnAmount = BigDecimal.ZERO;
-                    BigDecimal tmpFeeAmount = BigDecimal.ZERO;
-                    BigDecimal tmpTotalAmount = BigDecimal.ZERO;
-
-                    for (ReconFigures reconFigures : reconFiguresList) {
-                        tmpTxnAmount = tmpTxnAmount.add(reconFigures.sumNetTransactionAmounts());
-                        tmpFeeAmount = tmpFeeAmount.add(reconFigures.sumNetFeeAmounts());
-                        tmpTotalAmount = tmpTotalAmount.add(reconFigures.sumNetTotalAmounts());
-                    }
-                    summaryWriter.write(StringUtils.rightPad(i + "", cycleSpaces, ' '));
-                    summaryWriter.write(
-                            StringUtils.leftPad(formatDecimal(tmpTxnAmount), netAmountSpaces, ' '));
-                    summaryWriter.write(
-                            StringUtils.leftPad(formatDecimal(tmpFeeAmount), netAmountSpaces, ' '));
-                    summaryWriter.write(
-                            StringUtils.leftPad(formatDecimal(tmpTotalAmount), netAmountSpaces,
-                                    ' '));
-                    summaryWriter.newLine();
-                }
-            }
-
-            //2. calculate values for whole day
-            summaryWriter.newLine();
-            summaryWriter.newLine();
-            summaryWriter.newLine();
-            summaryWriter.newLine();
-            summaryWriter.write("===========================\n");
-            summaryWriter.write("    CURRENCY WISE RECON    \n");
-            summaryWriter.write("===========================\n");
-            summaryWriter.newLine();
-
-            summaryWriter.write(StringUtils.leftPad(" ", 5, ' '));
-            summaryWriter.write("CURRENCY");
-            summaryWriter.write(StringUtils.leftPad(" ", currencySpaces, ' '));
-            summaryWriter.write("NET TRANSACTION");
-            summaryWriter.write(StringUtils.leftPad(" ", 21, ' '));
-            summaryWriter.write("NET FEE");
-            summaryWriter.write(StringUtils.leftPad(" ", 19, ' '));
-            summaryWriter.write("NET TOTAL");
-            summaryWriter.write(StringUtils.leftPad(" ", 15, ' '));
-            summaryWriter.newLine();
-            summaryWriter.newLine();
-
-            for (String r : currencyReconMap.keySet()) {
-                ReconObject reconObject = currencyReconMap.get(r);
-                summaryWriter.write(StringUtils.leftPad(r + "", currencySpaces, ' '));
-                summaryWriter.write(
-                        StringUtils.leftPad(formatDecimal(reconObject.getTotalReconAmount()), netAmountSpaces, ' '));
-                summaryWriter.write(
-                        StringUtils.leftPad(formatDecimal(reconObject.getTotalFeeAmount()), netAmountSpaces, ' '));
-                summaryWriter.write(
-                        StringUtils.leftPad(formatDecimal(reconObject.getTotalNetAmount()), netAmountSpaces, ' '));
-                summaryWriter.newLine();
-            }
-        }
-    }
-
+//    private static void generateSummaryReport() throws IOException {
+//        try (BufferedWriter summaryWriter = new BufferedWriter(new FileWriter(filePathO + ID + "summary.txt"))) {
+//
+//            //Clearing Cycle Summary Reconciliation Report
+//
+//            int cycleSpaces = 5;
+//            int currencySpaces = 10;
+//            int netAmountSpaces = 28;
+//
+//            summaryWriter.write("=========================\n");
+//            summaryWriter.write("  CLEARING CYCLE DETAIL  \n");
+//            summaryWriter.write("=========================\n");
+//            summaryWriter.newLine();
+//
+//            summaryWriter.write("\t");
+//            summaryWriter.write("CYCLE ACTIVITY");
+//            summaryWriter.write(StringUtils.rightPad(" ", cycleSpaces, ' '));
+//            summaryWriter.write("FILE ID TO MC");
+//            summaryWriter.write(StringUtils.leftPad(" ", currencySpaces, ' '));
+//            summaryWriter.write("FILE ID FROM MC");
+//            summaryWriter.write(StringUtils.leftPad(" ", 19, ' '));
+//            summaryWriter.write("NET RECON CURRENCY AMOUNT");
+//            summaryWriter.newLine();
+//            summaryWriter.write("\t");
+//            summaryWriter.write("______________");
+//            summaryWriter.write(StringUtils.rightPad(" ", cycleSpaces, ' '));
+//            summaryWriter.write("______________");
+//            summaryWriter.write(StringUtils.leftPad(" ", 9, ' '));
+//            summaryWriter.write("_________________________");
+//            summaryWriter.write(StringUtils.leftPad(" ", 9, ' '));
+//            summaryWriter.write("_________________________");
+//            summaryWriter.newLine();
+//
+//            for (String r : currencyReconMap.keySet()) {
+//                summaryWriter.newLine();
+//                ReconObject reconObject = currencyReconMap.get(r);
+//                Currency curr = CurrencyHelper.getInstance(r);
+//                if (curr != null) {
+//                    summaryWriter.write("CURRENCY : " + r + "-" + curr.getCurrencyCode());
+//                } else {
+//                    summaryWriter.write("CURRENCY : " + r + "-");
+//                }
+//
+//                summaryWriter.newLine();
+//                summaryWriter.newLine();
+//
+//                for (int i = 1; i <= MAX_CYCLES; i++) {
+//                    ReconFigures reconFigures = reconObject.getReconFigures(i);
+//                    summaryWriter.write("\t");
+//                    summaryWriter.write(StringUtils.rightPad("CYCLE " + i + "", cycleSpaces, ' '));
+//                    if (reconObject.getFileId() != null) {
+//                        summaryWriter.write(StringUtils.leftPad(reconObject.getFileId(), 60, ' '));
+//                    } else {
+//                        summaryWriter.write(StringUtils.leftPad(" ", 60, ' '));
+//                    }
+//                    summaryWriter.write(
+//                            StringUtils.leftPad(formatDecimal(reconFigures.sumNetTotalAmounts()), 30, ' '));
+//                    summaryWriter.newLine();
+//                }
+//                summaryWriter.newLine();
+//
+//                summaryWriter.write("\t");
+//                summaryWriter.write("TOTAL");
+//                summaryWriter.write(
+//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalNetAmount()), 92, ' '));
+//                summaryWriter.newLine();
+//                summaryWriter.newLine();
+//            }
+//            summaryWriter.newLine();
+//            summaryWriter.newLine();
+//            summaryWriter.newLine();
+//
+//            summaryWriter.write("=====================================\n");
+//            summaryWriter.write("   CLEARING TOTALS BY END OF CYCLE   \n");
+//            summaryWriter.write("=====================================\n");
+//            summaryWriter.newLine();
+//
+//            summaryWriter.write("CYCLE");
+//            summaryWriter.write(StringUtils.rightPad(" ", 12, ' '));
+//            summaryWriter.write("NET TRANSACTION");
+//            summaryWriter.write(StringUtils.leftPad(" ", 16, ' '));
+//            summaryWriter.write("NET FEE");
+//            summaryWriter.write(StringUtils.leftPad(" ", 18, ' '));
+//            summaryWriter.write("NET TOTAL");
+//            summaryWriter.newLine();
+//            summaryWriter.newLine();
+//
+//            for (String r : currencyReconMap.keySet()) {
+//                summaryWriter.write("CURRENCY : " + r);
+//                summaryWriter.newLine();
+//                summaryWriter.newLine();
+//                for (int i = 1; i <= MAX_CYCLES; i++) {
+//                    ReconObject reconObject = currencyReconMap.get(r);
+//                    Set<ReconFigures> reconFiguresList = reconObject.getReconFiguresTillCycle(i);
+//                    BigDecimal tmpTxnAmount = BigDecimal.ZERO;
+//                    BigDecimal tmpFeeAmount = BigDecimal.ZERO;
+//                    BigDecimal tmpTotalAmount = BigDecimal.ZERO;
+//
+//                    for (ReconFigures reconFigures : reconFiguresList) {
+//                        tmpTxnAmount = tmpTxnAmount.add(reconFigures.sumNetTransactionAmounts());
+//                        tmpFeeAmount = tmpFeeAmount.add(reconFigures.sumNetFeeAmounts());
+//                        tmpTotalAmount = tmpTotalAmount.add(reconFigures.sumNetTotalAmounts());
+//                    }
+//                    summaryWriter.write(StringUtils.rightPad(i + "", cycleSpaces, ' '));
+//                    summaryWriter.write(
+//                            StringUtils.leftPad(formatDecimal(tmpTxnAmount), netAmountSpaces, ' '));
+//                    summaryWriter.write(
+//                            StringUtils.leftPad(formatDecimal(tmpFeeAmount), netAmountSpaces, ' '));
+//                    summaryWriter.write(
+//                            StringUtils.leftPad(formatDecimal(tmpTotalAmount), netAmountSpaces,
+//                                    ' '));
+//                    summaryWriter.newLine();
+//                }
+//            }
+//
+//            //2. calculate values for whole day
+//            summaryWriter.newLine();
+//            summaryWriter.newLine();
+//            summaryWriter.newLine();
+//            summaryWriter.newLine();
+//            summaryWriter.write("===========================\n");
+//            summaryWriter.write("    CURRENCY WISE RECON    \n");
+//            summaryWriter.write("===========================\n");
+//            summaryWriter.newLine();
+//
+//            summaryWriter.write(StringUtils.leftPad(" ", 5, ' '));
+//            summaryWriter.write("CURRENCY");
+//            summaryWriter.write(StringUtils.leftPad(" ", currencySpaces, ' '));
+//            summaryWriter.write("NET TRANSACTION");
+//            summaryWriter.write(StringUtils.leftPad(" ", 21, ' '));
+//            summaryWriter.write("NET FEE");
+//            summaryWriter.write(StringUtils.leftPad(" ", 19, ' '));
+//            summaryWriter.write("NET TOTAL");
+//            summaryWriter.write(StringUtils.leftPad(" ", 15, ' '));
+//            summaryWriter.newLine();
+//            summaryWriter.newLine();
+//
+//            for (String r : currencyReconMap.keySet()) {
+//                ReconObject reconObject = currencyReconMap.get(r);
+//                summaryWriter.write(StringUtils.leftPad(r + "", currencySpaces, ' '));
+//                summaryWriter.write(
+//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalReconAmount()), netAmountSpaces,
+//                                ' '));
+//                summaryWriter.write(
+//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalFeeAmount()), netAmountSpaces, ' '));
+//                summaryWriter.write(
+//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalNetAmount()), netAmountSpaces, ' '));
+//                summaryWriter.newLine();
+//            }
+//        }
+//    }
 
     public static BufferedWriter initializeWriter(String fileIn, String fileOut, File file) throws IOException {
         String dir = StringUtils.mid(file.getAbsolutePath(), fileIn.length(),
@@ -537,11 +580,10 @@ public class MCPS {
         return new BufferedWriter(new FileWriter(fileOut + ID + dir + file.getName() + ".txt"));
     }
 
-    private static void processMsgs(String key, T112Parser parser) {
+    private static void processMessages(String key, T112Parser parser) {
         System.out.println(new Date() + " - Starting processing messages..." + key);
         if (key != null) {
             var list = parser.getISOMessages();
-            //1. calculate values for each cycle 1-6
             for (ISOMsg m : list) {
                 try {
                     //header
@@ -554,7 +596,7 @@ public class MCPS {
                     }
                     //recon
                     else if (m.getMTI().equals("1644") && m.getString(24).equals("685")) {
-                        process1644Reconciliation(m, parser);
+                        //process1644Reconciliation(m, parser);
                     }
                     //financial addendum
                     else if (m.getMTI().equals("1644") && m.getString(24).equals("696")) {
@@ -563,6 +605,10 @@ public class MCPS {
                     //fees
                     else if (m.getMTI().equals("1740")) {
                         process1740(m, parser);
+                    }
+                    //trailer
+                    if (m.getMTI().equals("1644") && m.getString(24).equals("695")) {
+                        process1644Trailer(m, parser);
                     } else {
                         //System.out.println("Unknown message: " + m);
                     }
@@ -597,11 +643,11 @@ public class MCPS {
 
         transactionKey = bstype + "." + bsid + "." + mti + "." + de24 + "." + de3.substring(0, 2) + "." + ind;
 
-        if (presentmentsReconMap.containsKey(transactionKey)) {
-            reconObject = presentmentsReconMap.get(transactionKey);
+        if (messageReconMap.containsKey(transactionKey)) {
+            reconObject = messageReconMap.get(transactionKey);
         } else {
             reconObject = new ReconObject(mti, de24, de3.substring(0, 2), ind, "  ", "", bstype, bsid, cycle);
-            presentmentsReconMap.put(transactionKey, reconObject);
+            messageReconMap.put(transactionKey, reconObject);
         }
 
         reconObject.setReconCurrency(de50);
@@ -611,6 +657,23 @@ public class MCPS {
         BigDecimal amount = convertAmountToDecimal(de5, de50);
         amount = amount.negate(new MathContext(0));
         reconFigures.getReconAmounts().add(amount);
+    }
+
+    private static void process1644Trailer(ISOMsg m, T112Parser parser) {
+        PDSParser p = parser.getPDSParser(getKey(m) + "_DE48");
+
+        if (p.hasElement("0105")) {
+            String pds105 = p.getElementById("0105").getValue();
+            parser.setFileId(pds105);
+            int cycle = Integer.parseInt(pds105.substring(22, 23));
+            parser.setCycleNumber(cycle);
+        }
+
+        //p0301 File Amount, Checksum
+
+        if (p.hasElement("0306")) {
+            //p0306 File Message Counts
+        }
     }
 
     private static void process1644Header(ISOMsg m, T112Parser parser) {
@@ -680,11 +743,11 @@ public class MCPS {
 
         ReconObject reconObject;
         ReconFigures reconFigures;
-        if (presentmentsReconMap.containsKey(transactionKey)) {
-            reconObject = presentmentsReconMap.get(transactionKey);
+        if (messageReconMap.containsKey(transactionKey)) {
+            reconObject = messageReconMap.get(transactionKey);
         } else {
             reconObject = new ReconObject(mti, de24, tranCode, ind, ird, brand, bstype, bsid, cycle);
-            presentmentsReconMap.put(transactionKey, reconObject);
+            messageReconMap.put(transactionKey, reconObject);
         }
 
         presentmentsMap.put(m.getString(71), reconObject);
@@ -748,8 +811,9 @@ public class MCPS {
         ReconObject matchingPresentment = findAssociatedPresentment(msgNumber);
 
         reconObject = new ReconObject(m.getString(0), m.getString(24), "", "", matchingPresentment.getIrd(),
-                matchingPresentment.getBrand(), matchingPresentment.getBsType(),
+                matchingPresentment.getBrand(), matchingPresentment.getBsLevel(),
                 matchingPresentment.getBsId(), cycle);
+        reconObject.setFileId(parser.getFileId());
         financialAddendumMap.put(transactionKey, reconObject);
     }
 
@@ -757,52 +821,51 @@ public class MCPS {
         return presentmentsMap.get(msgNumber);
     }
 
-
-    private static void process1644Reconciliation(ISOMsg m, T112Parser parser) {
-        //get interchange amount from PDS395
-        PDSParser p = parser.getPDSParser(getKey(m) + "_DE48");
-        if (!p.hasElement("0394") || !p.hasElement("0395") || !p.hasElement("0396")) {
-            System.out.println("Important PDS not present");
-            return;
-        }
-
-        String currency = m.getString(50);
-        ReconObject reconObject;
-        ReconFigures reconFigures;
-
-        int cycle = parser.getCycleNumber();
-        if (currencyReconMap.containsKey(currency)) {
-            reconObject = currencyReconMap.get(currency);
-        } else {
-            reconObject = new ReconObject();
-            currencyReconMap.put(currency, reconObject);
-        }
-        reconFigures = reconObject.getReconFigures(cycle);
-        reconObject.setFileId(parser.getFileId());
-
-        String pds394 = p.getElementById("0394").getValue();
-        String pds395 = p.getElementById("0395").getValue();
-        String pds396 = p.getElementById("0396").getValue();
-
-        MathContext mc = new MathContext(0);
-        BigDecimal transactionAmount = convertAmountToDecimal(pds394.substring(1), currency);
-        if (!pds394.substring(0, 1).startsWith("C")) {
-            transactionAmount = transactionAmount.negate(mc);
-        }
-        reconFigures.getNetTransactionAmounts().add(transactionAmount);
-
-        BigDecimal feeAmount = convertAmountToDecimal(pds395.substring(1), currency);
-        if (!pds395.substring(0, 1).startsWith("C")) {
-            feeAmount = feeAmount.negate(mc);
-        }
-        reconFigures.getNetFeeAmounts().add(feeAmount);
-
-        BigDecimal totalAmount = convertAmountToDecimal(pds396.substring(1), currency);
-        if (!pds396.substring(0, 1).startsWith("C")) {
-            totalAmount = totalAmount.negate(mc);
-        }
-        reconFigures.getNetTotalAmounts().add(totalAmount);
-    }
+//    private static void process1644Reconciliation(ISOMsg m, T112Parser parser) {
+//        //get interchange amount from PDS395
+//        PDSParser p = parser.getPDSParser(getKey(m) + "_DE48");
+//        if (!p.hasElement("0394") || !p.hasElement("0395") || !p.hasElement("0396")) {
+//            System.out.println("Important PDS not present");
+//            return;
+//        }
+//
+//        String currency = m.getString(50);
+//        ReconObject reconObject;
+//        ReconFigures reconFigures;
+//
+//        int cycle = parser.getCycleNumber();
+//        if (currencyReconMap.containsKey(currency)) {
+//            reconObject = currencyReconMap.get(currency);
+//        } else {
+//            reconObject = new ReconObject();
+//            currencyReconMap.put(currency, reconObject);
+//        }
+//        reconFigures = reconObject.getReconFigures(cycle);
+//        reconObject.setFileId(parser.getFileId());
+//
+//        String pds394 = p.getElementById("0394").getValue();
+//        String pds395 = p.getElementById("0395").getValue();
+//        String pds396 = p.getElementById("0396").getValue();
+//
+//        MathContext mc = new MathContext(0);
+//        BigDecimal transactionAmount = convertAmountToDecimal(pds394.substring(1), currency);
+//        if (!pds394.substring(0, 1).startsWith("C")) {
+//            transactionAmount = transactionAmount.negate(mc);
+//        }
+//        reconFigures.getNetTransactionAmounts().add(transactionAmount);
+//
+//        BigDecimal feeAmount = convertAmountToDecimal(pds395.substring(1), currency);
+//        if (!pds395.substring(0, 1).startsWith("C")) {
+//            feeAmount = feeAmount.negate(mc);
+//        }
+//        reconFigures.getNetFeeAmounts().add(feeAmount);
+//
+//        BigDecimal totalAmount = convertAmountToDecimal(pds396.substring(1), currency);
+//        if (!pds396.substring(0, 1).startsWith("C")) {
+//            totalAmount = totalAmount.negate(mc);
+//        }
+//        reconFigures.getNetTotalAmounts().add(totalAmount);
+//    }
 
     static class ReconObject {
 
@@ -813,7 +876,7 @@ public class MCPS {
         String indicator;
         String ird;
         String brand;
-        String bsType;
+        String bsLevel;
         String bsId;
         String fileId;
         String reconCurrency;
@@ -832,7 +895,7 @@ public class MCPS {
             this.func = funcCode;
         }
 
-        public ReconObject(String mti, String func, String tc, String ind, String ird, String brand, String bsType,
+        public ReconObject(String mti, String func, String tc, String ind, String ird, String brand, String bsLevel,
                 String bsId,
                 int cycle) {
             this(mti, func);
@@ -840,7 +903,7 @@ public class MCPS {
             this.indicator = ind;
             this.ird = ird;
             this.brand = brand;
-            this.bsType = bsType;
+            this.bsLevel = bsLevel;
             this.bsId = bsId;
             this.cycle = cycle;
         }
@@ -874,8 +937,8 @@ public class MCPS {
             return brand;
         }
 
-        public String getBsType() {
-            return bsType;
+        public String getBsLevel() {
+            return bsLevel;
         }
 
         public String getBsId() {
@@ -972,18 +1035,82 @@ public class MCPS {
 
     }
 
+    static class ReconSummary {
+
+        String bsId;
+        String fileId;
+        String indicator;
+        BigDecimal reconAmount;
+        BigDecimal transactionFee;
+
+        public ReconSummary(String bsId, String fileId, String indicator, BigDecimal reconAmount,
+                BigDecimal transactionFee) {
+            this.bsId = bsId;
+            this.fileId = fileId;
+            this.indicator = indicator;
+            this.reconAmount = reconAmount;
+            this.transactionFee = transactionFee;
+        }
+
+        public String getBsId() {
+            return bsId;
+        }
+
+        public void setBsId(String bsId) {
+            this.bsId = bsId;
+        }
+
+        public String getFileId() {
+            return fileId;
+        }
+
+        public void setFileId(String fileId) {
+            this.fileId = fileId;
+        }
+
+        public String getIndicator() {
+            return indicator;
+        }
+
+        public void setIndicator(String indicator) {
+            this.indicator = indicator;
+        }
+
+        public BigDecimal getReconAmount() {
+            return reconAmount;
+        }
+
+        public void setReconAmount(BigDecimal reconAmount) {
+            this.reconAmount = reconAmount;
+        }
+
+        public BigDecimal getTransactionFee() {
+            return transactionFee;
+        }
+
+        public void setTransactionFee(BigDecimal transactionFee) {
+            this.transactionFee = transactionFee;
+        }
+    }
+
+    static class ReconKey {
+
+        String brand;
+        String bsLevel;
+        String bsId;
+        String fileId;
+        String currency;
+    }
+
     static class ReconFigures {
 
         String id;
         int cycleNumber;
 
         //used by 1240 messages
-        //transaction amount before deducting interchange
-        List<BigDecimal> txnAmountList;
-        //transaction amount after deducting interchange
-        List<BigDecimal> reconAmountList;
-        //amount of interchange
-        List<BigDecimal> feeAmountList;
+        List<BigDecimal> txnAmountList; //transaction amount before deducting interchange
+        List<BigDecimal> reconAmountList; //transaction amount after deducting interchange
+        List<BigDecimal> feeAmountList; //amount of interchange
 
         //used by 1644 recon messages
         List<BigDecimal> netTransactionAmountList;
