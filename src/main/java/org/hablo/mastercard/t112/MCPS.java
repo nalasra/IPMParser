@@ -188,33 +188,33 @@ public class MCPS {
                 writer.newLine();
                 writer.newLine();
                 writer.newLine();
-                writer.write("CYCLE : " + cycleNumber);
+                writer.write("CYCLE: " + cycleNumber);
 
                 String[] bs;
                 for (String t : presentments.keySet()) {
                     bs = t.split("\\.");
-                    //if (!("" + i).equals(bs[2])) {
-                    //    continue;
-                    //}
+
                     List<ReconObject> presentmentsList = presentments.get(t);
+                    //bs[3] = null;
                     printDataHeader(writer, bs);
 
                     int businessServiceCount = 0;
                     BigDecimal businessServiceReconAmount = BigDecimal.ZERO;
                     BigDecimal businessServiceFeeAmount = BigDecimal.ZERO;
-                    writer.write("MASTERCARD SETTLED");
                     writer.newLine();
                     writer.newLine();
-                    printHeader(writer,
-                            StringUtils.leftPad("TRANS. FUNC", 12, ' '),
-                            StringUtils.leftPad("PROC CODE", 13, ' '),
-                            StringUtils.leftPad("IRD", 13, ' '),
-                            StringUtils.leftPad("COUNTS", 9, ' '),
-                            StringUtils.leftPad("RECON AMOUNT", 30, ' '),
-                            StringUtils.leftPad("RECON CURR CODE", 18, ' '),
-                            StringUtils.leftPad("TRANS FEE", 22, ' '),
-                            StringUtils.leftPad("FEE CURR CODE", 16, ' ')
-                    );
+                    writer.write(
+                            "MASTERCARD SETTLED                                                     RECON                             FEE");
+                    writer.newLine();
+                    writer.write(
+                            "                                                                        CURR                             CURR");
+                    writer.newLine();
+                    writer.write(
+                            " TRANS. FUNC  PROC CODE       IRD COUNTS         RECON AMOUNT           CODE           TRANS FEE         CODE");
+                    writer.newLine();
+                    writer.write(
+                            " ------------ --------------- --- -------- -------------------------- ------- -------------------------- -------");
+                    writer.newLine();
 
                     for (ReconObject reconObject : presentmentsList) {
                         ReconFigures currentReconFigures = reconObject.getReconFigures(cycleNumber);
@@ -231,17 +231,19 @@ public class MCPS {
                                     reconObject.getBrand(), reconObject.getBsLevel(), reconObject.getBsId(),
                                     reconObject.getFileId(), cycleNumber);
                         } else {
-                            printReconAmount(writer, reconObject, currentReconFigures);
-                            printFeeAmount(writer, reconObject, currentReconFigures);
+                            printReconInfo(writer, reconObject, currentReconFigures);
                             writer.newLine();
 
                             businessServiceCount += currentReconFigures.getReconAmounts().size();
-                            businessServiceReconAmount = businessServiceReconAmount.add(currentReconFigures.sumReconAmounts());
-                            businessServiceFeeAmount = businessServiceFeeAmount.add(currentReconFigures.sumFeeAmounts());
+                            businessServiceReconAmount = businessServiceReconAmount.add(
+                                    currentReconFigures.sumReconAmounts());
+                            businessServiceFeeAmount = businessServiceFeeAmount.add(
+                                    currentReconFigures.sumFeeAmounts());
                         }
                     }
                     writer.write(
-                            "-------------------------------------------------------------------------------------------------------------------------------------\n");
+                            " ------------ --------------- --- -------- -------------------------- ------- -------------------------- -------");
+                    writer.newLine();
                     writer.newLine();
                     writer.write(businessServiceLevelMap.get(bs[1]));
                     writer.newLine();
@@ -249,10 +251,10 @@ public class MCPS {
                     writer.newLine();
                     writer.write("BUSINESS SERVICE ID SUB TOTAL ");
                     writer.write(
-                            StringUtils.leftPad(businessServiceCount + "", 17, ' '));
-                    writer.write(StringUtils.leftPad(formatDecimal(businessServiceReconAmount), 30, ' '));
-                    writer.write(StringUtils.leftPad(getFormattedCurrency(bs[3]), 5, ' '));
-                    writer.write(StringUtils.leftPad(formatDecimal(businessServiceFeeAmount), 30, ' '));
+                            StringUtils.leftPad(businessServiceCount + "", 12, ' '));
+                    writer.write(StringUtils.leftPad(formatDecimal(businessServiceReconAmount), 27, ' '));
+                    writer.write(StringUtils.leftPad(getFormattedCurrency(bs[3]), 8, ' '));
+                    writer.write(StringUtils.leftPad(formatDecimal(businessServiceFeeAmount), 27, ' '));
                     writer.newLine();
 
                     reconSummaryPerBsLevel.put(t,
@@ -284,9 +286,11 @@ public class MCPS {
             if (!started) {
                 printDataHeader(writer, bs2);
                 writer.newLine();
-                writer.write("BS ID               FILE ID                       RECON AMOUNT                   TRANSACTION FEE    ");
+                writer.write(
+                        "BS ID               FILE ID                       RECON AMOUNT                   TRANSACTION FEE    ");
                 writer.newLine();
-                writer.write("------    ----------------------------     --------------------------      -------------------------");
+                writer.write(
+                        "------    ----------------------------     --------------------------      -------------------------");
                 writer.newLine();
                 started = true;
             } else if ((lastKey != null && !lastKey.equals(currentKey))) {
@@ -299,9 +303,11 @@ public class MCPS {
                 tmpFeeAmount = BigDecimal.ZERO;
                 printDataHeader(writer, bs2);
                 writer.newLine();
-                writer.write("BS ID               FILE ID                       RECON AMOUNT                   TRANSACTION FEE    ");
+                writer.write(
+                        "BS ID               FILE ID                       RECON AMOUNT                   TRANSACTION FEE    ");
                 writer.newLine();
-                writer.write("------    ----------------------------     --------------------------      -------------------------");
+                writer.write(
+                        "------    ----------------------------     --------------------------      -------------------------");
                 writer.newLine();
             }
             lastKey = currentKey;
@@ -350,7 +356,7 @@ public class MCPS {
             writer.newLine();
             writer.write("BUSINESS SERVICE ID: " + key[2]);
         }
-        if (key.length > 4&& key[3] != null && !key[3].isEmpty()) {
+        if (key.length > 4 && key[3] != null && !key[3].isEmpty()) {
             writer.newLine();
             writer.write("CURRENCY CODE: " + getFormattedCurrency(key[3]));
         }
@@ -361,17 +367,6 @@ public class MCPS {
         writer.newLine();
     }
 
-    private static void printFeeAmount(BufferedWriter writer, ReconObject reconObject, ReconFigures
-            currentReconFigures)
-            throws IOException {
-        //trans fee
-        writer.write(
-                StringUtils.leftPad(formatDecimal(currentReconFigures.sumFeeAmounts()), 30, ' '));
-
-        //fee curr code
-        writer.write(getFormattedCurrency(reconObject.getFeeCurrency()));
-    }
-
     private static String getTxnDescription(String tranCode, String funcCode) {
         if (transactionCodeMap.containsKey(tranCode + "." + funcCode)) {
             return transactionCodeMap.get(tranCode + "." + funcCode);
@@ -379,10 +374,10 @@ public class MCPS {
         return transactionCodeMap.get(tranCode);
     }
 
-    private static void printReconAmount(BufferedWriter writer, ReconObject reconObject,
+    private static void printReconInfo(BufferedWriter writer, ReconObject reconObject,
             ReconFigures currentReconFigures)
             throws IOException {
-        writer.write("   ");
+        writer.write(" ");
         writer.write(reconObject.getMti());
         writer.write(" ");
         writer.write(reconObject.getFunc());
@@ -391,17 +386,28 @@ public class MCPS {
                 StringUtils.rightPad(getTxnDescription(reconObject.getTranCode(), reconObject.getFunc()), 10, ' '));
         writer.write(" ");
         writer.write(reconObject.getIndicator());
-        writer.write("    ");
-        writer.write(reconObject.getIrd());
         writer.write(" ");
+        writer.write(reconObject.getIrd());
+        writer.write("  ");
 
         writer.write(
-                StringUtils.leftPad(currentReconFigures.getReconAmounts().size() + "", 9, ' '));
-        writer.write(
-                StringUtils.leftPad(formatDecimal(currentReconFigures.sumReconAmounts()), 30, ' '));
+                StringUtils.leftPad(currentReconFigures.getReconAmounts().size() + "", 8, ' '));
 
-        //recon curr
+        //recon amount
+        writer.write(
+                StringUtils.leftPad(formatDecimal(currentReconFigures.sumReconAmounts()), 27, ' '));
+
+        //recon curr code
+        writer.write(" ");
         writer.write(getFormattedCurrency(reconObject.getReconCurrency()));
+
+        //trans fee
+        writer.write(
+                StringUtils.leftPad(formatDecimal(currentReconFigures.sumFeeAmounts()), 27, ' '));
+
+        //fee curr code
+        writer.write(" ");
+        writer.write(getFormattedCurrency(reconObject.getFeeCurrency()));
     }
 
     private static String getFormattedCurrency(String numericCurr) {
@@ -411,10 +417,10 @@ public class MCPS {
         }
         if (c1 != null) {
             return
-                    StringUtils.leftPad(numericCurr + "-" + c1.getCurrencyCode(), 10, ' ');
+                    StringUtils.leftPad(numericCurr + "-" + c1.getCurrencyCode(), 7, ' ');
         } else {
             return
-                    StringUtils.leftPad(numericCurr + "-???", 10, ' ');
+                    StringUtils.leftPad(numericCurr + "-???", 7, ' ');
         }
     }
 
@@ -587,29 +593,32 @@ public class MCPS {
             for (ISOMsg m : list) {
                 try {
                     //header
-                    if (m.getMTI().equals("1644") && m.getString(24).equals("697")) {
-                        process1644Header(m, parser);
+                    if (m.getMTI().equals("1644")) {
+                        if (m.getString(24).equals("697")) {
+                            process1644Header(m, parser);
+                        }
+                        //recon
+                        else if (m.getString(24).equals("685")) {
+                            //process1644Reconciliation(m, parser);
+                        }
+                        //financial addendum
+                        else if (m.getString(24).equals("696")) {
+                            process1644Addendum(m, parser);
+                        } else if (m.getString(24).equals("695")) {
+                            process1644Trailer(m, parser);
+                        }
                     }
                     //presentment
                     else if (m.getMTI().equals("1240")) {
                         process1240(m, parser);
                     }
-                    //recon
-                    else if (m.getMTI().equals("1644") && m.getString(24).equals("685")) {
-                        //process1644Reconciliation(m, parser);
-                    }
-                    //financial addendum
-                    else if (m.getMTI().equals("1644") && m.getString(24).equals("696")) {
-                        process1644Addendum(m, parser);
-                    }
+
                     //fees
                     else if (m.getMTI().equals("1740")) {
                         process1740(m, parser);
                     }
                     //trailer
-                    if (m.getMTI().equals("1644") && m.getString(24).equals("695")) {
-                        process1644Trailer(m, parser);
-                    } else {
+                    else {
                         //System.out.println("Unknown message: " + m);
                     }
                 } catch (ISOException e) {
@@ -1094,7 +1103,6 @@ public class MCPS {
     }
 
     static class ReconKey {
-
         String brand;
         String bsLevel;
         String bsId;
