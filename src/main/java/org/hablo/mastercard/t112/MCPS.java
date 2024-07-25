@@ -87,7 +87,7 @@ public class MCPS {
         try {
             //File[] fs = getFiles("", filePath);
             //File[] fs = getFiles("mox", filePath);
-            File[] fs = getFiles("analysis/MCI.AR.T112.M.E0070571.D230904.T191205.A001", filePath);
+            File[] fs = getFiles("mox/TT112T0.2023-10-13-00-15-26.001_PASS1_D20231013_T002000", filePath);
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
                 System.out.printf("Total %d files/folders found\n", fs.length);
@@ -135,14 +135,12 @@ public class MCPS {
                         Collectors.groupingBy(ReconObject::getFileId,
                                 Collectors.groupingBy(ReconObject::getBrand,
                                         Collectors.groupingBy(ReconObject::getBsLevel,
-                                                Collectors.groupingBy(ReconObject::getBsId,
+                                                Collectors.groupingBy(ReconObject::getBsId, TreeMap::new,
                                                         Collectors.groupingBy(ReconObject::getReconCurrency,
                                                                 Collectors.groupingBy(x -> x.mti + "." + x.func,
                                                                         Collectors.groupingBy(ReconObject::getTranCode,
-                                                                                Collectors.groupingBy(
-                                                                                        ReconObject::getIndicator,
-                                                                                        Collectors.groupingBy(
-                                                                                                ReconObject::getIrd
+                                                                                Collectors.groupingBy(ReconObject::getIndicator,
+                                                                                        Collectors.groupingBy(ReconObject::getIrd
                                                                                         )
                                                                                 )
                                                                         )
@@ -225,6 +223,7 @@ public class MCPS {
                             // Iterate through the fourth level
                             for (Entry<String, Map<String, Map<Object, Map<String, Map<String, Map<String, List<ReconObject>>>>>>> level4Entry : level3Value.entrySet()) {
                                 String bsIdKey = level4Entry.getKey();
+
                                 Map<String, Map<Object, Map<String, Map<String, Map<String, List<ReconObject>>>>>> level4Value = level4Entry.getValue();
 
                                 printHeader(writer,
@@ -232,12 +231,12 @@ public class MCPS {
 
                                 // Iterate through the fifth level
                                 for (Entry<String, Map<Object, Map<String, Map<String, Map<String, List<ReconObject>>>>>> level5Entry : level4Value.entrySet()) {
+                                    String currencyKey = level5Entry.getKey();
 
                                     int businessServiceCount = 0;
                                     BigDecimal businessServiceReconAmount = BigDecimal.ZERO;
                                     BigDecimal businessServiceFeeAmount = BigDecimal.ZERO;
 
-                                    String currencyKey = level5Entry.getKey();
                                     Map<Object, Map<String, Map<String, Map<String, List<ReconObject>>>>> level5Value = level5Entry.getValue();
 
                                     writer.newLine();
@@ -354,6 +353,7 @@ public class MCPS {
                                                     moreTranCodeToProcess = true;
                                                 }
                                                 //end of indicator
+
                                             }
                                             //end of tranCode
                                         }
@@ -406,9 +406,10 @@ public class MCPS {
                                     writer.newLine();
 
                                     reconSummaryPerBs.add(
-                                            new ReconSummary(cycleNumber, bsLevelKey, bsIdKey, fileIdKey, currencyKey,
-                                                    brandKey,
-                                                    businessServiceReconAmount, businessServiceFeeAmount));
+                                            new ReconSummary(cycleNumber, bsLevelKey, bsIdKey, fileIdKey,
+                                                    currencyKey,
+                                                    brandKey, "INDC", businessServiceReconAmount,
+                                                    businessServiceFeeAmount));
                                 }
                                 //end of bsId
                             }
@@ -471,11 +472,12 @@ public class MCPS {
                         // Process each ReconSummary in the list
                         for (ReconSummary reconSummary : reconSummaries) {
                             writer.newLine();
+                            writer.write(" ");
                             writer.write(reconSummary.getBsId());
-                            writer.write("    ");
+                            writer.write("   ");
                             writer.write(formatFileId(fileIdKey));
                             writer.write(" ");
-                            writer.write("INDC"); //TODO
+                            writer.write(reconSummary.getIndicator());
                             writer.write(" ");
                             writer.write(
                                     StringUtils.leftPad(formatDecimal(reconSummary.getReconAmount()), 26,
@@ -1276,6 +1278,7 @@ public class MCPS {
         BigDecimal transactionFee;
 
         public ReconSummary(int cycle, String bsLevel, String bsId, String fileId, String currency, String brand,
+                String indicator,
                 BigDecimal reconAmount,
                 BigDecimal transactionFee) {
             this.cycle = cycle;
@@ -1284,6 +1287,7 @@ public class MCPS {
             this.fileId = fileId;
             this.currency = currency;
             this.brand = brand;
+            this.indicator = indicator;
             this.reconAmount = reconAmount;
             this.transactionFee = transactionFee;
         }
