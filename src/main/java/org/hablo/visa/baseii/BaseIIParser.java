@@ -108,17 +108,19 @@ public class BaseIIParser extends FileParserSupport {
         }
         try (BufferedWriter writer = new BufferedWriter(fw)) {
             for (FSDMsg m : rawData) {
-                String reportId = m.get("Report Text").substring(0, 6);
-                if (reportTypes.containsKey(reportId)) {
-                    String reportName = reportTypes.get(reportId);
-                    FSDMsg r = new FSDMsg(RAW_DATA_SCHEMA);
-                    r.unpack(m.get("Report Text").getBytes());
-                    writer.write("###### " + reportName);
-                    writer.newLine();
-                    writer.write(ISOMsgHelper.toString(r));
-                } else {
-                    System.out.println("ID=" + m.get("Report Text"));
-                    unknownRecords++;
+                if (m.hasField("Report Text")) {
+                    String reportId = m.get("Report Text").substring(0, 6);
+                    if (reportTypes.containsKey(reportId)) {
+                        String reportName = reportTypes.get(reportId);
+                        FSDMsg r = new FSDMsg(RAW_DATA_SCHEMA);
+                        r.unpack(m.get("Report Text").getBytes());
+                        writer.write("###### " + reportName);
+                        writer.newLine();
+                        writer.write(ISOMsgHelper.toString(r));
+                    } else {
+                        System.out.println("ID=" + m.get("Report Text"));
+                        unknownRecords++;
+                    }
                 }
             }
             if (unknownRecords > 0) {

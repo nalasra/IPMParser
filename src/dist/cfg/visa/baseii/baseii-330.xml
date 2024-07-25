@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='Destination Identifier' type='N' length='6' />
-    <field id='Source Identifier' type='N' length='6' />
+    <field id='Destination Identifier' type='AN' length='6' />
+    <field id='Source Identifier' type='AN' length='6' />
     <field id='Report Identifier' type='AN' length='10' />
-    <field id='Report Line Sequence Number' type='N' length='8' />
+    <field id='Report Line Sequence Number' type='AN' length='8' />
     <field id='Report Text' type='AN' length='133' />
     <field id='Reimbursement Attribute' type='AN' length='1' />
 </schema>

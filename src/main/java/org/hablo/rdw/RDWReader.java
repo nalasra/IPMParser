@@ -1,13 +1,12 @@
 package org.hablo.rdw;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.NotImplementedException;
-import org.jpos.iso.ISOUtil;
-
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.jpos.iso.ISOUtil;
 
 public class RDWReader implements AutoCloseable {
 
@@ -16,7 +15,7 @@ public class RDWReader implements AutoCloseable {
     final int RDW_SIZE = 4;
     final int UNUSED_SIZE = 2;
     int currentCounter = 0;
-    private String filename;
+    private final String filename;
 
     public RDWReader(String filename) {
         this.filename = filename;
