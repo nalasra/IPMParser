@@ -49,7 +49,6 @@ public class MCPS {
     static String filePath = System.getProperty("user.dir") + "/src/dist/files/mastercard/t112/in/";
     static String filePathO = System.getProperty("user.dir") + "/src/dist/files/mastercard/t112/out/";
 
-    //static Map<String, ReconObject> currencyReconMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
     static List<ReconObject> messageReconMap = Collections.synchronizedList(new ArrayList<>());
     static List<ReconObject> financialAddendumMap = Collections.synchronizedList(new ArrayList<>());
@@ -60,14 +59,14 @@ public class MCPS {
     //used for storing summary results
     static List<ReconSummary> reconSummaryPerBs = Collections.synchronizedList(new ArrayList<>());
 
-    static Map<String, String> msgFuncMap = new HashMap<>();
+    static Map<String, String> mtiFuncMap = new HashMap<>();
     static Map<String, String> businessServiceLevelMap = new HashMap<>();
     static Map<String, String> transactionCodeMap = new HashMap<>();
 
     static {
-        msgFuncMap.put("1240.200", "FIRST PRES.");
-        msgFuncMap.put("1240.205", "SEC. PRES.-F");
-        msgFuncMap.put("1240.282", "SEC. PRES.-P");
+        mtiFuncMap.put("1240.200", "FIRST PRES.");
+        mtiFuncMap.put("1240.205", "SEC. PRES.-F");
+        mtiFuncMap.put("1240.282", "SEC. PRES.-P");
 
         transactionCodeMap.put("00", "PURCHASE");
         transactionCodeMap.put("01", "ATM CASH");
@@ -87,7 +86,7 @@ public class MCPS {
         try {
             //File[] fs = getFiles("", filePath);
             //File[] fs = getFiles("mox", filePath);
-            File[] fs = getFiles("mox/TT112T0.2023-10-13-00-15-26.001_PASS1_D20231013_T002000", filePath);
+            File[] fs = getFiles("analysis/MCI.AR.T112.M.E0070571.D240727.T191530.A001", filePath);
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
                 System.out.printf("Total %d files/folders found\n", fs.length);
@@ -139,8 +138,10 @@ public class MCPS {
                                                         Collectors.groupingBy(ReconObject::getReconCurrency,
                                                                 Collectors.groupingBy(x -> x.mti + "." + x.func,
                                                                         Collectors.groupingBy(ReconObject::getTranCode,
-                                                                                Collectors.groupingBy(ReconObject::getIndicator,
-                                                                                        Collectors.groupingBy(ReconObject::getIrd
+                                                                                Collectors.groupingBy(
+                                                                                        ReconObject::getIndicator,
+                                                                                        Collectors.groupingBy(
+                                                                                                ReconObject::getIrd
                                                                                         )
                                                                                 )
                                                                         )
@@ -152,15 +153,19 @@ public class MCPS {
         return data;
     }
 
-    private static Map<String, Map<String, Map<String, Map<String, List<ReconSummary>>>>> getSummaryByBusinessServiceId(
+    private static Map<String, Map<String, Map<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>>>> getSummaryByBusinessServiceId(
             int cycleNumber) {
 
-        Map<String, Map<String, Map<String, Map<String, List<ReconSummary>>>>> data;
+        Map<String, Map<String, Map<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>>>> data;
         data = reconSummaryPerBs.stream().filter(x -> x.getCycle() == cycleNumber).collect(
                 Collectors.groupingBy(ReconSummary::getFileId,
                         Collectors.groupingBy(ReconSummary::getBrand,
                                 Collectors.groupingBy(ReconSummary::getBsLevel,
-                                        Collectors.groupingBy(ReconSummary::getCurrency
+                                        Collectors.groupingBy(ReconSummary::getCurrency,
+                                                Collectors.groupingBy(ReconSummary::getBsId, TreeMap::new,
+                                                        Collectors.groupingBy(ReconSummary::getIndicator
+                                                        )
+                                                )
                                         )
                                 )
                         )
@@ -177,7 +182,7 @@ public class MCPS {
                 Collectors.groupingBy(ReconObject::getFileId,
                         Collectors.groupingBy(ReconObject::getBrand,
                                 Collectors.groupingBy(ReconObject::getBsLevel,
-                                        Collectors.groupingBy(ReconObject::getBsId,
+                                        Collectors.groupingBy(ReconObject::getBsId, TreeMap::new,
                                                 Collectors.counting()
                                         )
                                 )
@@ -185,6 +190,10 @@ public class MCPS {
                 )
         );
         return data;
+    }
+
+    private static String getMemberId(String pds0105) {
+        return pds0105.substring(9, 20);
     }
 
     private static String formatFileId(String pds0105) {
@@ -227,31 +236,31 @@ public class MCPS {
                                 Map<String, Map<Object, Map<String, Map<String, Map<String, List<ReconObject>>>>>> level4Value = level4Entry.getValue();
 
                                 printHeader(writer,
-                                        new String[]{brandKey, bsLevelKey, bsIdKey, fileIdKey, "MEMBERID"});
+                                        new String[]{brandKey, bsLevelKey, bsIdKey, fileIdKey, fileIdKey});
 
                                 // Iterate through the fifth level
                                 for (Entry<String, Map<Object, Map<String, Map<String, Map<String, List<ReconObject>>>>>> level5Entry : level4Value.entrySet()) {
                                     String currencyKey = level5Entry.getKey();
 
-                                    int businessServiceCount = 0;
-                                    BigDecimal businessServiceReconAmount = BigDecimal.ZERO;
-                                    BigDecimal businessServiceFeeAmount = BigDecimal.ZERO;
+                                    int perBSIDCount = 0;
+                                    BigDecimal perBSIdReconAmountSum = BigDecimal.ZERO;
+                                    BigDecimal perBSIDFeeAmountSum = BigDecimal.ZERO;
 
                                     Map<Object, Map<String, Map<String, Map<String, List<ReconObject>>>>> level5Value = level5Entry.getValue();
 
                                     writer.newLine();
                                     writer.newLine();
                                     writer.write(
-                                            "MASTERCARD SETTLED                                                      RECON                            FEE");
+                                            "MASTERCARD SETTLED                                                      RECON                         FEE");
                                     writer.newLine();
                                     writer.write(
-                                            "                                                                         CURR                            CURR");
+                                            "                                                                         CURR                         CURR");
                                     writer.newLine();
                                     writer.write(
-                                            " TRANS. FUNC. PROC.CODE       IRD   COUNTS               RECON AMOUNT    CODE          TRANS FEE         CODE");
+                                            " TRANS. FUNC. PROC.CODE       IRD   COUNTS               RECON AMOUNT    CODE          TRANS FEE      CODE");
                                     writer.newLine();
                                     writer.write(
-                                            " ------------ --------------- --- -------- -------------------------- ------- -------------------------- -------");
+                                            " ------------ --------------- --- -------- -------------------------- ------- ----------------------- -------");
                                     writer.newLine();
 
                                     boolean moreMtiFuncToProcess = false;
@@ -261,9 +270,9 @@ public class MCPS {
                                         Object mtiFuncKey = level6Entry.getKey();
                                         Map<String, Map<String, Map<String, List<ReconObject>>>> level6Value = level6Entry.getValue();
 
-                                        int mtiFuncCount = 0;
-                                        BigDecimal mtiFuncReconAmount = BigDecimal.ZERO;
-                                        BigDecimal mtiFuncFeeAmount = BigDecimal.ZERO;
+                                        int perMtiFuncCount = 0;
+                                        BigDecimal perMtiFuncReconAmountSum = BigDecimal.ZERO;
+                                        BigDecimal perMtiFuncFeeAmountSum = BigDecimal.ZERO;
 
                                         if (moreMtiFuncToProcess) {
                                             writer.newLine();
@@ -286,6 +295,9 @@ public class MCPS {
                                                 String indicatorKey = level8Entry.getKey();
                                                 Map<String, List<ReconObject>> level8Value = level8Entry.getValue();
 
+                                                BigDecimal perIndicatorReconAmountSum = BigDecimal.ZERO;
+                                                BigDecimal perIndicatorFeeAmountSum = BigDecimal.ZERO;
+
                                                 // Iterate through the ninth level
                                                 for (Map.Entry<String, List<ReconObject>> level9Entry : level8Value.entrySet()) {
                                                     String irdKey = level9Entry.getKey();
@@ -297,7 +309,7 @@ public class MCPS {
 
                                                     // Process the List of ReconObject
                                                     for (ReconObject reconObject : reconObjects) {
-                                                        mtiFuncCount++;
+                                                        perMtiFuncCount++;
 
                                                         // Perform operations on reconObject
                                                         ReconFigures currentReconFigures = reconObject.getReconFigures(
@@ -316,24 +328,27 @@ public class MCPS {
                                                                     reconObject.getBsId(),
                                                                     reconObject.getFileId(), cycleNumber);
                                                         } else {
-                                                            //writer.newLine();
                                                             tmpCount += currentReconFigures.getReconAmounts()
                                                                     .size();
-                                                            businessServiceCount += currentReconFigures.getReconAmounts()
+                                                            perBSIDCount += currentReconFigures.getReconAmounts()
                                                                     .size();
 
-                                                            businessServiceReconAmount = businessServiceReconAmount.add(
+                                                            perBSIdReconAmountSum = perBSIdReconAmountSum.add(
                                                                     currentReconFigures.sumReconAmounts());
                                                             tmpSumReconAmount = tmpSumReconAmount.add(
                                                                     currentReconFigures.sumReconAmounts());
-                                                            mtiFuncReconAmount = mtiFuncReconAmount.add(
+                                                            perMtiFuncReconAmountSum = perMtiFuncReconAmountSum.add(
+                                                                    currentReconFigures.sumReconAmounts());
+                                                            perIndicatorReconAmountSum = perIndicatorReconAmountSum.add(
                                                                     currentReconFigures.sumReconAmounts());
 
-                                                            businessServiceFeeAmount = businessServiceFeeAmount.add(
+                                                            perBSIDFeeAmountSum = perBSIDFeeAmountSum.add(
                                                                     currentReconFigures.sumFeeAmounts());
                                                             tmpSumFeeAmount = tmpSumFeeAmount.add(
                                                                     currentReconFigures.sumFeeAmounts());
-                                                            mtiFuncFeeAmount = mtiFuncFeeAmount.add(
+                                                            perMtiFuncFeeAmountSum = perMtiFuncFeeAmountSum.add(
+                                                                    currentReconFigures.sumFeeAmounts());
+                                                            perIndicatorFeeAmountSum = perIndicatorFeeAmountSum.add(
                                                                     currentReconFigures.sumFeeAmounts());
                                                         }
                                                     }
@@ -353,29 +368,33 @@ public class MCPS {
                                                     moreTranCodeToProcess = true;
                                                 }
                                                 //end of indicator
-
+                                                reconSummaryPerBs.add(
+                                                        new ReconSummary(cycleNumber, bsLevelKey, bsIdKey, fileIdKey,
+                                                                currencyKey,
+                                                                brandKey, indicatorKey, perIndicatorReconAmountSum,
+                                                                perIndicatorFeeAmountSum));
                                             }
                                             //end of tranCode
                                         }
                                         //end of mtiFunc
                                         writer.newLine();
                                         writer.write(
-                                                " ------------ --------------- --- -------- -------------------------- ------- -------------------------- -------");
+                                                " ------------ --------------- --- -------- -------------------------- ------- ----------------------- -------");
                                         writer.newLine();
                                         writer.write(" ");
                                         writer.write(
                                                 StringUtils.rightPad(getMsgDescription((String) mtiFuncKey, ""), 12,
                                                         ' '));
                                         writer.write(" TOTAL");
-                                        writer.write(StringUtils.leftPad(mtiFuncCount + "", 23, ' '));
+                                        writer.write(StringUtils.leftPad(perMtiFuncCount + "", 23, ' '));
                                         writer.write(
-                                                StringUtils.leftPad(formatDecimal(mtiFuncReconAmount),
+                                                StringUtils.leftPad(formatDecimal(perMtiFuncReconAmountSum),
                                                         27,
                                                         ' '));
                                         writer.write(" ");
                                         writer.write(getFormattedCurrency(currencyKey));
                                         writer.write(
-                                                StringUtils.leftPad(formatDecimal(mtiFuncFeeAmount), 27,
+                                                StringUtils.leftPad(formatDecimal(perMtiFuncFeeAmountSum), 24,
                                                         ' '));
                                         writer.write(" ");
                                         writer.write(getFormattedCurrency(currencyKey));
@@ -391,25 +410,19 @@ public class MCPS {
                                     writer.newLine();
                                     writer.write("BUSINESS SERVICE ID SUBTOTAL  ");
                                     writer.write(
-                                            StringUtils.leftPad(businessServiceCount + "", 12, ' '));
+                                            StringUtils.leftPad(String.format("%,d", perBSIDCount) + "", 12, ' '));
                                     writer.write(
-                                            StringUtils.leftPad(formatDecimal(businessServiceReconAmount),
+                                            StringUtils.leftPad(formatDecimal(perBSIdReconAmountSum),
                                                     27,
                                                     ' '));
                                     writer.write(
                                             StringUtils.leftPad(getFormattedCurrency(currencyKey), 8, ' '));
                                     writer.write(
-                                            StringUtils.leftPad(formatDecimal(businessServiceFeeAmount), 27,
+                                            StringUtils.leftPad(formatDecimal(perBSIDFeeAmountSum), 24,
                                                     ' '));
                                     writer.write(
                                             StringUtils.leftPad(getFormattedCurrency(currencyKey), 8, ' '));
                                     writer.newLine();
-
-                                    reconSummaryPerBs.add(
-                                            new ReconSummary(cycleNumber, bsLevelKey, bsIdKey, fileIdKey,
-                                                    currencyKey,
-                                                    brandKey, "INDC", businessServiceReconAmount,
-                                                    businessServiceFeeAmount));
                                 }
                                 //end of bsId
                             }
@@ -428,34 +441,30 @@ public class MCPS {
     }
 
     private static void prepareSummaryByBusinessServiceIds(BufferedWriter writer, int cycleNumber) throws IOException {
-        Map<String, Map<String, Map<String, Map<String, List<ReconSummary>>>>> summary = getSummaryByBusinessServiceId(
+        Map<String, Map<String, Map<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>>>> summary = getSummaryByBusinessServiceId(
                 cycleNumber);
 
         // Iterate through the first level
-        for (Entry<String, Map<String, Map<String, Map<String, List<ReconSummary>>>>> level1Entry : summary.entrySet()) {
+        for (Entry<String, Map<String, Map<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>>>> level1Entry : summary.entrySet()) {
             String fileIdKey = level1Entry.getKey();
-            Map<String, Map<String, Map<String, List<ReconSummary>>>> level1Value = level1Entry.getValue();
+            Map<String, Map<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>>> level1Value = level1Entry.getValue();
 
             // Iterate through the second level
-            for (Entry<String, Map<String, Map<String, List<ReconSummary>>>> level2Entry : level1Value.entrySet()) {
+            for (Entry<String, Map<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>>> level2Entry : level1Value.entrySet()) {
                 String brandKey = level2Entry.getKey();
-                Map<String, Map<String, List<ReconSummary>>> level2Value = level2Entry.getValue();
+                Map<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>> level2Value = level2Entry.getValue();
 
                 // Iterate through the third level
-                for (Entry<String, Map<String, List<ReconSummary>>> level3Entry : level2Value.entrySet()) {
+                for (Entry<String, Map<String, TreeMap<String, Map<String, List<ReconSummary>>>>> level3Entry : level2Value.entrySet()) {
                     String bsLevelKey = level3Entry.getKey();
-                    Map<String, List<ReconSummary>> level3Value = level3Entry.getValue();
+                    Map<String, TreeMap<String, Map<String, List<ReconSummary>>>> level3Value = level3Entry.getValue();
 
-                    // Iterate through the fourth level
-                    for (Entry<String, List<ReconSummary>> level4Entry : level3Value.entrySet()) {
+                    for (Entry<String, TreeMap<String, Map<String, List<ReconSummary>>>> level4Entry : level3Value.entrySet()) {
                         String currencyKey = level4Entry.getKey();
-                        List<ReconSummary> reconSummaries = level4Entry.getValue();
-
-                        BigDecimal tmpReconAmount = BigDecimal.ZERO;
-                        BigDecimal tmpFeeAmount = BigDecimal.ZERO;
+                        TreeMap<String, Map<String, List<ReconSummary>>> level4Value = level4Entry.getValue();
 
                         printHeader(writer,
-                                new String[]{brandKey, bsLevelKey, null, null, "MEMBERID", currencyKey});
+                                new String[]{brandKey, bsLevelKey, null, null, fileIdKey, currencyKey});
                         writer.newLine();
                         writer.write(
                                 " BUSINESS                                                                                              ");
@@ -469,41 +478,63 @@ public class MCPS {
                         writer.write(
                                 " -------- ---------------------------- ----        -------------------              -------------------");
 
-                        // Process each ReconSummary in the list
-                        for (ReconSummary reconSummary : reconSummaries) {
-                            writer.newLine();
-                            writer.write(" ");
-                            writer.write(reconSummary.getBsId());
-                            writer.write("   ");
-                            writer.write(formatFileId(fileIdKey));
-                            writer.write(" ");
-                            writer.write(reconSummary.getIndicator());
-                            writer.write(" ");
-                            writer.write(
-                                    StringUtils.leftPad(formatDecimal(reconSummary.getReconAmount()), 26,
-                                            ' '));
-                            writer.write(" ");
-                            writer.write(
-                                    StringUtils.leftPad(formatDecimal(reconSummary.getTransactionFee()), 30,
-                                            ' '));
-                            tmpReconAmount = tmpReconAmount.add(reconSummary.getReconAmount());
-                            tmpFeeAmount = tmpFeeAmount.add(reconSummary.getTransactionFee());
-                        }
+                        BigDecimal grandTotalReconAmount = BigDecimal.ZERO;
+                        BigDecimal grandTotalFeeAmount = BigDecimal.ZERO;
 
+                        // Iterate through the fifth level
+                        for (Entry<String, Map<String, List<ReconSummary>>> level5Entry : level4Value.entrySet()) {
+                            String bsIdKey = level5Entry.getKey();
+                            Map<String, List<ReconSummary>> level5Value = level5Entry.getValue();
+
+                            for (Entry<String, List<ReconSummary>> level6Entry : level5Value.entrySet()) {
+                                String indicatorKey = level6Entry.getKey();
+                                List<ReconSummary> reconSummaries = level6Entry.getValue();
+
+                                BigDecimal tmpReconAmount = BigDecimal.ZERO;
+                                BigDecimal tmpFeeAmount = BigDecimal.ZERO;
+
+                                // Process each ReconSummary in the list
+                                for (ReconSummary reconSummary : reconSummaries) {
+                                    tmpReconAmount = tmpReconAmount.add(reconSummary.getReconAmount());
+                                    tmpFeeAmount = tmpFeeAmount.add(reconSummary.getTransactionFee());
+                                }
+
+                                writer.newLine();
+                                writer.write(" ");
+                                writer.write(bsIdKey);
+                                writer.write("   ");
+                                writer.write(formatFileId(fileIdKey));
+                                writer.write(" ");
+                                writer.write(indicatorKey);
+                                writer.write(" ");
+                                writer.write(
+                                        StringUtils.leftPad(formatDecimal(tmpReconAmount), 26,
+                                                ' '));
+                                writer.write(" ");
+                                writer.write(
+                                        StringUtils.leftPad(formatDecimal(tmpFeeAmount), 30,
+                                                ' '));
+
+                                grandTotalReconAmount = grandTotalReconAmount.add(tmpReconAmount);
+                                grandTotalFeeAmount = grandTotalFeeAmount.add(tmpFeeAmount);
+                                //end of currency
+                            }
+                        }
                         writer.newLine();
                         writer.newLine();
 
                         writer.write("                             GRAND TOTAL");
-                        writer.write(StringUtils.leftPad(formatDecimal(tmpReconAmount), 30,
+                        writer.write(StringUtils.leftPad(formatDecimal(grandTotalReconAmount), 30,
                                 ' '));
-                        writer.write(StringUtils.leftPad(formatDecimal(tmpFeeAmount), 31,
+                        writer.write(StringUtils.leftPad(formatDecimal(grandTotalFeeAmount), 31,
                                 ' '));
-
+                        //end of bsId
                     }
                 }
             }
         }
     }
+
 
     private static void prepareAddendumsInfo(BufferedWriter writer, int cycleNumber) throws IOException {
         Map<String, Map<String, Map<String, Map<String, Long>>>> addendums = getAddendumCountGroupedByBusinessServiceId(
@@ -528,14 +559,14 @@ public class MCPS {
                         String bsId = level4Entry.getKey();
                         Long level4Value = level4Entry.getValue();
 
-                        printHeader(writer, new String[]{brand, bsLevel, bsId, fileId, "MEMBERID"});
+                        printHeader(writer, new String[]{brand, bsLevel, bsId, fileId, fileId});
                         writer.newLine();
                         writer.write(" NON-FINANCIAL DETAIL                              COUNTS");
                         writer.newLine();
                         writer.write(" ORIGINALS:");
                         writer.newLine();
                         writer.write("               FINANCIAL DETAIL ADDENDUM          " + StringUtils.leftPad(
-                                (2 * level4Value) + "", 8, '0'));
+                                (2 * level4Value) + "", 7, '0'));
                     }
                 }
             }
@@ -563,7 +594,7 @@ public class MCPS {
         }
         if (key.length >= 5 && key[4] != null && !key[4].isEmpty()) {
             writer.newLine();
-            writer.write("MEMBER ID: " + key[4]);
+            writer.write("MEMBER ID: " + getMemberId(key[4]));
         }
         if (key.length >= 6 && key[5] != null && !key[5].isEmpty()) {
             writer.newLine();
@@ -573,10 +604,10 @@ public class MCPS {
     }
 
     private static String getMsgDescription(String mti, String funcCode) {
-        if (msgFuncMap.containsKey(mti + "." + funcCode)) {
-            return msgFuncMap.get(mti + "." + funcCode);
+        if (mtiFuncMap.containsKey(mti + "." + funcCode)) {
+            return mtiFuncMap.get(mti + "." + funcCode);
         }
-        return msgFuncMap.get(mti);
+        return mtiFuncMap.get(mti);
     }
 
     private static String getTxnDescription(String tranCode, String funcCode) {
@@ -614,7 +645,7 @@ public class MCPS {
 
             //trans fee
             writer.write(
-                    StringUtils.leftPad(formatDecimal(sumFeeAmount), 27, ' '));
+                    StringUtils.leftPad(formatDecimal(sumFeeAmount), 24, ' '));
 
             //fee curr code
             writer.write(" ");
@@ -645,158 +676,6 @@ public class MCPS {
                     StringUtils.leftPad(numericCurr + "-???", 7, ' ');
         }
     }
-
-//    private static void generateSummaryReport() throws IOException {
-//        try (BufferedWriter summaryWriter = new BufferedWriter(new FileWriter(filePathO + ID + "summary.txt"))) {
-//
-//            //Clearing Cycle Summary Reconciliation Report
-//
-//            int cycleSpaces = 5;
-//            int currencySpaces = 10;
-//            int netAmountSpaces = 28;
-//
-//            summaryWriter.write("=========================\n");
-//            summaryWriter.write("  CLEARING CYCLE DETAIL  \n");
-//            summaryWriter.write("=========================\n");
-//            summaryWriter.newLine();
-//
-//            summaryWriter.write("\t");
-//            summaryWriter.write("CYCLE ACTIVITY");
-//            summaryWriter.write(StringUtils.rightPad(" ", cycleSpaces, ' '));
-//            summaryWriter.write("FILE ID TO MC");
-//            summaryWriter.write(StringUtils.leftPad(" ", currencySpaces, ' '));
-//            summaryWriter.write("FILE ID FROM MC");
-//            summaryWriter.write(StringUtils.leftPad(" ", 19, ' '));
-//            summaryWriter.write("NET RECON CURRENCY AMOUNT");
-//            summaryWriter.newLine();
-//            summaryWriter.write("\t");
-//            summaryWriter.write("______________");
-//            summaryWriter.write(StringUtils.rightPad(" ", cycleSpaces, ' '));
-//            summaryWriter.write("______________");
-//            summaryWriter.write(StringUtils.leftPad(" ", 9, ' '));
-//            summaryWriter.write("_________________________");
-//            summaryWriter.write(StringUtils.leftPad(" ", 9, ' '));
-//            summaryWriter.write("_________________________");
-//            summaryWriter.newLine();
-//
-//            for (String r : currencyReconMap.keySet()) {
-//                summaryWriter.newLine();
-//                ReconObject reconObject = currencyReconMap.get(r);
-//                Currency curr = CurrencyHelper.getInstance(r);
-//                if (curr != null) {
-//                    summaryWriter.write("CURRENCY : " + r + "-" + curr.getCurrencyCode());
-//                } else {
-//                    summaryWriter.write("CURRENCY : " + r + "-");
-//                }
-//
-//                summaryWriter.newLine();
-//                summaryWriter.newLine();
-//
-//                for (int i = 1; i <= MAX_CYCLES; i++) {
-//                    ReconFigures reconFigures = reconObject.getReconFigures(i);
-//                    summaryWriter.write("\t");
-//                    summaryWriter.write(StringUtils.rightPad("CYCLE " + i + "", cycleSpaces, ' '));
-//                    if (reconObject.getFileId() != null) {
-//                        summaryWriter.write(StringUtils.leftPad(reconObject.getFileId(), 60, ' '));
-//                    } else {
-//                        summaryWriter.write(StringUtils.leftPad(" ", 60, ' '));
-//                    }
-//                    summaryWriter.write(
-//                            StringUtils.leftPad(formatDecimal(reconFigures.sumNetTotalAmounts()), 30, ' '));
-//                    summaryWriter.newLine();
-//                }
-//                summaryWriter.newLine();
-//
-//                summaryWriter.write("\t");
-//                summaryWriter.write("TOTAL");
-//                summaryWriter.write(
-//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalNetAmount()), 92, ' '));
-//                summaryWriter.newLine();
-//                summaryWriter.newLine();
-//            }
-//            summaryWriter.newLine();
-//            summaryWriter.newLine();
-//            summaryWriter.newLine();
-//
-//            summaryWriter.write("=====================================\n");
-//            summaryWriter.write("   CLEARING TOTALS BY END OF CYCLE   \n");
-//            summaryWriter.write("=====================================\n");
-//            summaryWriter.newLine();
-//
-//            summaryWriter.write("CYCLE");
-//            summaryWriter.write(StringUtils.rightPad(" ", 12, ' '));
-//            summaryWriter.write("NET TRANSACTION");
-//            summaryWriter.write(StringUtils.leftPad(" ", 16, ' '));
-//            summaryWriter.write("NET FEE");
-//            summaryWriter.write(StringUtils.leftPad(" ", 18, ' '));
-//            summaryWriter.write("NET TOTAL");
-//            summaryWriter.newLine();
-//            summaryWriter.newLine();
-//
-//            for (String r : currencyReconMap.keySet()) {
-//                summaryWriter.write("CURRENCY : " + r);
-//                summaryWriter.newLine();
-//                summaryWriter.newLine();
-//                for (int i = 1; i <= MAX_CYCLES; i++) {
-//                    ReconObject reconObject = currencyReconMap.get(r);
-//                    Set<ReconFigures> reconFiguresList = reconObject.getReconFiguresTillCycle(i);
-//                    BigDecimal tmpTxnAmount = BigDecimal.ZERO;
-//                    BigDecimal tmpFeeAmount = BigDecimal.ZERO;
-//                    BigDecimal tmpTotalAmount = BigDecimal.ZERO;
-//
-//                    for (ReconFigures reconFigures : reconFiguresList) {
-//                        tmpTxnAmount = tmpTxnAmount.add(reconFigures.sumNetTransactionAmounts());
-//                        tmpFeeAmount = tmpFeeAmount.add(reconFigures.sumNetFeeAmounts());
-//                        tmpTotalAmount = tmpTotalAmount.add(reconFigures.sumNetTotalAmounts());
-//                    }
-//                    summaryWriter.write(StringUtils.rightPad(i + "", cycleSpaces, ' '));
-//                    summaryWriter.write(
-//                            StringUtils.leftPad(formatDecimal(tmpTxnAmount), netAmountSpaces, ' '));
-//                    summaryWriter.write(
-//                            StringUtils.leftPad(formatDecimal(tmpFeeAmount), netAmountSpaces, ' '));
-//                    summaryWriter.write(
-//                            StringUtils.leftPad(formatDecimal(tmpTotalAmount), netAmountSpaces,
-//                                    ' '));
-//                    summaryWriter.newLine();
-//                }
-//            }
-//
-//            //2. calculate values for whole day
-//            summaryWriter.newLine();
-//            summaryWriter.newLine();
-//            summaryWriter.newLine();
-//            summaryWriter.newLine();
-//            summaryWriter.write("===========================\n");
-//            summaryWriter.write("    CURRENCY WISE RECON    \n");
-//            summaryWriter.write("===========================\n");
-//            summaryWriter.newLine();
-//
-//            summaryWriter.write(StringUtils.leftPad(" ", 5, ' '));
-//            summaryWriter.write("CURRENCY");
-//            summaryWriter.write(StringUtils.leftPad(" ", currencySpaces, ' '));
-//            summaryWriter.write("NET TRANSACTION");
-//            summaryWriter.write(StringUtils.leftPad(" ", 21, ' '));
-//            summaryWriter.write("NET FEE");
-//            summaryWriter.write(StringUtils.leftPad(" ", 19, ' '));
-//            summaryWriter.write("NET TOTAL");
-//            summaryWriter.write(StringUtils.leftPad(" ", 15, ' '));
-//            summaryWriter.newLine();
-//            summaryWriter.newLine();
-//
-//            for (String r : currencyReconMap.keySet()) {
-//                ReconObject reconObject = currencyReconMap.get(r);
-//                summaryWriter.write(StringUtils.leftPad(r + "", currencySpaces, ' '));
-//                summaryWriter.write(
-//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalReconAmount()), netAmountSpaces,
-//                                ' '));
-//                summaryWriter.write(
-//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalFeeAmount()), netAmountSpaces, ' '));
-//                summaryWriter.write(
-//                        StringUtils.leftPad(formatDecimal(reconObject.getTotalNetAmount()), netAmountSpaces, ' '));
-//                summaryWriter.newLine();
-//            }
-//        }
-//    }
 
     public static BufferedWriter initializeWriter(String fileIn, String fileOut, File file) throws IOException {
         String dir = StringUtils.mid(file.getAbsolutePath(), fileIn.length(),
