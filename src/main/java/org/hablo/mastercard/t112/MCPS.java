@@ -30,10 +30,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hablo.helper.CurrencyHelper;
 import org.hablo.helper.FilenameComparator;
 import org.hablo.mastercard.util.PDSParser;
@@ -67,6 +65,8 @@ public class MCPS {
         mtiFuncMap.put("1240.200", "FIRST PRES.");
         mtiFuncMap.put("1240.205", "SEC. PRES.-F");
         mtiFuncMap.put("1240.282", "SEC. PRES.-P");
+        mtiFuncMap.put("1740.700", "FEE COLL-MBG");
+        mtiFuncMap.put("1740.783", "FEE COLL-CSG");
 
         transactionCodeMap.put("00", "PURCHASE");
         transactionCodeMap.put("01", "ATM CASH");
@@ -85,8 +85,9 @@ public class MCPS {
     public static void main(String[] args) {
         try {
             //File[] fs = getFiles("", filePath);
-            //File[] fs = getFiles("mox", filePath);
-            File[] fs = getFiles("analysis/MCI.AR.T112.M.E0070571.D240727.T191530.A001", filePath);
+            File[] fs = getFiles("mox", filePath);
+            //File[] fs = getFiles("r71q", filePath);
+
             if (fs != null) {
                 Arrays.sort(fs, new FilenameComparator());
                 System.out.printf("Total %d files/folders found\n", fs.length);
@@ -117,7 +118,7 @@ public class MCPS {
                 System.out.printf("Generate presentment report...\n");
                 generateT140Report();
 
-                System.out.printf("Generate summary report...");
+                //System.out.printf("Generate summary report...");
                 //generateSummaryReport();
             }
         } catch (Exception exception) {
@@ -280,10 +281,15 @@ public class MCPS {
                                         }
 
                                         writer.write(" ");
-                                        writer.write(
-                                                StringUtils.rightPad(getMsgDescription((String) mtiFuncKey, ""), 12,
-                                                        ' '));
-
+                                        try {
+                                            writer.write(
+                                                    StringUtils.rightPad(getMsgDescription((String) mtiFuncKey, ""), 12,
+                                                            ' '));
+                                        } catch (NullPointerException npe){
+                                            System.out.println("==== NPE ====");
+                                            System.out.println(mtiFuncKey);
+                                            System.out.println(npe.getMessage());
+                                        }
                                         boolean moreTranCodeToProcess = false;
                                         // Iterate through the seventh level
                                         for (Entry<String, Map<String, Map<String, List<ReconObject>>>> level7Entry : level6Value.entrySet()) {
@@ -736,30 +742,23 @@ public class MCPS {
         String mti = m.getString(0);
         String de3 = m.getString(3);
         String de24 = m.getString(24);
-        ReconKey reconKey;
         String de5 = m.getString(5);
         String de50 = m.getString(50);
         String ind = "ORIG";
         String bstype = "";
         String bsid = "";
+        String brand = "";
         ReconObject reconObject = null;
         ReconFigures reconFigures;
 
         if (p.hasElement("0158")) {
             String pds0158 = p.getElementById("0158").getValue();
+            brand = pds0158.substring(0, 3);
             bstype = pds0158.substring(3, 4);
             bsid = pds0158.substring(4, 10);
         }
-
-        reconKey = new ReconKey(cycle, null, bstype, bsid, mti, de24, de3.substring(0, 2), ind, null, null,
-                parser.getFileId());
-
-        // if (messageReconMap.containsKey(reconKey)) {
-        //     reconObject = messageReconMap.get(reconKey);
-        // } else {
-        reconObject = new ReconObject(mti, de24, de3.substring(0, 2), ind, "  ", "", bstype, bsid, cycle);
+        reconObject = new ReconObject(mti, de24, de3.substring(0, 2), ind, "  ", brand, bstype, bsid, cycle);
         messageReconMap.add(reconObject);
-        // }
 
         reconObject.setReconCurrency(de50);
         reconObject.setFileId(parser.getFileId());
@@ -806,7 +805,6 @@ public class MCPS {
         String de3 = m.getString(3);
         String tranCode = de3.substring(0, 2);
         String de24 = m.getString(24);
-        ReconKey reconKey;
         String de5 = "", de50 = "";
         if (m.hasField(5)) {
             de5 = m.getString(5);
@@ -848,7 +846,7 @@ public class MCPS {
         if (isReversal) {
             ind = "RVSL";
         }
-        reconKey = new ReconKey(cycle, brand, bstype, bsid, mti, de24, tranCode, ind, ird, de50, parser.getFileId());
+        //reconKey = new ReconKey(cycle, brand, bstype, bsid, mti, de24, tranCode, ind, ird, de50, parser.getFileId());
 
         ReconObject reconObject;
         ReconFigures reconFigures;
@@ -1244,141 +1242,6 @@ public class MCPS {
         }
     }
 
-    static class ReconKey implements Comparable<ReconKey> {
-
-        int cycle;
-        String brand;
-        String bsLevel;
-        String bsId;
-        String mti;
-        String de24;
-        String de71;
-        String tranCode;
-        String indicator;
-        String ird;
-        String currency;
-        String fileId;
-
-        public ReconKey(int cycle, String brand, String bstype, String bsid, String mti, String de24, String tranCode,
-                String ind, String ird, String currency, String fileId) {
-            this.cycle = cycle;
-            this.brand = brand;
-            this.bsLevel = bstype;
-            this.bsId = bsid;
-            this.mti = mti;
-            this.de24 = de24;
-            this.tranCode = tranCode;
-            this.indicator = ind;
-            this.ird = ird;
-            this.currency = currency;
-            this.fileId = fileId;
-        }
-
-        public ReconKey(String de71) {
-            this.de71 = de71;
-        }
-
-        //key[] = brand, bslevel, bsId, currency, fileId
-        public String[] toKeyArray() {
-            List<String> l = new ArrayList<>();
-            if (brand != null) {
-                l.add(brand);
-            }
-            if (bsLevel != null) {
-                l.add(bsLevel);
-            }
-            if (bsId != null) {
-                l.add(bsId);
-            }
-            if (currency != null) {
-                l.add(currency);
-            }
-            if (fileId != null) {
-                l.add(fileId);
-            }
-            return l.toArray(new String[0]);
-        }
-
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            ReconKey that = (ReconKey) o;
-
-            return new EqualsBuilder()
-                    .append(cycle, that.cycle)
-                    .append(brand, that.brand)
-                    .append(bsLevel, that.bsLevel)
-                    .append(bsId, that.bsId)
-                    .append(mti, that.mti)
-                    .append(de24, that.de24)
-                    //.append(tranCode, that.tranCode)
-                    //.append(indicator, that.indicator)
-                    //.append(ird, that.ird)
-                    .append(currency, that.currency)
-                    //.append(fileId, that.fileId)
-                    .isEquals();
-        }
-
-        @Override
-        public int hashCode() {
-            return new HashCodeBuilder(17, 37)
-                    .append(cycle)
-                    .append(brand)
-                    .append(bsLevel)
-                    .append(bsId)
-                    .append(mti)
-                    .append(de24)
-                    //.append(tranCode)
-                    //.append(indicator)
-                    //.append(ird)
-                    .append(currency)
-                    //.append(fileId)
-                    .toHashCode();
-        }
-
-        @Override
-        public int compareTo(ReconKey that) {
-            return new CompareToBuilder()
-                    .append(cycle, that.cycle)
-                    .append(brand, that.brand)
-                    .append(bsLevel, that.bsLevel)
-                    .append(bsId, that.bsId)
-                    //.append(mti, that.mti)
-                    //.append(de24, that.de24)
-                    //.append(tranCode, that.tranCode)
-                    //.append(indicator, that.indicator)
-                    //.append(ird, that.ird)
-                    .append(currency, that.currency)
-                    //.append(fileId, that.fileId)
-                    .toComparison();
-        }
-
-        @Override
-        public String toString() {
-            return new ToStringBuilder(this)
-                    .append(cycle)
-                    .append(brand)
-                    .append(bsLevel)
-                    .append(bsId)
-                    .append(mti)
-                    .append(de24)
-                    //.append(tranCode)
-                    //.append(indicator)
-                    //.append(ird)
-                    .append(currency)
-                    //.append(fileId)
-                    .toString();
-        }
-
-    }
 
     static class ReconFigures {
 
