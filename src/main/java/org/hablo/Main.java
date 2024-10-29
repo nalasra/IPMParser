@@ -80,12 +80,13 @@ public class Main {
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"");
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISA_OUTCTF0322160157.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"INCTF01.EPD.20211020.203029.CTF"); //VISAIN_BAE_410896_090921.txt
-        parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"n1co/INCTF01.EPD.20240628.011746.CTF");
+        //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"n1co/INCTF01.EPD.20240628.011746.CTF");
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"fee_issue/INCTF01.EPD.20240530.011742.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT, "tc33_wing.txt");
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"VISAIN_BAE_410896_090921.CTF"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"Success_VISAIN_ADQ_409887_240723.txt"); //VISAIN_BAE_410896_090921.txt
         //parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"Test_CTF_BAE_TCR_3_22_Dec_8"); //VISAIN_BAE_410896_090921.txt
+        parseFile(BaseIIParser.class, BASEII_FILES_IN, BASEII_FILES_OUT,"salt/"); //VISAIN_BAE_410896_090921.txt
 
         /* Mastercard IPM Clearing (T112)*/
         //parseFile(T112Parser.class, T112_FILES_IN, T112_FILES_OUT, "");
@@ -133,6 +134,7 @@ public class Main {
         //parseDE(DE48IPMParser.class, "0100", 48, "0001018H 53174365999981950002003MRG0003003MRG001500723091110023003POI0044002 I00580020000590115012083469301460360029018260000000000028260000000000020147048002901826000000000000027760826000000000000027760014800482620158031MCC4826001P223091303 MRGNNNNNNN015906722153      04075400000123              3EU00082601N23091303230913010165001M0177002N 019100120207003216");
         //parseDE(DE48IPMParser.class, "0100", 48, "0002003MSO0003003MSO0148008826282620158030MSI4826001S212061402     NNNNN0165001M0177001N0191001201590679570       0942027400                  1EU00000008N2104190121041901");
         //parseDE(DE48IPMParser.class, "0100", 48, "0002003MSO0003003MSO014801682627842784278420158030MSI4826001S212061402     NNNNN0165001M0177001N0191001201590679570       0942027400                  1EU00000008N23020301230203010146036001900784000000000012784000000000012");
+        //parseDE(DE48IPMParser.class, "0100", 48, "0001018C 55980659988460340002003BPD0003003BPD001500724092110023003MAN0025007 2409210044002 I00580020000590115011003027301460360029010520000000001698260000000000640148008052282620158031DMC10305016124092303    NNNNNNN01590673480       98390607                    1EU00000012N24092303240923010165001M0170032246 432-1127    246 432-1127    0173027MASSY STORES (BARBADOS) LTD0177002YY019100120207003103");
         //parseDE(DE61Parser.class, "0100", 61, "102510800600084063129-5210");
         //parseDE(DE108Parser.class, "0100", 108,"010640109FIRSTNAME0308LASTNAME0703USA1122123456789+123456789012180202020690109FIRSTNAME0308LASTNAME04121234 MAIN ST0703USA1111123456789101802050302301190877775555580121530");
         //parseDE(DE110Parser.class, "0100", 110,"09080B0080P0TB00S000082E9F773BCFF20772A6D292A45F5F4C97EAD3C519679D1E95AC6A9E509F7BEE21000658D4C6"); //key block DKE
@@ -213,7 +215,8 @@ public class Main {
 
                     if (fps instanceof BaseIIParser) {
                         BaseIIParser baseIIParser = ((BaseIIParser) fps);
-                        baseIIParser.generateRawDataReports();
+                        baseIIParser.generateTC33Reports();
+                        baseIIParser.generateTC46Reports();
                     }
                 }
                 index++;
@@ -234,7 +237,8 @@ public class Main {
 
                 if (o instanceof BaseIIParser) {
                     BaseIIParser baseIIParser = ((BaseIIParser) o);
-                    baseIIParser.generateRawDataReports();
+                    baseIIParser.generateTC33Reports();
+                    baseIIParser.generateTC46Reports();
                 }
             } else {
                 System.out.println("Unknown class type: " + clazz.getSimpleName());
@@ -245,14 +249,14 @@ public class Main {
     }
 
     public static <T> void parseDE(Class<T> clazz, String mti, int key, String data) {
+        T o = null;
         try {
             ISOMsg m = new ISOMsg();
             m.setMTI(mti);
             m.set(key, data);
-            T o = clazz.newInstance();
+            o = clazz.newInstance();
             if (o instanceof ParserSupport) {
                 ((ParserSupport) o).parse(m);
-                ((ParserSupport) o).dump(System.out, "");
             } else {
                 System.out.println("Unknown class type: " + clazz.getSimpleName());
             }
@@ -260,6 +264,8 @@ public class Main {
             throw new RuntimeException(e);
         } catch (BLException | ISOException blException) {
             blException.printStackTrace();
+        } finally {
+            ((ParserSupport) o).dump(System.out, "");
         }
     }
 

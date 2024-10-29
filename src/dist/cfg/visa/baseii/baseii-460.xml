@@ -2,7 +2,7 @@
 <schema>
     <field id='destinationIdentifier' type='N' length='6' />
     <field id='sourceIdentifier' type='N' length='6' />
-    <field id='reportIdentifier' type='AN' length='10' />
+    <field id='reportingForSREIdentifier' type='AN' length='10' />
     <field id='settlementServiceIdentifier' type='AN' length='3' />
     <field id='reportDate' type='N' length='7' />
     <field id='sreLevelNumber' type='AN' length='1' />

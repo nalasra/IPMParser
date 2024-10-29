@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema>
-    <field id='fromDate' type='AN' length='7' />
-    <field id='toDate' type='AN' length='7' />
-    <field id='reserved' type='AN' length='150' />
+    <field id='rateTableId' type='AN' length='5' />
+    <field id='reserved' type='AN' length='2' />
+    <field id='firstCount' type='AN' length='15' />
+    <field id='secondCount' type='AN' length='15' />
+    <field id='firstAmount' type='AN' length='15' />
+    <field id='firstAmountSign' type='AN' length='2' />
+    <field id='secondAmount' type='AN' length='15' />
+    <field id='secondAmountSign' type='AN' length='2' />
+    <field id='thirdAmount' type='AN' length='15' />
+    <field id='thirdAmountSign' type='AN' length='2' />
+    <field id='fourthAmount' type='AN' length='15' />
+    <field id='fourthAmountSign' type='AN' length='2' />
+    <field id='fifthAmount' type='AN' length='15' />
+    <field id='fifthAmountSign' type='AN' length='2' />
+    <field id='sixthAmount' type='AN' length='15' />
+    <field id='sixthAmountSign' type='AN' length='2' />
+    <field id='served2' type='AN' length='25' />
 </schema>

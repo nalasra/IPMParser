@@ -24,9 +24,12 @@ public class BaseIIParser extends FileParserSupport {
     private static final String TC_SCHEMA = "file:src/dist/cfg/visa/baseii/baseii-";
     private int counter;
     private String lastRecord;
-    private List<FSDMsg> rawData = null;
+    private List<FSDMsg> tc33Records = null;
+    private List<FSDMsg> tc46Records = null;
     static String TRANSACTION_CODE = "Transaction Code";
     static String TRANSACTION_COMPONENT_SEQ = "Transaction Component Sequence";
+
+    static String TRANSACTION_CODE_QUAL = "Transaction Code Qualifier";
 
     static Map<String, String> reportTypes = new HashMap<>();
 
@@ -61,10 +64,17 @@ public class BaseIIParser extends FileParserSupport {
 
         //if TC33 is found
         if (msgBase.get(TRANSACTION_CODE).equals("33")) {
-            if (rawData == null) {
-                rawData = new ArrayList<>();
+            if (tc33Records == null) {
+                tc33Records = new ArrayList<>();
             }
-            rawData.add(msgBase);
+            tc33Records.add(msgBase);
+        }
+        //if TC46 is found
+        if (msgBase.get(TRANSACTION_CODE).equals("46")) {
+            if (tc46Records == null) {
+                tc46Records = new ArrayList<>();
+            }
+            tc46Records.add(msgBase);
         }
         return msgBase;
     }
@@ -77,8 +87,10 @@ public class BaseIIParser extends FileParserSupport {
             while ((row = bufferedReader.readLine()) != null && row.length() > 0) {
                 msgBase = parseRecord(row);
                 if (outputParsedFile) {
-                    writer.write("TC" + msgBase.get(TRANSACTION_CODE) + (msgBase.hasField(TRANSACTION_COMPONENT_SEQ) ?
-                            " TCR" + msgBase.get(TRANSACTION_COMPONENT_SEQ) : "") + "\n");
+                    writer.write("TC" + msgBase.get(TRANSACTION_CODE) +
+                            (msgBase.hasField(TRANSACTION_CODE_QUAL) ? " TCQ" + msgBase.get(TRANSACTION_CODE_QUAL) : "") +
+                            (msgBase.hasField(TRANSACTION_COMPONENT_SEQ) ? " TCR" + msgBase.get(TRANSACTION_COMPONENT_SEQ) : "") +
+                            "\n");
                     writer.write(ISOMsgHelper.toString(msgBase));
                 }
                 counter++;
@@ -94,8 +106,8 @@ public class BaseIIParser extends FileParserSupport {
         }
     }
 
-    public void generateRawDataReports() throws IOException, JDOMException {
-        if (rawData == null || rawData.isEmpty()) {
+    public void generateTC33Reports() throws IOException, JDOMException {
+        if (tc33Records == null || tc33Records.isEmpty()) {
             return;
         }
 
@@ -107,7 +119,7 @@ public class BaseIIParser extends FileParserSupport {
             fw = new FileWriter(outputDir + "/" + sessionId + "/TC33_SMSRawData.txt");
         }
         try (BufferedWriter writer = new BufferedWriter(fw)) {
-            for (FSDMsg m : rawData) {
+            for (FSDMsg m : tc33Records) {
                 if (m.hasField("Report Text")) {
                     String reportId = m.get("Report Text").substring(0, 6);
                     if (reportTypes.containsKey(reportId)) {
@@ -125,6 +137,41 @@ public class BaseIIParser extends FileParserSupport {
             }
             if (unknownRecords > 0) {
                 System.out.println("generateRawDataReports -> Unknown records: " + unknownRecords);
+            }
+        }
+    }
+
+    public void generateTC46Reports() throws IOException {
+        if (tc46Records == null || tc46Records.isEmpty()) {
+            return;
+        }
+
+        int unknownRecords = 0;
+        FileWriter fw;
+        if (outputDir == null) {
+            fw = new FileWriter(FileDescriptor.out);
+        } else {
+            fw = new FileWriter(outputDir + "/" + sessionId + "/TC46_Parsed.txt");
+        }
+        try (BufferedWriter writer = new BufferedWriter(fw)) {
+            for (FSDMsg m : tc46Records) {
+//                if (m.hasField("Report Text")) {
+//                    String reportId = m.get("Report Text").substring(0, 6);
+//                    if (reportTypes.containsKey(reportId)) {
+//                        String reportName = reportTypes.get(reportId);
+//                        FSDMsg r = new FSDMsg(RAW_DATA_SCHEMA);
+//                        r.unpack(m.get("Report Text").getBytes());
+//                        writer.write("###### " + reportName);
+//                        writer.newLine();
+//                        writer.write(ISOMsgHelper.toString(r));
+//                    } else {
+//                        System.out.println("ID=" + m.get("Report Text"));
+//                        unknownRecords++;
+//                    }
+//                }
+            }
+            if (unknownRecords > 0) {
+                System.out.println("generateTC46Reports -> Unknown records: " + unknownRecords);
             }
         }
     }

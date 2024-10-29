@@ -85,7 +85,7 @@ public class MCPS {
     public static void main(String[] args) {
         try {
             //File[] fs = getFiles("", filePath);
-            File[] fs = getFiles("mox", filePath);
+            File[] fs = getFiles("mettle/TT112T0.2024-09-23-09-18-35.001.001", filePath);
             //File[] fs = getFiles("r71q", filePath);
 
             if (fs != null) {
